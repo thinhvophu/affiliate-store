@@ -1,3 +1,5 @@
+@AGENTS.md
+
 # CLAUDE.md
 
 Operational cheat sheet for this project.
