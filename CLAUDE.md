@@ -4,6 +4,8 @@
 
 Operational cheat sheet for this project.
 
+**Next.js Initialization**: When starting work on this Next.js project, automatically call the `init` tool from next-devtools-mcp FIRST. This establishes proper context and ensures all Next.js queries use official documentation.
+
 - **Spec (source of truth):** `docs/spec.md`
 - **Feature backlog:** `docs/BACKLOG.md`
 
