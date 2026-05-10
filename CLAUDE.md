@@ -24,14 +24,15 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00015 (content loader utilities: lib/products.ts, lib/posts.ts)
+> Last updated: US00016 (base global styles & design tokens: app/globals.css)
 
 ### Top-level layout
 
 ```
 aff-store/
 ├── app/                 # Next.js App Router (routes, layouts, route handlers)
-│   ├── layout.tsx       # Root layout — <html lang="vi">
+│   ├── layout.tsx       # Root layout — <html lang="vi">, imports globals.css
+│   ├── globals.css      # Global CSS reset + design tokens (US00016)
 │   └── page.tsx         # Homepage (/)
 ├── components/          # Reusable React components (PascalCase.tsx)
 ├── content/             # Static content sources
