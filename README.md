@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00111 (Vercel ↔ GitHub auto-deploy on `main`)
+> Last updated: US00113 (PR validation CI workflow: .github/workflows/ci.yml)
 
 ### Top-level layout
 
