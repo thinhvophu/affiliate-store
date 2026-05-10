@@ -36,11 +36,35 @@ Useful scripts:
 | `NEXT_PUBLIC_SITE_URL`          | Canonical/sitemap base URL         | Yes      |
 | `NEXT_PUBLIC_GA_MEASUREMENT_ID` | GA4 ID; empty = analytics disabled | No       |
 
+## Hosting
+
+Production runs on **Vercel** with the GitHub integration. Push to `main` auto-deploys.
+
+| Item                  | Value                                                                                |
+| --------------------- | ------------------------------------------------------------------------------------ |
+| Vercel project        | `aff-store` ([dashboard](https://vercel.com/thinhvophu/aff-store))                   |
+| Production URL        | `https://aff-store.vercel.app` (until custom domain is added during launch prep)     |
+| Production branch     | `main`                                                                               |
+| Framework preset      | Next.js (auto-detected)                                                              |
+| Node.js version       | 22.x (matches `package.json` `engines`)                                              |
+| Preview deploys       | Auto-created for every PR; URL posted as a comment by the Vercel bot                 |
+| Speed Insights        | Enabled — see [`docs/plans/US00115.md`](./docs/plans/US00115.md) (when implemented)  |
+
+### Verifying a deploy
+
+1. Open the [Vercel dashboard → `aff-store` → Deployments](https://vercel.com/thinhvophu/aff-store/deployments).
+2. Confirm the latest commit on `main` shows a green "Ready" Production deployment.
+3. Visit the Production URL above and confirm the homepage renders without console errors.
+
+### When a build fails
+
+The previously successful Production deployment continues serving traffic. Fix forward (push a new commit) or revert. No manual intervention in the Vercel UI is required to keep the site up.
+
 ## Codebase structure
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00015 (content loader utilities: lib/products.ts, lib/posts.ts)
+> Last updated: US00111 (Vercel ↔ GitHub auto-deploy on `main`)
 
 ### Top-level layout
 
