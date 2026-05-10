@@ -64,14 +64,14 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00113 (PR validation CI workflow: .github/workflows/ci.yml)
+> Last updated: US00115 (Speed Insights: app/layout.tsx mounts <SpeedInsights />)
 
 ### Top-level layout
 
 ```
 aff-store/
 ├── app/                 # Next.js App Router (routes, layouts, route handlers)
-│   ├── layout.tsx       # Root layout — <html lang="vi">
+│   ├── layout.tsx       # Root layout — <html lang="vi">, imports globals.css, mounts <SpeedInsights />
 │   └── page.tsx         # Homepage (/)
 ├── components/          # Reusable React components (PascalCase.tsx)
 ├── content/             # Static content sources
@@ -131,6 +131,21 @@ aff-store/
 2. `/task-planner USxxxxx` reads the spec + the **Codebase structure** section above and produces a plan in `docs/plans/USxxxxx.md`.
 3. After approval, `/implement-story USxxxxx` implements it on a feature branch and opens a PR.
 4. If the implementation changes the structure, `/implement-story` updates this section and the matching one in `CLAUDE.md` as part of the same PR.
+
+## Core Web Vitals (Vercel Speed Insights)
+
+Real-user Core Web Vitals (LCP, CLS, INP, TTFB, FCP) are collected on every Production page view via [Vercel Speed Insights](https://vercel.com/docs/speed-insights). The `<SpeedInsights />` component is mounted in `app/layout.tsx` and beacons are only sent from the Production environment — local `npm run dev` and Preview deployments are silent by design.
+
+### Where to view metrics
+
+1. Open the Vercel dashboard for this project.
+2. Click the **Speed Insights** tab in the project sidebar.
+3. Direct URL: `https://vercel.com/thinhvophu/aff-store/speed-insights`
+
+If the tab is empty after a deploy, confirm that:
+
+- Speed Insights is enabled in **Project Settings → Speed Insights**.
+- At least one real page view has happened on the live Production URL since the deploy (the dashboard does not back-fill past traffic).
 
 ## License
 
