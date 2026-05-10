@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00014 (shared TypeScript types: Product, Post, PostFrontmatter)
+> Last updated: US00015 (content loader utilities: lib/products.ts, lib/posts.ts)
 
 ### Top-level layout
 
@@ -38,6 +38,8 @@ aff-store/
 │   ├── products/        # *.json — one file per product (see Product JSON shape)
 │   └── posts/           # *.mdx — one file per blog post
 ├── lib/                 # Pure utilities, data loaders, formatters (no React)
+│   ├── products.ts      # getAllProducts(), getProductBySlug() — reads content/products/*.json
+│   └── posts.ts         # getAllPosts(), getPostBySlug() — reads content/posts/*.mdx
 ├── static/              # Static assets served at /static/*
 │   └── images/{products,blog}/
 ├── types/               # Shared TypeScript types
@@ -192,4 +194,4 @@ GA4 component must be conditionally rendered only when the ID is set, and never 
 - All user-facing copy is **Vietnamese**. Code, identifiers, and comments stay in English.
 - Publishing flow: add file → push to `main` → Vercel rebuilds. No DB, no admin UI.
 - Before marking a UI task done, verify in a browser (per user rule).
-- Get approval before non-trivial architecture decisions or destructive actions; implementation steps from an approved plan proceed without asking.
+- When implementing a user story inside this repo on a feature branch (`feat/*`), proceed autonomously end-to-end (branch → code → verify → PR) without asking for approval. The PR is the review gate. Only pause if something falls clearly outside the story's scope or would touch `main` directly.

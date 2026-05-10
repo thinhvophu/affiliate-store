@@ -40,7 +40,7 @@ Useful scripts:
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00014 (shared TypeScript types: Product, Post, PostFrontmatter)
+> Last updated: US00015 (content loader utilities: lib/products.ts, lib/posts.ts)
 
 ### Top-level layout
 
@@ -54,6 +54,8 @@ aff-store/
 │   ├── products/        # *.json — one file per product
 │   └── posts/           # *.mdx — one file per blog post
 ├── lib/                 # Pure utilities, data loaders, formatters (no React)
+│   ├── products.ts      # getAllProducts(), getProductBySlug() — reads content/products/*.json
+│   └── posts.ts         # getAllPosts(), getPostBySlug() — reads content/posts/*.mdx
 ├── static/              # Static assets served at /static/*
 │   └── images/{products,blog}/
 ├── types/               # Shared TypeScript types
