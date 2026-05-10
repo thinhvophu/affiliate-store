@@ -17,13 +17,13 @@ The site is purely content-driven — no user accounts, no cart, no checkout. Ev
 
 ## 2. Goals
 
-| Goal | Priority |
-|---|---|
-| Drive affiliate clicks to Shopee product pages | P0 |
-| Rank on Vietnamese long-tail buying-intent keywords | P0 |
-| Serve as a link hub for social channel audiences | P1 |
-| Support Google AdSense display ads | P1 |
-| Enable Google Analytics tracking | P2 |
+| Goal                                                | Priority |
+| --------------------------------------------------- | -------- |
+| Drive affiliate clicks to Shopee product pages      | P0       |
+| Rank on Vietnamese long-tail buying-intent keywords | P0       |
+| Serve as a link hub for social channel audiences    | P1       |
+| Support Google AdSense display ads                  | P1       |
+| Enable Google Analytics tracking                    | P2       |
 
 ---
 
@@ -54,8 +54,8 @@ Cron job workflow (`.github/workflows/scheduled-deploy.yml`):
 ```yaml
 on:
   schedule:
-    - cron: '0 2 * * 1'  # Every Monday at 02:00 UTC
-  workflow_dispatch:       # Allow manual trigger
+    - cron: "0 2 * * 1" # Every Monday at 02:00 UTC
+  workflow_dispatch: # Allow manual trigger
 ```
 
 Triggers a Vercel deploy hook to rebuild the site on schedule.
@@ -98,13 +98,13 @@ SEO is a first-class concern, not an afterthought.
 
 ### 5.1 Global Theme
 
-| Property | Value |
-|---|---|
-| Style | Minimalism — clean, low visual noise |
-| Language | Vietnamese |
+| Property      | Value                                                                              |
+| ------------- | ---------------------------------------------------------------------------------- |
+| Style         | Minimalism — clean, low visual noise                                               |
+| Language      | Vietnamese                                                                         |
 | Primary color | Configurable via CSS variable (`--color-primary`), default Shopee orange `#EE4D2D` |
-| Font | System font stack (no external font dependency for performance) |
-| Responsive | Mobile-first, breakpoints at 768px and 1280px |
+| Font          | System font stack (no external font dependency for performance)                    |
+| Responsive    | Mobile-first, breakpoints at 768px and 1280px                                      |
 
 ### 5.2 Global Layout
 
@@ -128,12 +128,14 @@ SEO is a first-class concern, not an afterthought.
 - Main content captures primary visual focus — left panel is secondary
 
 #### Header
+
 - Site logo (SVG, configurable)
 - Site name / tagline
 - Navigation: Trang chủ · Sản phẩm · Bài viết · Về chúng tôi
 - Sticky on scroll (optional, P2)
 
 #### Footer
+
 - Contact info (email or social handle)
 - Copyright notice with current year
 - Links: Privacy Policy · Affiliate Disclosure
@@ -143,12 +145,14 @@ SEO is a first-class concern, not an afterthought.
 **Purpose:** Browse and filter all affiliate products.
 
 **Left panel — Filters:**
+
 - Product category (checkbox list)
 - Price range (slider or preset ranges)
 - Brand (checkbox list)
 - Sort by: Mới nhất · Giá thấp → cao · Giá cao → thấp · Phổ biến
 
 **Main content — Product grid:**
+
 - Responsive grid: 2 columns mobile / 3 columns tablet / 4 columns desktop
 - Each product card displays:
   - Product thumbnail image
@@ -161,6 +165,7 @@ SEO is a first-class concern, not an afterthought.
   - Pagination must be crawlable by Google (use `?page=N` query params with proper canonical)
 
 **SEO notes for this page:**
+
 - Each category page (`/danh-muc/[category]/`) duplicates this grid filtered by category
 - Category pages must include a 100–200 word introductory text block above the grid for keyword relevance
 
@@ -169,6 +174,7 @@ SEO is a first-class concern, not an afterthought.
 **Purpose:** Thin landing page per product — mainly for structured data and affiliate CTA.
 
 **Content:**
+
 - Product name (`h1`)
 - Product images (gallery)
 - Short description (1–3 sentences)
@@ -187,6 +193,7 @@ SEO is a first-class concern, not an afterthought.
 **Left panel:** Categories or tags filter (simple link list).
 
 **Main content:**
+
 - Posts ordered by `publishedAt` descending (newest first)
 - Each item displays:
   - Title (linked)
@@ -203,6 +210,7 @@ SEO is a first-class concern, not an afterthought.
 **Left panel:** Table of contents (generated from MDX headings), sticky on desktop.
 
 **Main content:**
+
 - Article title (`h1`)
 - Published date + estimated read time
 - Hero image
@@ -213,11 +221,13 @@ SEO is a first-class concern, not an afterthought.
 - Related posts (3 cards at bottom)
 
 **SEO:**
+
 - `Article` JSON-LD schema
 - `og:title`, `og:description`, `og:image` from frontmatter
 - Reading time in meta is a soft signal but good UX
 
 **MDX frontmatter schema:**
+
 ```yaml
 ---
 title: "Top 5 Tai Nghe Gaming Dưới 500k Năm 2026"
@@ -284,6 +294,7 @@ Each product is a JSON entry:
 ### 7.2 Blog Content Pipeline
 
 Weekly cadence (AI-assisted):
+
 1. Identify 1–2 long-tail Vietnamese buyer-intent keywords
 2. Generate MDX draft using AI (Claude) with structured prompt template
 3. Review for accuracy, insert real affiliate links via `<ProductCard />` components
@@ -294,13 +305,13 @@ Target: 4–8 published posts per month.
 
 ### 7.3 Content Types (Priority Order)
 
-| Type | Example | SEO Value |
-|---|---|---|
-| Buying guide | "Tai nghe gaming dưới 500k loại nào tốt?" | High |
-| Comparison | "So sánh Logitech G102 vs E-Dra EM625S" | High |
-| Best-of list | "Top 5 chuột gaming cho tay nhỏ 2026" | High |
-| Setup guide | "Cách setup góc gaming cơ bản dưới 5 triệu" | Medium |
-| Product spotlight | "Review nhanh: Bàn phím Akko 3068B" | Medium |
+| Type              | Example                                     | SEO Value |
+| ----------------- | ------------------------------------------- | --------- |
+| Buying guide      | "Tai nghe gaming dưới 500k loại nào tốt?"   | High      |
+| Comparison        | "So sánh Logitech G102 vs E-Dra EM625S"     | High      |
+| Best-of list      | "Top 5 chuột gaming cho tay nhỏ 2026"       | High      |
+| Setup guide       | "Cách setup góc gaming cơ bản dưới 5 triệu" | Medium    |
+| Product spotlight | "Review nhanh: Bàn phím Akko 3068B"         | Medium    |
 
 ---
 
@@ -308,7 +319,7 @@ Target: 4–8 published posts per month.
 
 Per Vietnamese consumer protection norms and Google's quality guidelines, every page must include a visible affiliate disclosure:
 
-> *"Các liên kết sản phẩm trên trang này là liên kết tiếp thị liên kết. Chúng tôi có thể nhận hoa hồng khi bạn mua hàng qua các liên kết này, không phát sinh thêm chi phí cho bạn."*
+> _"Các liên kết sản phẩm trên trang này là liên kết tiếp thị liên kết. Chúng tôi có thể nhận hoa hồng khi bạn mua hàng qua các liên kết này, không phát sinh thêm chi phí cho bạn."_
 
 Place in: footer (all pages) + top of each blog post.
 

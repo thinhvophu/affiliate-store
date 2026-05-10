@@ -11,6 +11,7 @@ Feature-level backlog derived from `docs/spec.md`. User stories (`US####`) will 
 **Goal:** Establish the project scaffolding and shared building blocks every other feature depends on.
 
 **Scope:**
+
 - Next.js (App Router) + TypeScript project initialization
 - Folder structure: `app/`, `components/`, `content/`, `lib/`, `static/`, `types/`
 - MDX pipeline configured with frontmatter parsing
@@ -34,6 +35,7 @@ Feature-level backlog derived from `docs/spec.md`. User stories (`US####`) will 
 **Goal:** Browsable product directory backed by JSON files, surfaced via listing, category, and detail pages.
 
 **Scope:**
+
 - Product listing `/san-pham/` with filters (category, price, brand), sort, pagination 24/page
 - Category pages `/danh-muc/[category]/` with filtered grid + 100–200 word intro copy
 - Product detail `/san-pham/[slug]/` with image gallery, short description, specs table, price, prominent affiliate CTA, related products (3–4)
@@ -55,6 +57,7 @@ Feature-level backlog derived from `docs/spec.md`. User stories (`US####`) will 
 **Goal:** SEO-driving blog and buying-guide system authored in MDX.
 
 **Scope:**
+
 - Blog listing `/bai-viet/` ordered by `publishedAt` desc, 12/page, category/tag filter in left panel
 - Blog post `/bai-viet/[slug]/` with hero image, MDX body, sticky TOC (from headings), Vietnamese date format (`02 tháng 5, 2026`), related posts (3)
 - `<ProductCard slug="..." />` MDX component for inline affiliate cards
@@ -74,6 +77,7 @@ Feature-level backlog derived from `docs/spec.md`. User stories (`US####`) will 
 **Goal:** Every product CTA reliably opens its Shopee affiliate URL in a new tab with correct link semantics, everywhere a product surfaces.
 
 **Scope:**
+
 - All product cards, detail-page CTA, and inline `<ProductCard />` use the canonical affiliate-link component
 - `target="_blank"` and `rel="noopener noreferrer sponsored"` on every affiliate anchor
 - Whole product card is clickable (not just the CTA button)
@@ -92,6 +96,7 @@ Feature-level backlog derived from `docs/spec.md`. User stories (`US####`) will 
 **Goal:** Make every page rankable, crawlable, and shareable from day one.
 
 **Scope:**
+
 - Per-page `<title>`, `<meta description>`, and canonical URL
 - Open Graph tags (`og:title`, `og:description`, `og:image`)
 - JSON-LD: `Product` on product pages, `Article` on blog posts, `BreadcrumbList` everywhere
@@ -115,6 +120,7 @@ Feature-level backlog derived from `docs/spec.md`. User stories (`US####`) will 
 **Goal:** Consistent global chrome and design tokens shared by every page.
 
 **Scope:**
+
 - Header: logo, site name, primary nav (Trang chủ · Sản phẩm · Bài viết · Về chúng tôi); sticky on scroll (P2)
 - Footer: contact, copyright with current year, Privacy Policy & Affiliate Disclosure links, disclosure text
 - Two-column layout shell (left panel ~280px + main content)
@@ -136,6 +142,7 @@ Feature-level backlog derived from `docs/spec.md`. User stories (`US####`) will 
 **Goal:** Measure traffic and identify top-converting products without code changes at launch.
 
 **Scope:**
+
 - GA4 integration component, conditionally rendered only when `NEXT_PUBLIC_GA_MEASUREMENT_ID` is set
 - Never loaded in development
 - `affiliate_click` GA4 event fired on every affiliate link click with `product_name`, `product_category`, `destination_url`
@@ -154,6 +161,7 @@ Feature-level backlog derived from `docs/spec.md`. User stories (`US####`) will 
 **Goal:** Meet Vietnamese consumer-protection norms and Google quality guidelines for affiliate sites.
 
 **Scope:**
+
 - Vietnamese affiliate disclosure block visible in footer on every page
 - Same disclosure rendered at the top of every blog post
 - Privacy Policy page
@@ -173,6 +181,7 @@ Feature-level backlog derived from `docs/spec.md`. User stories (`US####`) will 
 **Goal:** Primary entry point that surfaces featured products and orients visitors arriving from social or organic search.
 
 **Scope:**
+
 - Hero / intro section
 - Featured product picks (sourced from `featured: true` in product JSON)
 - Category highlights (links into `/danh-muc/[category]/`)
@@ -192,6 +201,7 @@ Feature-level backlog derived from `docs/spec.md`. User stories (`US####`) will 
 **Goal:** Trust-signal page at `/ve-chung-toi/` describing the site and its editorial stance.
 
 **Scope:**
+
 - Static page with site mission, who we are, how we pick products
 - Affiliate disclosure restated
 - Contact info
@@ -209,6 +219,7 @@ Feature-level backlog derived from `docs/spec.md`. User stories (`US####`) will 
 **Goal:** Reliable, automated build and deploy with scheduled refresh.
 
 **Scope:**
+
 - Vercel project connected to repo; push to `main` auto-deploys
 - `NEXT_PUBLIC_SITE_URL` and `NEXT_PUBLIC_GA_MEASUREMENT_ID` configured per environment
 - GitHub Actions cron `.github/workflows/scheduled-deploy.yml` (Mon 02:00 UTC) calling Vercel deploy hook

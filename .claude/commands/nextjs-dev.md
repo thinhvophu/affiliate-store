@@ -28,6 +28,7 @@ git checkout -b feat/$ARGUMENTS
 ### 4. Read the plan in full
 
 Read `docs/plans/$ARGUMENTS.md` and identify:
+
 - Every file to create or modify (Section 4).
 - Step-by-step execution order (Section 7).
 - Acceptance-criteria table (Section 8).
@@ -36,6 +37,7 @@ Read `docs/plans/$ARGUMENTS.md` and identify:
 ### 5. Implement — follow the execution order exactly
 
 For each step in Section 7:
+
 - Prefer editing existing files over creating new ones.
 - Write no comments unless the WHY is non-obvious.
 - Do not pre-empt work owned by other stories.
@@ -46,6 +48,7 @@ For each step in Section 7:
 Start `npm run dev` in the background and wait for "Ready" in the logs.
 
 Use `mcp__next-devtools__browser_eval` to:
+
 1. Navigate to every route touched by this story.
 2. Take a screenshot.
 3. Check browser console — a 404 on `/favicon.ico` is acceptable; anything else must be investigated and fixed.
@@ -55,6 +58,7 @@ Stop the dev server after verification.
 ### 7. Run acceptance criteria
 
 Work through every scenario in Section 8 of the plan. For each:
+
 - Run the prescribed command or browser check.
 - Note pass or fail.
 - If a scenario fails, fix the code and re-run before moving on.
@@ -72,6 +76,7 @@ Confirm exit 0 and that affected routes show `○ (Static)` (or the render strat
 ### 9. Update the plan document
 
 In `docs/plans/$ARGUMENTS.md`:
+
 - Change `**Status:** Approved` → `**Status:** Done`
 - Tick every checkbox in the Definition of Done section (replace `[ ]` with `[x]`).
 
@@ -85,6 +90,7 @@ If this story added, moved, renamed, or removed any of the following, update **b
 - A new top-level config file that other contributors will need to know about.
 
 Rules:
+
 - Keep the two sections in sync — same tree, same conventions, same route map. Only the surrounding prose differs (CLAUDE.md is for agents, README.md is public-facing).
 - Bump the `> Last updated:` line to reference this story (e.g., `> Last updated: US00018 (added /san-pham route + lib/products.ts loader)`).
 - If the story did **not** change structure, skip this step. Do not touch the doc just to bump the marker.
@@ -106,6 +112,7 @@ git push -u origin feat/$ARGUMENTS
 ```
 
 Create a PR with `gh pr create`:
+
 - **Base branch:** `main`
 - **Title:** `feat($ARGUMENTS): <short description>` (≤70 chars)
 - **Body:** summary bullets + test plan checklist (use the AC scenarios as the checklist).

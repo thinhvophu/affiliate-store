@@ -22,19 +22,19 @@ npm run dev          # http://localhost:3000
 
 Useful scripts:
 
-| Command | Purpose |
-|---|---|
-| `npm run dev` | Local dev server |
-| `npm run build` | Production build (used by Vercel) |
-| `npm run start` | Run the production build locally |
-| `npm run typecheck` | `tsc --noEmit` |
+| Command             | Purpose                           |
+| ------------------- | --------------------------------- |
+| `npm run dev`       | Local dev server                  |
+| `npm run build`     | Production build (used by Vercel) |
+| `npm run start`     | Run the production build locally  |
+| `npm run typecheck` | `tsc --noEmit`                    |
 
 ## Environment variables
 
-| Name | Purpose | Required |
-|---|---|---|
-| `NEXT_PUBLIC_SITE_URL` | Canonical/sitemap base URL | Yes |
-| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | GA4 ID; empty = analytics disabled | No |
+| Name                            | Purpose                            | Required |
+| ------------------------------- | ---------------------------------- | -------- |
+| `NEXT_PUBLIC_SITE_URL`          | Canonical/sitemap base URL         | Yes      |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | GA4 ID; empty = analytics disabled | No       |
 
 ## Codebase structure
 
@@ -87,17 +87,17 @@ aff-store/
 
 ### Route map
 
-| Path | Source file (planned) |
-|---|---|
-| `/` | `app/page.tsx` ✅ |
-| `/san-pham` | `app/san-pham/page.tsx` |
-| `/san-pham/[slug]` | `app/san-pham/[slug]/page.tsx` |
+| Path                   | Source file (planned)              |
+| ---------------------- | ---------------------------------- |
+| `/`                    | `app/page.tsx` ✅                  |
+| `/san-pham`            | `app/san-pham/page.tsx`            |
+| `/san-pham/[slug]`     | `app/san-pham/[slug]/page.tsx`     |
 | `/danh-muc/[category]` | `app/danh-muc/[category]/page.tsx` |
-| `/bai-viet` | `app/bai-viet/page.tsx` |
-| `/bai-viet/[slug]` | `app/bai-viet/[slug]/page.tsx` |
-| `/ve-chung-toi` | `app/ve-chung-toi/page.tsx` |
-| `/sitemap.xml` | `app/sitemap.ts` |
-| `/robots.txt` | `app/robots.ts` |
+| `/bai-viet`            | `app/bai-viet/page.tsx`            |
+| `/bai-viet/[slug]`     | `app/bai-viet/[slug]/page.tsx`     |
+| `/ve-chung-toi`        | `app/ve-chung-toi/page.tsx`        |
+| `/sitemap.xml`         | `app/sitemap.ts`                   |
+| `/robots.txt`          | `app/robots.ts`                    |
 
 ✅ = implemented · others to be created by upcoming stories.
 

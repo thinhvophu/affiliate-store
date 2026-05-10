@@ -72,17 +72,17 @@ aff-store/
 
 ### Route map (planned — see "Routes" section below for SEO/render strategy)
 
-| Path | Source file (planned) |
-|---|---|
-| `/` | `app/page.tsx` ✅ |
-| `/san-pham` | `app/san-pham/page.tsx` |
-| `/san-pham/[slug]` | `app/san-pham/[slug]/page.tsx` |
+| Path                   | Source file (planned)              |
+| ---------------------- | ---------------------------------- |
+| `/`                    | `app/page.tsx` ✅                  |
+| `/san-pham`            | `app/san-pham/page.tsx`            |
+| `/san-pham/[slug]`     | `app/san-pham/[slug]/page.tsx`     |
 | `/danh-muc/[category]` | `app/danh-muc/[category]/page.tsx` |
-| `/bai-viet` | `app/bai-viet/page.tsx` |
-| `/bai-viet/[slug]` | `app/bai-viet/[slug]/page.tsx` |
-| `/ve-chung-toi` | `app/ve-chung-toi/page.tsx` |
-| `/sitemap.xml` | `app/sitemap.ts` |
-| `/robots.txt` | `app/robots.ts` |
+| `/bai-viet`            | `app/bai-viet/page.tsx`            |
+| `/bai-viet/[slug]`     | `app/bai-viet/[slug]/page.tsx`     |
+| `/ve-chung-toi`        | `app/ve-chung-toi/page.tsx`        |
+| `/sitemap.xml`         | `app/sitemap.ts`                   |
+| `/robots.txt`          | `app/robots.ts`                    |
 
 ✅ = implemented · others to be created by upcoming stories.
 
@@ -168,16 +168,16 @@ Posts can embed `<ProductCard slug="..." />` to render an affiliate card inline.
 
 Vietnamese affiliate disclosure must appear in the **footer of every page** AND at the **top of every blog post**:
 
-> *"Các liên kết sản phẩm trên trang này là liên kết tiếp thị liên kết. Chúng tôi có thể nhận hoa hồng khi bạn mua hàng qua các liên kết này, không phát sinh thêm chi phí cho bạn."*
+> _"Các liên kết sản phẩm trên trang này là liên kết tiếp thị liên kết. Chúng tôi có thể nhận hoa hồng khi bạn mua hàng qua các liên kết này, không phát sinh thêm chi phí cho bạn."_
 
 Footer must also link to: Privacy Policy, Affiliate Disclosure.
 
 ## Env vars
 
-| Name | Purpose | Required |
-|---|---|---|
-| `NEXT_PUBLIC_SITE_URL` | Canonical/sitemap base URL | Yes |
-| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | GA4 ID; empty = analytics disabled | No |
+| Name                            | Purpose                            | Required |
+| ------------------------------- | ---------------------------------- | -------- |
+| `NEXT_PUBLIC_SITE_URL`          | Canonical/sitemap base URL         | Yes      |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | GA4 ID; empty = analytics disabled | No       |
 
 GA4 component must be conditionally rendered only when the ID is set, and never loaded in development. Affiliate clicks are tracked as GA4 event `affiliate_click` with `product_name`, `product_category`, `destination_url`.
 
