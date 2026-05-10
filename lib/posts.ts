@@ -5,29 +5,18 @@ import type { Post } from "@/types";
 
 const POSTS_DIR = path.join(process.cwd(), "content", "posts");
 
-function validatePostFrontmatter(
-  data: Record<string, unknown>,
-  filePath: string
-): void {
-  const requiredStrings: string[] = [
-    "title",
-    "summary",
-    "publishedAt",
-    "category",
-    "coverImage",
-  ];
+function validatePostFrontmatter(data: Record<string, unknown>, filePath: string): void {
+  const requiredStrings: string[] = ["title", "summary", "publishedAt", "category", "coverImage"];
   for (const field of requiredStrings) {
     if (typeof data[field] !== "string" || (data[field] as string).trim() === "") {
       throw new Error(
-        `[content] ${filePath}: missing or invalid required frontmatter field "${field}".`
+        `[content] ${filePath}: missing or invalid required frontmatter field "${field}".`,
       );
     }
   }
 
   if (!Array.isArray(data.tags)) {
-    throw new Error(
-      `[content] ${filePath}: frontmatter "tags" must be an array of strings.`
-    );
+    throw new Error(`[content] ${filePath}: frontmatter "tags" must be an array of strings.`);
   }
 }
 
@@ -58,9 +47,7 @@ export function getAllPosts(): Post[] {
     try {
       parsed = matter(raw);
     } catch (err) {
-      throw new Error(
-        `[content] ${filePath}: failed to parse frontmatter. ${err}`
-      );
+      throw new Error(`[content] ${filePath}: failed to parse frontmatter. ${err}`);
     }
 
     const frontmatter = parsed.data as Record<string, unknown>;
@@ -74,7 +61,7 @@ export function getAllPosts(): Post[] {
         `[content] Duplicate post slug "${slug}" found in:\n` +
           `  - ${existing}\n` +
           `  - ${filePath}\n` +
-          `Slugs must be unique because they are used as URL keys.`
+          `Slugs must be unique because they are used as URL keys.`,
       );
     }
     slugMap.set(slug, filePath);
@@ -91,10 +78,7 @@ export function getAllPosts(): Post[] {
     });
   }
 
-  posts.sort(
-    (a, b) =>
-      new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-  );
+  posts.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
 
   return posts;
 }

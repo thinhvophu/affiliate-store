@@ -6,9 +6,7 @@ const PRODUCTS_DIR = path.join(process.cwd(), "content", "products");
 
 function validateProduct(data: unknown, filePath: string): Product {
   if (typeof data !== "object" || data === null) {
-    throw new Error(
-      `[content] ${filePath}: file does not contain a valid JSON object.`
-    );
+    throw new Error(`[content] ${filePath}: file does not contain a valid JSON object.`);
   }
 
   const obj = data as Record<string, unknown>;
@@ -23,37 +21,27 @@ function validateProduct(data: unknown, filePath: string): Product {
   for (const field of requiredStrings) {
     if (typeof obj[field] !== "string" || (obj[field] as string).trim() === "") {
       throw new Error(
-        `[content] ${filePath}: missing or invalid required string field "${field}".`
+        `[content] ${filePath}: missing or invalid required string field "${field}".`,
       );
     }
   }
 
   if (typeof obj.price !== "number" || obj.price < 0) {
-    throw new Error(
-      `[content] ${filePath}: "price" must be a non-negative number.`
-    );
+    throw new Error(`[content] ${filePath}: "price" must be a non-negative number.`);
   }
 
   if (!Array.isArray(obj.images)) {
-    throw new Error(
-      `[content] ${filePath}: "images" must be an array of strings.`
-    );
+    throw new Error(`[content] ${filePath}: "images" must be an array of strings.`);
   }
 
-  if (
-    typeof obj.specs !== "object" ||
-    obj.specs === null ||
-    Array.isArray(obj.specs)
-  ) {
+  if (typeof obj.specs !== "object" || obj.specs === null || Array.isArray(obj.specs)) {
     throw new Error(
-      `[content] ${filePath}: "specs" must be a plain object (Record<string, string>).`
+      `[content] ${filePath}: "specs" must be a plain object (Record<string, string>).`,
     );
   }
 
   if (typeof obj.publishedAt !== "string") {
-    throw new Error(
-      `[content] ${filePath}: missing or invalid "publishedAt" date string.`
-    );
+    throw new Error(`[content] ${filePath}: missing or invalid "publishedAt" date string.`);
   }
 
   if (typeof obj.featured !== "boolean") {
@@ -68,9 +56,7 @@ export function getAllProducts(): Product[] {
     return [];
   }
 
-  const files = fs
-    .readdirSync(PRODUCTS_DIR)
-    .filter((f) => f.endsWith(".json"));
+  const files = fs.readdirSync(PRODUCTS_DIR).filter((f) => f.endsWith(".json"));
 
   if (files.length === 0) {
     return [];
@@ -103,7 +89,7 @@ export function getAllProducts(): Product[] {
         `[content] Duplicate product slug "${product.slug}" found in:\n` +
           `  - ${existing}\n` +
           `  - ${filePath}\n` +
-          `Slugs must be unique because they are used as URL keys.`
+          `Slugs must be unique because they are used as URL keys.`,
       );
     }
     slugMap.set(product.slug, filePath);
@@ -111,10 +97,7 @@ export function getAllProducts(): Product[] {
     products.push(product);
   }
 
-  products.sort(
-    (a, b) =>
-      new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-  );
+  products.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
 
   return products;
 }

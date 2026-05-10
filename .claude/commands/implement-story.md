@@ -27,6 +27,7 @@ Call the `mcp__next-devtools__init` tool with the project path. This is mandator
 ### 3. Read the plan
 
 Read `docs/plans/<user_story>.md` in full. Identify:
+
 - Every file to create or modify.
 - The step-by-step execution order (Section 7 of the plan).
 - The acceptance-criteria table (Section 8).
@@ -35,6 +36,7 @@ Read `docs/plans/<user_story>.md` in full. Identify:
 ### 4. Implement
 
 Follow the plan's execution order exactly. For each step:
+
 - Prefer editing existing files over creating new ones.
 - Write no comments unless the WHY is non-obvious.
 - Do not pre-empt work owned by other stories.
@@ -45,6 +47,7 @@ Follow the plan's execution order exactly. For each step:
 Start `npm run dev` in the background. Wait for "Ready" in the logs.
 
 Use `mcp__next-devtools__browser_eval` to:
+
 1. Navigate to the relevant page(s).
 2. Take a screenshot.
 3. Check console messages for errors (a 404 on `/favicon.ico` is acceptable; everything else must be investigated).
@@ -54,6 +57,7 @@ Stop the dev server after verification.
 ### 6. Run acceptance criteria
 
 Work through every scenario in the plan's Section 8. For each:
+
 - Run the prescribed command or browser check.
 - Note pass/fail.
 - If a scenario fails, fix the code and re-run before continuing.
@@ -71,6 +75,7 @@ Confirm exit 0 and that the affected routes show `○ (Static)` or the expected 
 ### 8. Update the plan document
 
 In `docs/plans/<user_story>.md`:
+
 - Change `**Status:** Approved` → `**Status:** Done`
 - Tick every checkbox in the Definition of Done section (replace `[ ]` with `[x]`).
 
@@ -91,6 +96,7 @@ git push -u origin feat/<user_story>
 ```
 
 Then create a PR with `gh pr create`:
+
 - **Base branch:** `main`
 - **Title:** `feat(<user_story>): <short description>` (≤70 chars)
 - **Body:** summary bullets + test plan checklist (use the AC scenarios as the checklist).
