@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00014 (shared TypeScript types: Product, Post, PostFrontmatter)
+> Last updated: US00015 (content loader utilities: lib/products.ts, lib/posts.ts)
 
 ### Top-level layout
 
@@ -38,6 +38,8 @@ aff-store/
 │   ├── products/        # *.json — one file per product (see Product JSON shape)
 │   └── posts/           # *.mdx — one file per blog post
 ├── lib/                 # Pure utilities, data loaders, formatters (no React)
+│   ├── products.ts      # getAllProducts(), getProductBySlug() — reads content/products/*.json
+│   └── posts.ts         # getAllPosts(), getPostBySlug() — reads content/posts/*.mdx
 ├── static/              # Static assets served at /static/*
 │   └── images/{products,blog}/
 ├── types/               # Shared TypeScript types
