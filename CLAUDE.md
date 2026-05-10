@@ -194,4 +194,4 @@ GA4 component must be conditionally rendered only when the ID is set, and never 
 - All user-facing copy is **Vietnamese**. Code, identifiers, and comments stay in English.
 - Publishing flow: add file → push to `main` → Vercel rebuilds. No DB, no admin UI.
 - Before marking a UI task done, verify in a browser (per user rule).
-- Get approval before non-trivial architecture decisions or destructive actions; implementation steps from an approved plan proceed without asking.
+- When implementing a user story inside this repo on a feature branch (`feat/*`), proceed autonomously end-to-end (branch → code → verify → PR) without asking for approval. The PR is the review gate. Only pause if something falls clearly outside the story's scope or would touch `main` directly.
