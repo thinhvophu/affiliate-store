@@ -5,3 +5,9 @@ out/
 .DS_Store
 *.tsbuildinfo
 next-env.d.ts.tmp
+
+# Editor/IDE
+.idea/
+
+# Local tooling
+.playwright-mcp/
