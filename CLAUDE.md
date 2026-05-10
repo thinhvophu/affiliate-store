@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00012 (canonical folders + `@/*` path alias)
+> Last updated: US00014 (shared TypeScript types: Product, Post, PostFrontmatter)
 
 ### Top-level layout
 
@@ -40,7 +40,10 @@ aff-store/
 ├── lib/                 # Pure utilities, data loaders, formatters (no React)
 ├── static/              # Static assets served at /static/*
 │   └── images/{products,blog}/
-├── types/               # Shared TypeScript types (Product, Post, etc.)
+├── types/               # Shared TypeScript types
+│   ├── product.ts       # Product interface (canonical JSON shape)
+│   ├── post.ts          # PostFrontmatter + Post interfaces (MDX frontmatter + content)
+│   └── index.ts         # Barrel: import { Product, Post, PostFrontmatter } from "@/types"
 ├── docs/                # Spec, backlog, story specs, plans
 │   ├── spec.md          # Source of truth
 │   ├── BACKLOG.md
@@ -60,7 +63,7 @@ aff-store/
 - **Routes** live under `app/<vietnamese-slug>/`. Use `page.tsx`, `layout.tsx`, `loading.tsx`, `not-found.tsx` per Next.js App Router.
 - **Components** in `components/<Name>.tsx`. Server Components by default; add `"use client"` only when needed.
 - **Data loaders / formatters** in `lib/` (e.g., `lib/products.ts`, `lib/posts.ts`, `lib/format.ts`). No JSX in `lib/`.
-- **Types** in `types/<domain>.ts` (e.g., `types/product.ts`).
+- **Types** in `types/<domain>.ts` (e.g., `types/product.ts`, `types/post.ts`). Barrel at `types/index.ts` — always import from `@/types`.
 - **Content** is read at build time from `content/`. No DB, no CMS.
 - **Imports** use the `@/*` alias (e.g., `import { getProducts } from "@/lib/products"`). Avoid deep relative paths.
 
