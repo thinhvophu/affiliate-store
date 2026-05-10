@@ -105,8 +105,8 @@ aff-store/
 
 1. Story spec lives in `docs/specs/USxxxxx.md`.
 2. `/task-planner USxxxxx` reads the spec + the **Codebase structure** section above and produces a plan in `docs/plans/USxxxxx.md`.
-3. After approval, `/nextjs-dev USxxxxx` implements it on a feature branch and opens a PR.
-4. If the implementation changes the structure, `/nextjs-dev` updates this section and the matching one in `CLAUDE.md` as part of the same PR.
+3. After approval, `/implement-story USxxxxx` implements it on a feature branch and opens a PR.
+4. If the implementation changes the structure, `/implement-story` updates this section and the matching one in `CLAUDE.md` as part of the same PR.
 
 ## License
 

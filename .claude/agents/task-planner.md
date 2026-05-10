@@ -61,7 +61,7 @@ The plan you write must include everything the playbook lists, plus:
 - **Status:** `Draft` (literal — main agent flips this on approval).
 - **Codebase touchpoints** — quote the exact rows/folders/conventions from the structure doc that this story affects.
 - **Structure-doc impact** — list any structural changes (new top-level folder, new route, new convention, new path alias). Implementation will need to update `CLAUDE.md` + `README.md` accordingly.
-- **Acceptance criteria** and **Definition of Done** in the format the implementer (`/nextjs-dev`) expects.
+- **Acceptance criteria** and **Definition of Done** in the format the implementer (`/implement-story`) expects.
 
 ### 7. Final report to the main agent
 
