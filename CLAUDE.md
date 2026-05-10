@@ -24,14 +24,14 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00114 (scheduled deploy workflow: .github/workflows/scheduled-deploy.yml)
+> Last updated: US00115 (Speed Insights: app/layout.tsx mounts <SpeedInsights />)
 
 ### Top-level layout
 
 ```
 aff-store/
 ├── app/                 # Next.js App Router (routes, layouts, route handlers)
-│   ├── layout.tsx       # Root layout — <html lang="vi">, imports globals.css
+│   ├── layout.tsx       # Root layout — <html lang="vi">, imports globals.css, mounts <SpeedInsights />
 │   ├── globals.css      # Global CSS reset + design tokens (US00016)
 │   └── page.tsx         # Homepage (/)
 ├── components/          # Reusable React components (PascalCase.tsx)
