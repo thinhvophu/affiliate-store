@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00016 (base global styles & design tokens: app/globals.css)
+> Last updated: US00113 (PR validation CI workflow: .github/workflows/ci.yml)
 
 ### Top-level layout
 
