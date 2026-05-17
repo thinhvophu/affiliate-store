@@ -1,0 +1,97 @@
+/* Drawer primitive — modal slide-out panel with dimmed overlay (US00025) */
+
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+/* Hidden when aria-hidden is true (drawer closed) */
+.root[aria-hidden="true"] {
+  visibility: hidden;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transition: opacity 200ms ease;
+  pointer-events: none;
+}
+
+.panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: min(85vw, 320px);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-hairline);
+  padding: var(--spacing-md);
+  overflow-y: auto;
+  transition: transform 200ms ease;
+  pointer-events: auto;
+}
+
+.panel--left {
+  left: 0;
+  transform: translateX(-100%);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+.panel--right {
+  right: 0;
+  transform: translateX(100%);
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+}
+
+.root.open {
+  pointer-events: auto;
+}
+
+.root.open .overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.root.open .panel {
+  transform: translateX(0);
+}
+
+.closeButton {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+}
+
+.closeButton:hover {
+  background: var(--color-bg-secondary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .panel {
+    transition: none;
+  }
+}
+
+/* Defense-in-depth: never show the drawer on desktop even if state goes
+   stale. ShellLayoutDrawer also force-closes on resize via matchMedia. */
+@media (min-width: 768px) {
+  .root {
+    display: none;
+  }
+}
