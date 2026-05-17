@@ -24,15 +24,15 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00022 (Footer: components/Footer.tsx, Footer.module.css, lib/disclosures.ts; CSS Modules convention established)
+> Last updated: US00023 (Root layout wired: SkipLink + Header + main + Footer; 6 F0002 surface tokens added to globals.css)
 
 ### Top-level layout
 
 ```
 aff-store/
 ├── app/                 # Next.js App Router (routes, layouts, route handlers)
-│   ├── layout.tsx       # Root layout — <html lang="vi">, imports globals.css, mounts <SpeedInsights />
-│   ├── globals.css      # Global CSS reset + design tokens (US00016)
+│   ├── layout.tsx       # Root layout — <html lang="vi">, imports globals.css, mounts <SkipLink />, <Header />, <main>, <Footer />, <SpeedInsights />
+│   ├── globals.css      # Global CSS reset + design tokens (US00016 + F0002 surface tokens)
 │   └── page.tsx         # Homepage (/)
 ├── components/          # Reusable React components (PascalCase.tsx; co-locate styles as <Name>.module.css)
 │   ├── Footer.tsx           # Server Component — 4-column footer, affiliate disclosure (US00022)
@@ -40,7 +40,8 @@ aff-store/
 │   ├── Header.tsx           # Server Component — orange brand band, logo, site name
 │   ├── HeaderNav.tsx        # "use client" — active-route nav links (usePathname)
 │   ├── HeaderMobileMenu.tsx # "use client" — hamburger trigger + mobile nav panel
-│   └── Header.module.css    # Scoped styles for the Header
+│   ├── Header.module.css    # Scoped styles for the Header
+│   └── SkipLink.tsx         # Server Component — skip-to-main-content link (US00023)
 ├── content/             # Static content sources
 │   ├── products/        # *.json — one file per product (see Product JSON shape)
 │   └── posts/           # *.mdx — one file per blog post
