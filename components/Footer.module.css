@@ -1,0 +1,126 @@
+.footer {
+  background-color: var(--color-surface, #ffffff);
+  color: var(--color-text);
+  margin-top: var(--spacing-2xl);
+}
+
+.topAccent {
+  height: 3px;
+  background-color: var(--color-primary);
+}
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--spacing-xl) var(--spacing-md);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-lg);
+}
+
+.column {
+  padding-block: var(--spacing-sm);
+}
+
+/* Mobile-stack hairline (top border on columns 2–4 when stacked) */
+.column + .column {
+  border-block-start: 1px solid var(--color-border-hairline, #e5e5e5);
+  padding-block-start: var(--spacing-lg);
+}
+
+.columnTitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-text);
+}
+
+.columnList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.columnLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding-inline: var(--spacing-sm);
+  margin-inline-start: calc(var(--spacing-sm) * -1);
+  color: var(--color-text);
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.columnLink:hover,
+.columnLink:focus-visible {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.columnLink:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.columnPlaceholder {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  padding-block: var(--spacing-sm);
+}
+
+.meta {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--spacing-lg) var(--spacing-md) var(--spacing-xl);
+  border-block-start: 1px solid var(--color-border-hairline, #e5e5e5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.disclosure {
+  display: block;
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.copyright {
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+}
+
+/* Desktop/tablet: 4-column grid + vertical hairline separators
+   Breakpoint matches --breakpoint-tablet (768px). CSS var() not allowed
+   inside @media — using raw value. */
+@media (min-width: 768px) {
+  .container {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    padding-block: var(--spacing-2xl);
+  }
+
+  .column + .column {
+    border-block-start: none;
+    border-inline-start: 1px solid var(--color-border-hairline, #e5e5e5);
+    padding-inline-start: var(--spacing-lg);
+    padding-block-start: var(--spacing-sm);
+  }
+
+  .column {
+    padding-inline-end: var(--spacing-lg);
+  }
+
+  .meta {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-lg);
+  }
+
+  .disclosure {
+    max-width: 70%;
+  }
+}
