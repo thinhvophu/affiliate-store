@@ -1,0 +1,35 @@
+/* ShellLayoutDrawer — mobile trigger button + drawer wrapper (US00025) */
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  min-height: 44px;
+  padding: 0 var(--spacing-md);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border: 0;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  cursor: pointer;
+  margin-bottom: var(--spacing-md);
+}
+
+.trigger:hover {
+  opacity: 0.9;
+}
+
+.title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-top: var(--spacing-xl);
+  margin-bottom: var(--spacing-md);
+  padding-right: var(--spacing-2xl);
+}
+
+/* Hidden on tablet and above — the inline left panel takes over */
+@media (min-width: 768px) {
+  .trigger {
+    display: none;
+  }
+}

@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00024 (components/ShellLayout.tsx + .module.css — opt-in two-column shell with Shopee card surfaces)
+> Last updated: US00025 (components/Drawer.tsx + ShellLayoutDrawer.tsx + CSS Modules — mobile-responsive left panel drawer; lib/breakpoints.ts JS-side breakpoint constants)
 
 ### Top-level layout
 
@@ -41,13 +41,18 @@ aff-store/
 │   ├── HeaderNav.tsx        # "use client" — active-route nav links (usePathname)
 │   ├── HeaderMobileMenu.tsx # "use client" — hamburger trigger + mobile nav panel
 │   ├── Header.module.css    # Scoped styles for the Header
-│   ├── ShellLayout.tsx      # Server Component — opt-in two-column shell (leftPanel + children) (US00024)
-│   ├── ShellLayout.module.css # Scoped styles for ShellLayout; CSS Grid, card chrome, responsive breakpoints
-│   └── SkipLink.tsx         # Server Component — skip-to-main-content link (US00023)
+│   ├── Drawer.tsx               # "use client" — generic slide-out drawer primitive (Esc, focus trap, scroll lock, overlay) (US00025)
+│   ├── Drawer.module.css        # Scoped styles for Drawer; overlay, slide-in panel, reduced-motion, desktop hide
+│   ├── ShellLayout.tsx          # Server Component — opt-in two-column shell (leftPanel + children) (US00024)
+│   ├── ShellLayout.module.css   # Scoped styles for ShellLayout; CSS Grid, card chrome, responsive breakpoints
+│   ├── ShellLayoutDrawer.tsx    # "use client" — mobile trigger button + Drawer wrapper for ShellLayout leftPanel (US00025)
+│   ├── ShellLayoutDrawer.module.css # Scoped styles for ShellLayoutDrawer; white-on-orange trigger, mobile-only
+│   └── SkipLink.tsx             # Server Component — skip-to-main-content link (US00023)
 ├── content/             # Static content sources
 │   ├── products/        # *.json — one file per product (see Product JSON shape)
 │   └── posts/           # *.mdx — one file per blog post
 ├── lib/                 # Pure utilities, data loaders, formatters (no React)
+│   ├── breakpoints.ts   # BREAKPOINT_TABLET_PX / BREAKPOINT_DESKTOP_PX / MOBILE_MEDIA_QUERY — JS mirror of globals.css tokens (US00025)
 │   ├── disclosures.ts   # AFFILIATE_DISCLOSURE_VI constant — shared with F0005 page + F0006 posts (US00022)
 │   ├── nav-items.ts     # NAV_ITEMS constant — the four primary nav routes (typed)
 │   ├── products.ts      # getAllProducts(), getProductBySlug() — reads content/products/*.json
