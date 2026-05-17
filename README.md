@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00115 (Speed Insights: app/layout.tsx mounts <SpeedInsights />)
+> Last updated: US00021 (Site Header: components/Header.tsx, HeaderNav.tsx, HeaderMobileMenu.tsx, Header.module.css; lib/nav-items.ts)
 
 ### Top-level layout
 
@@ -74,10 +74,15 @@ aff-store/
 │   ├── layout.tsx       # Root layout — <html lang="vi">, imports globals.css, mounts <SpeedInsights />
 │   └── page.tsx         # Homepage (/)
 ├── components/          # Reusable React components (PascalCase.tsx)
+│   ├── Header.tsx           # Server Component — orange brand band, logo, site name
+│   ├── HeaderNav.tsx        # "use client" — active-route nav links (usePathname)
+│   ├── HeaderMobileMenu.tsx # "use client" — hamburger trigger + mobile nav panel
+│   └── Header.module.css    # Scoped styles for the Header
 ├── content/             # Static content sources
 │   ├── products/        # *.json — one file per product
 │   └── posts/           # *.mdx — one file per blog post
 ├── lib/                 # Pure utilities, data loaders, formatters (no React)
+│   ├── nav-items.ts     # NAV_ITEMS constant — the four primary nav routes (typed)
 │   ├── products.ts      # getAllProducts(), getProductBySlug() — reads content/products/*.json
 │   └── posts.ts         # getAllPosts(), getPostBySlug() — reads content/posts/*.mdx
 ├── static/              # Static assets served at /static/*
