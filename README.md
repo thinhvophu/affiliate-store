@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00021 (Site Header: components/Header.tsx, HeaderNav.tsx, HeaderMobileMenu.tsx, Header.module.css; lib/nav-items.ts)
+> Last updated: US00022 (Footer: components/Footer.tsx, Footer.module.css, lib/disclosures.ts; CSS Modules convention established)
 
 ### Top-level layout
 
@@ -73,7 +73,9 @@ aff-store/
 ├── app/                 # Next.js App Router (routes, layouts, route handlers)
 │   ├── layout.tsx       # Root layout — <html lang="vi">, imports globals.css, mounts <SpeedInsights />
 │   └── page.tsx         # Homepage (/)
-├── components/          # Reusable React components (PascalCase.tsx)
+├── components/          # Reusable React components (PascalCase.tsx; co-locate styles as <Name>.module.css)
+│   ├── Footer.tsx           # Server Component — 4-column footer, affiliate disclosure (US00022)
+│   ├── Footer.module.css    # Scoped styles for the Footer
 │   ├── Header.tsx           # Server Component — orange brand band, logo, site name
 │   ├── HeaderNav.tsx        # "use client" — active-route nav links (usePathname)
 │   ├── HeaderMobileMenu.tsx # "use client" — hamburger trigger + mobile nav panel
@@ -82,6 +84,7 @@ aff-store/
 │   ├── products/        # *.json — one file per product
 │   └── posts/           # *.mdx — one file per blog post
 ├── lib/                 # Pure utilities, data loaders, formatters (no React)
+│   ├── disclosures.ts   # AFFILIATE_DISCLOSURE_VI constant — shared with F0005 page + F0006 posts (US00022)
 │   ├── nav-items.ts     # NAV_ITEMS constant — the four primary nav routes (typed)
 │   ├── products.ts      # getAllProducts(), getProductBySlug() — reads content/products/*.json
 │   └── posts.ts         # getAllPosts(), getPostBySlug() — reads content/posts/*.mdx
@@ -109,6 +112,7 @@ aff-store/
 
 - **Routes** live under `app/<vietnamese-slug>/`. Use `page.tsx`, `layout.tsx`, `loading.tsx`, `not-found.tsx` per Next.js App Router.
 - **Components** in `components/<Name>.tsx`. Server Components by default; add `"use client"` only when needed.
+- **Component styles** co-locate as `<Name>.module.css` next to the component file (CSS Modules, scoped). First instance: `components/Footer.tsx` + `components/Footer.module.css` (US00022).
 - **Data loaders / formatters** in `lib/` (e.g., `lib/products.ts`, `lib/posts.ts`, `lib/format.ts`). No JSX in `lib/`.
 - **Types** in `types/<domain>.ts` (e.g., `types/product.ts`, `types/post.ts`). Barrel at `types/index.ts` — always import from `@/types`.
 - **Content** is read at build time from `content/`. No DB, no CMS.
