@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00024 (components/ShellLayout.tsx + .module.css — opt-in two-column shell with Shopee card surfaces)
+> Last updated: US00026 (components/HeaderStickyShadow.tsx — sticky-header shadow toggle; globals.css sticky header tokens)
 
 ### Top-level layout
 
@@ -41,6 +41,7 @@ aff-store/
 │   ├── HeaderNav.tsx        # "use client" — active-route nav links (usePathname)
 │   ├── HeaderMobileMenu.tsx # "use client" — hamburger trigger + mobile nav panel
 │   ├── Header.module.css    # Scoped styles for the Header
+│   ├── HeaderStickyShadow.tsx   # "use client" — sticky-shadow toggle for <Header />; IntersectionObserver sentinel (US00026)
 │   ├── ShellLayout.tsx      # Server Component — opt-in two-column shell (leftPanel + children) (US00024)
 │   ├── ShellLayout.module.css # Scoped styles for ShellLayout; CSS Grid, card chrome, responsive breakpoints
 │   └── SkipLink.tsx         # Server Component — skip-to-main-content link (US00023)

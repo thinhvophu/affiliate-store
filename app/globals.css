@@ -50,6 +50,11 @@
   --color-on-primary: #ffffff;
   --radius-sm: 2px;
   --radius-md: 4px;
+
+  /* -- F0002 / US00026 — Sticky Header tokens (additive) -- */
+  --header-height: 64px;
+  --shadow-header: 0 2px 4px rgba(0, 0, 0, 0.08);
+  --z-header: 100;
 }
 
 /* --------------------------------------------------------------------------
@@ -161,4 +166,30 @@ table {
 
 main:focus {
   outline: none;
+}
+
+/* --------------------------------------------------------------------------
+   4. Sticky Header (US00026)
+   -------------------------------------------------------------------------- */
+
+header[data-site-header] {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  height: var(--header-height);
+  box-shadow: none;
+}
+
+header[data-site-header][data-stuck="true"] {
+  box-shadow: var(--shadow-header);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  header[data-site-header] {
+    transition: box-shadow 150ms ease;
+  }
+}
+
+main {
+  scroll-margin-top: var(--header-height);
 }
