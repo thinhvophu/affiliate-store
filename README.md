@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00022 (Footer: components/Footer.tsx, Footer.module.css, lib/disclosures.ts; CSS Modules convention established)
+> Last updated: US00024 (components/ShellLayout.tsx + .module.css — opt-in two-column shell with Shopee card surfaces)
 
 ### Top-level layout
 
@@ -79,7 +79,10 @@ aff-store/
 │   ├── Header.tsx           # Server Component — orange brand band, logo, site name
 │   ├── HeaderNav.tsx        # "use client" — active-route nav links (usePathname)
 │   ├── HeaderMobileMenu.tsx # "use client" — hamburger trigger + mobile nav panel
-│   └── Header.module.css    # Scoped styles for the Header
+│   ├── Header.module.css    # Scoped styles for the Header
+│   ├── ShellLayout.tsx      # Server Component — opt-in two-column shell (leftPanel + children) (US00024)
+│   ├── ShellLayout.module.css # Scoped styles for ShellLayout; CSS Grid, card chrome, responsive breakpoints
+│   └── SkipLink.tsx         # Server Component — skip-to-main-content link (US00023)
 ├── content/             # Static content sources
 │   ├── products/        # *.json — one file per product
 │   └── posts/           # *.mdx — one file per blog post
