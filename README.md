@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00026 (components/HeaderStickyShadow.tsx — sticky-header shadow toggle; globals.css sticky header tokens)
+> Last updated: US00031 + US00033 (components/AffiliateLink.tsx — canonical affiliate-link primitive; F0003 ↔ F0007 seam attributes baked in)
 
 ### Top-level layout
 
@@ -83,7 +83,9 @@ aff-store/
 │   ├── HeaderStickyShadow.tsx   # "use client" — sticky-shadow toggle for <Header />; IntersectionObserver sentinel (US00026)
 │   ├── ShellLayout.tsx      # Server Component — opt-in two-column shell (leftPanel + children) (US00024)
 │   ├── ShellLayout.module.css # Scoped styles for ShellLayout; CSS Grid, card chrome, responsive breakpoints
-│   └── SkipLink.tsx         # Server Component — skip-to-main-content link (US00023)
+│   ├── SkipLink.tsx         # Server Component — skip-to-main-content link (US00023)
+│   ├── AffiliateLink.tsx        # Server Component — canonical affiliate-link primitive; baked target/rel + F0003↔F0007 seam attributes (US00031, US00033)
+│   └── AffiliateLink.module.css # Scoped styles for AffiliateLink — only the visually-hidden screen-reader label class (US00031)
 ├── content/             # Static content sources
 │   ├── products/        # *.json — one file per product
 │   └── posts/           # *.mdx — one file per blog post
