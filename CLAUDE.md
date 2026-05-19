@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00031 + US00033 (components/AffiliateLink.tsx — canonical affiliate-link primitive; F0003 ↔ F0007 seam attributes baked in)
+> Last updated: US00031 + US00032 + US00033 (components/AffiliateLink.module.css — whole-card surface; F0003 ↔ F0007 seam)
 
 ### Top-level layout
 
@@ -46,7 +46,7 @@ aff-store/
 │   ├── ShellLayout.module.css # Scoped styles for ShellLayout; CSS Grid, card chrome, responsive breakpoints
 │   ├── SkipLink.tsx         # Server Component — skip-to-main-content link (US00023)
 │   ├── AffiliateLink.tsx        # Server Component — canonical affiliate-link primitive; baked target/rel + F0003↔F0007 seam attributes (US00031, US00033)
-│   └── AffiliateLink.module.css # Scoped styles for AffiliateLink — only the visually-hidden screen-reader label class (US00031)
+│   └── AffiliateLink.module.css # Scoped styles for AffiliateLink — visually-hidden srOnly + .card whole-card surface (hover, focus-visible, prefers-reduced-motion gate) (US00031 + US00032)
 ├── content/             # Static content sources
 │   ├── products/        # *.json — one file per product (see Product JSON shape)
 │   └── posts/           # *.mdx — one file per blog post
@@ -191,6 +191,17 @@ All affiliate destinations on the site route through `<AffiliateLink>` (`compone
 - `data-destination-url` — sourced from the `href` prop (mirrors the href)
 
 Renaming any of them is a breaking change and must update both `<AffiliateLink>` and the F0007 listener in the same PR. No other component in the codebase may emit `data-affiliate-link`.
+
+**Whole-card pattern (US00032).** To make an entire card surface clickable, consumers import the co-located styles and pass `className`:
+
+```tsx
+import { AffiliateLink } from "@/components/AffiliateLink";
+import affiliateStyles from "@/components/AffiliateLink.module.css";
+
+<AffiliateLink className={affiliateStyles.card} … >…</AffiliateLink>
+```
+
+When wrapping a full card subtree, do **not** nest interactive elements inside the children — the CTA must be a styled `<span>` (e.g., with `data-affiliate-cta`), never `<button>` or a nested `<a>`. Nested interactives produce invalid HTML, multiply tab stops, and break the single-link click target.
 
 <!-- US00034 will append a no-raw-anchor bullet here on landing. -->
 
