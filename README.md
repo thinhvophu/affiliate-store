@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00031 + US00032 + US00033 (components/AffiliateLink.module.css — whole-card surface; F0003 ↔ F0007 seam)
+> Last updated: US00031 + US00032 + US00033 + US00034 (lib/affiliate.ts — Shopee affiliate-URL allow-list helper; wired into lib/products.ts so bad affiliateUrls fail the build)
 
 ### Top-level layout
 
@@ -90,9 +90,10 @@ aff-store/
 │   ├── products/        # *.json — one file per product
 │   └── posts/           # *.mdx — one file per blog post
 ├── lib/                 # Pure utilities, data loaders, formatters (no React)
+│   ├── affiliate.ts     # Shopee affiliate-URL allow-list + assertAffiliateUrl helper (US00034)
 │   ├── disclosures.ts   # AFFILIATE_DISCLOSURE_VI constant — shared with F0005 page + F0006 posts (US00022)
 │   ├── nav-items.ts     # NAV_ITEMS constant — the four primary nav routes (typed)
-│   ├── products.ts      # getAllProducts(), getProductBySlug() — reads content/products/*.json
+│   ├── products.ts      # getAllProducts(), getProductBySlug() — now calls assertAffiliateUrl() at build time
 │   └── posts.ts         # getAllPosts(), getPostBySlug() — reads content/posts/*.mdx
 ├── static/              # Static assets served at /static/*
 │   └── images/{products,blog}/
@@ -123,6 +124,7 @@ aff-store/
 - **Types** in `types/<domain>.ts` (e.g., `types/product.ts`, `types/post.ts`). Barrel at `types/index.ts` — always import from `@/types`.
 - **Content** is read at build time from `content/`. No DB, no CMS.
 - **Imports** use the `@/*` alias (e.g., `import { getProducts } from "@/lib/products"`). Avoid deep relative paths.
+- **Affiliate URLs** are validated in one place: `lib/affiliate.ts` (`assertAffiliateUrl`). Raw `<a>` elements whose `href` targets a Shopee host (`shopee.vn`, `shopee.ee`, `shope.ee`) outside `<AffiliateLink>` are disallowed — block on review.
 
 ### Route map
 

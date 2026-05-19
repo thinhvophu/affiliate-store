@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00031 + US00032 + US00033 (components/AffiliateLink.module.css — whole-card surface; F0003 ↔ F0007 seam)
+> Last updated: US00031 + US00032 + US00033 + US00034 (lib/affiliate.ts — Shopee affiliate-URL allow-list helper; wired into lib/products.ts so bad affiliateUrls fail the build)
 
 ### Top-level layout
 
@@ -51,9 +51,10 @@ aff-store/
 │   ├── products/        # *.json — one file per product (see Product JSON shape)
 │   └── posts/           # *.mdx — one file per blog post
 ├── lib/                 # Pure utilities, data loaders, formatters (no React)
+│   ├── affiliate.ts     # Shopee affiliate-URL allow-list + assertAffiliateUrl helper (US00034)
 │   ├── disclosures.ts   # AFFILIATE_DISCLOSURE_VI constant — shared with F0005 page + F0006 posts (US00022)
 │   ├── nav-items.ts     # NAV_ITEMS constant — the four primary nav routes (typed)
-│   ├── products.ts      # getAllProducts(), getProductBySlug() — reads content/products/*.json
+│   ├── products.ts      # getAllProducts(), getProductBySlug() — now calls assertAffiliateUrl() at build time
 │   └── posts.ts         # getAllPosts(), getPostBySlug() — reads content/posts/*.mdx
 ├── static/              # Static assets served at /static/*
 │   └── images/{products,blog}/
@@ -84,6 +85,7 @@ aff-store/
 - **Types** in `types/<domain>.ts` (e.g., `types/product.ts`, `types/post.ts`). Barrel at `types/index.ts` — always import from `@/types`.
 - **Content** is read at build time from `content/`. No DB, no CMS.
 - **Imports** use the `@/*` alias (e.g., `import { getProducts } from "@/lib/products"`). Avoid deep relative paths.
+- **Affiliate URLs** are validated in one place: `lib/affiliate.ts`. The product loader (`lib/products.ts`) calls `assertAffiliateUrl(url, slug)` at build time, so any product JSON with a non-Shopee or malformed `affiliateUrl` fails `next build` with the offending slug named. No file outside `lib/affiliate.ts` may parse, trim, or rewrite an affiliate URL.
 
 ### Route map (planned — see "Routes" section below for SEO/render strategy)
 
@@ -203,7 +205,7 @@ import affiliateStyles from "@/components/AffiliateLink.module.css";
 
 When wrapping a full card subtree, do **not** nest interactive elements inside the children — the CTA must be a styled `<span>` (e.g., with `data-affiliate-cta`), never `<button>` or a nested `<a>`. Nested interactives produce invalid HTML, multiply tab stops, and break the single-link click target.
 
-<!-- US00034 will append a no-raw-anchor bullet here on landing. -->
+**No raw affiliate anchors (US00034).** All affiliate destinations on the site must route through `<AffiliateLink>` (`components/AffiliateLink.tsx`). Raw `<a href="https://shope.ee/…">` — or any anchor whose host is `shopee.vn`, `shopee.ee`, or `shope.ee` — outside `<AffiliateLink>` is **disallowed**; block such PRs on review. URL validation, parsing, and any future normalization live in `lib/affiliate.ts`; no file outside that module may parse, trim, or rewrite an affiliate URL. Allow-listed hosts: `shopee.vn`, `shopee.ee`, `shope.ee` (exact host match; subdomains and `www.` are intentionally excluded so unexpected hosts surface loudly).
 
 ## Required disclosures
 

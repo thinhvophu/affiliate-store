@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Product } from "@/types";
+import { assertAffiliateUrl } from "@/lib/affiliate";
 
 const PRODUCTS_DIR = path.join(process.cwd(), "content", "products");
 
@@ -24,6 +25,13 @@ function validateProduct(data: unknown, filePath: string): Product {
         `[content] ${filePath}: missing or invalid required string field "${field}".`,
       );
     }
+  }
+
+  try {
+    assertAffiliateUrl(obj.affiliateUrl as string, obj.slug as string);
+  } catch (err) {
+    const inner = err instanceof Error ? err.message : String(err);
+    throw new Error(`[content] ${filePath}: ${inner}`);
   }
 
   if (typeof obj.price !== "number" || obj.price < 0) {
