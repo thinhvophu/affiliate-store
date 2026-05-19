@@ -9,3 +9,69 @@
   white-space: nowrap;
   border: 0;
 }
+
+/* ==========================================================================
+   AffiliateLink — whole-card surface styles (US00032)
+   --------------------------------------------------------------------------
+   Applied to the wrapping <a> when a consumer passes
+   className={affiliateStyles.card}. Inline usage (no className) is
+   unaffected — these rules only match when the class is present.
+
+   No new :root tokens — composes from F0002 surface tokens and the
+   F0001 spacing scale.
+   ========================================================================== */
+
+/* Block-level anchor that wraps a card-shaped subtree (image + name + price
+   + decorative CTA). Children own their own layout (grid/flex). */
+.card {
+  display: block;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-hairline);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  color: inherit;
+  text-decoration: none;
+  box-shadow: none;
+}
+
+/* Hover state: subtle elevation + border emphasis. transform is GPU-only
+   so neighbouring cards do not reflow. */
+.card:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Focus-visible state: 2 px Shopee-orange outline against the white surface.
+   outline (not box-shadow) survives forced-colors mode. Applied to the
+   wrapping anchor — the whole card surface — never to inner elements. */
+.card:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-md);
+}
+
+/* Non-interactive CTA element used inside the card subtree. Renders as a
+   styled <span>; NEVER as <button> or a nested <a>. See AffiliateLink.tsx
+   JSDoc example for the canonical markup. */
+.cta {
+  display: inline-block;
+  margin-top: var(--spacing-sm);
+  padding: var(--spacing-xs) var(--spacing-md);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+
+/* Animate the hover/focus visuals only for users who haven't requested
+   reduced motion. Mirrors the US00026 pattern: gate transitions, never
+   end-state styles. */
+@media (prefers-reduced-motion: no-preference) {
+  .card {
+    transition:
+      border-color 150ms ease,
+      transform 150ms ease,
+      box-shadow 150ms ease;
+  }
+}

@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00031 + US00033 (components/AffiliateLink.tsx — canonical affiliate-link primitive; F0003 ↔ F0007 seam attributes baked in)
+> Last updated: US00031 + US00032 + US00033 (components/AffiliateLink.module.css — whole-card surface; F0003 ↔ F0007 seam)
 
 ### Top-level layout
 
@@ -85,7 +85,7 @@ aff-store/
 │   ├── ShellLayout.module.css # Scoped styles for ShellLayout; CSS Grid, card chrome, responsive breakpoints
 │   ├── SkipLink.tsx         # Server Component — skip-to-main-content link (US00023)
 │   ├── AffiliateLink.tsx        # Server Component — canonical affiliate-link primitive; baked target/rel + F0003↔F0007 seam attributes (US00031, US00033)
-│   └── AffiliateLink.module.css # Scoped styles for AffiliateLink — only the visually-hidden screen-reader label class (US00031)
+│   └── AffiliateLink.module.css # Scoped styles for AffiliateLink — visually-hidden srOnly + .card whole-card surface (hover, focus-visible, prefers-reduced-motion gate) (US00031 + US00032)
 ├── content/             # Static content sources
 │   ├── products/        # *.json — one file per product
 │   └── posts/           # *.mdx — one file per blog post

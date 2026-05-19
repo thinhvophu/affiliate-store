@@ -40,8 +40,31 @@ import styles from "./AffiliateLink.module.css";
  *   </a>
  * -----------------------------------------------------------------------
  *
- * Whole-card usage example is in US00032's plan / implementation; consumers
- * pass `className={styles.card}` to style the wrapping <a>.
+ * @example Whole-card clickability (US00032)
+ *
+ * The entire card is one anchor. Tab-focus stops ONCE on the card.
+ * The "Mua ngay" CTA MUST be a styled `<span>` — NEVER `<button>`, NEVER a
+ * nested `<a>`. Nesting interactive elements inside `<AffiliateLink>`
+ * children produces invalid HTML and breaks keyboard navigation (multiple
+ * tab stops, broken click target).
+ *
+ * ```tsx
+ * import { AffiliateLink } from "@/components/AffiliateLink";
+ * import affiliateStyles from "@/components/AffiliateLink.module.css";
+ *
+ * <AffiliateLink
+ *   className={affiliateStyles.card}
+ *   href={product.affiliateUrl}
+ *   productName={product.name}
+ *   productCategory={product.category}
+ * >
+ *   <Image src={product.images[0]} alt={product.name} width={240} height={240} />
+ *   <h3>{product.name}</h3>
+ *   <p>{formatPrice(product.price)}</p>
+ *   <span data-affiliate-cta>Mua ngay</span>
+ * </AffiliateLink>
+ * ```
+ *
  * URL validation lives in lib/affiliate.ts (US00034); this component does not
  * re-validate at render time — destinations are already trusted by the loader.
  */
