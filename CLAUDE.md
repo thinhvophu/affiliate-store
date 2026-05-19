@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00026 (components/HeaderStickyShadow.tsx — sticky-header shadow toggle; globals.css sticky header tokens)
+> Last updated: US00031 + US00033 (components/AffiliateLink.tsx — canonical affiliate-link primitive; F0003 ↔ F0007 seam attributes baked in)
 
 ### Top-level layout
 
@@ -44,7 +44,9 @@ aff-store/
 │   ├── HeaderStickyShadow.tsx   # "use client" — sticky-shadow toggle for <Header />; IntersectionObserver sentinel (US00026)
 │   ├── ShellLayout.tsx      # Server Component — opt-in two-column shell (leftPanel + children) (US00024)
 │   ├── ShellLayout.module.css # Scoped styles for ShellLayout; CSS Grid, card chrome, responsive breakpoints
-│   └── SkipLink.tsx         # Server Component — skip-to-main-content link (US00023)
+│   ├── SkipLink.tsx         # Server Component — skip-to-main-content link (US00023)
+│   ├── AffiliateLink.tsx        # Server Component — canonical affiliate-link primitive; baked target/rel + F0003↔F0007 seam attributes (US00031, US00033)
+│   └── AffiliateLink.module.css # Scoped styles for AffiliateLink — only the visually-hidden screen-reader label class (US00031)
 ├── content/             # Static content sources
 │   ├── products/        # *.json — one file per product (see Product JSON shape)
 │   └── posts/           # *.mdx — one file per blog post
@@ -176,6 +178,21 @@ Posts can embed `<ProductCard slug="..." />` to render an affiliate card inline.
 - **Affiliate links:** ALWAYS `target="_blank" rel="noopener noreferrer sponsored"`
 - **Price format:** `₫1.200.000` (dot thousands separator, ₫ prefix)
 - **Date format:** `02 tháng 5, 2026`
+
+## Affiliate links
+
+All affiliate destinations on the site route through `<AffiliateLink>` (`components/AffiliateLink.tsx`). The primitive bakes in `target="_blank"`, `rel="noopener noreferrer sponsored"`, the Vietnamese screen-reader label, and the F0003 ↔ F0007 click-tracking contract.
+
+**F0003 ↔ F0007 contract (US00033).** Every `<AffiliateLink>` anchor carries four `data-*` attributes that F0007's delegated click listener relies on. These names are a public API:
+
+- `data-affiliate-link` — presence flag (selector hook for the listener)
+- `data-product-name` — sourced from the `productName` prop
+- `data-product-category` — sourced from the `productCategory` prop
+- `data-destination-url` — sourced from the `href` prop (mirrors the href)
+
+Renaming any of them is a breaking change and must update both `<AffiliateLink>` and the F0007 listener in the same PR. No other component in the codebase may emit `data-affiliate-link`.
+
+<!-- US00034 will append a no-raw-anchor bullet here on landing. -->
 
 ## Required disclosures
 
