@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00031 + US00032 + US00033 + US00034 + US00041 + US00042 (components/ProductCard.tsx — standard product summary card; first consumer of US00032's whole-card AffiliateLink pattern)
+> Last updated: US00043 (app/san-pham/page.tsx — paginated product listing; components/ProductListingClient.tsx, Pagination.tsx; 25 product fixtures; public/static/images/products/ convention established)
 
 ### Top-level layout
 
@@ -33,7 +33,9 @@ aff-store/
 ├── app/                 # Next.js App Router (routes, layouts, route handlers)
 │   ├── layout.tsx       # Root layout — <html lang="vi">, imports globals.css, mounts <SkipLink />, <Header />, <main>, <Footer />, <SpeedInsights />
 │   ├── globals.css      # Global CSS reset + design tokens (US00016 + F0002 surface tokens)
-│   └── page.tsx         # Homepage (/)
+│   ├── page.tsx         # Homepage (/)
+│   └── san-pham/        # /san-pham/ route
+│       └── page.tsx     # Product listing — SSG, passes all products to ProductListingClient (US00043)
 ├── components/          # Reusable React components (PascalCase.tsx; co-locate styles as <Name>.module.css)
 │   ├── Footer.tsx           # Server Component — 4-column footer, affiliate disclosure (US00022)
 │   ├── Footer.module.css    # Scoped styles for the Footer
@@ -48,10 +50,16 @@ aff-store/
 │   ├── AffiliateLink.tsx        # Server Component — canonical affiliate-link primitive; baked target/rel + F0003↔F0007 seam attributes (US00031, US00033)
 │   ├── AffiliateLink.module.css # Scoped styles for AffiliateLink — visually-hidden srOnly + .card whole-card surface (hover, focus-visible, prefers-reduced-motion gate) (US00031 + US00032)
 │   ├── ProductCard.tsx          # Server Component — standard product summary card, whole-card AffiliateLink (US00042)
-│   └── ProductCard.module.css   # Scoped styles for ProductCard — flex column, image frame, category badge, name clamp, CTA pill (US00042)
+│   ├── ProductCard.module.css   # Scoped styles for ProductCard — flex column, image frame, category badge, name clamp, CTA pill (US00042)
+│   ├── ProductListingClient.tsx      # "use client" — paginated product grid, reads ?page via useSearchParams (US00043)
+│   ├── ProductListingClient.module.css # Grid CSS (2/3/4 cols), empty/error state (US00043)
+│   ├── Pagination.tsx                # Shared — crawlable page-link nav; reused by /san-pham/ and /danh-muc/[category]/ (US00043)
+│   └── Pagination.module.css         # Pagination styles — flex row, touch targets, active state (US00043)
 ├── content/             # Static content sources
-│   ├── products/        # *.json — one file per product (see Product JSON shape)
+│   ├── products/        # *.json — one file per product (25 fixtures added in US00043; see Product JSON shape)
 │   └── posts/           # *.mdx — one file per blog post
+├── public/              # Static assets served at the root (Next.js convention)
+│   └── static/images/products/ # Product images (established in US00043; referenced as /static/images/products/<slug>.jpg)
 ├── lib/                 # Pure utilities, data loaders, formatters (no React)
 │   ├── affiliate.ts     # Shopee affiliate-URL allow-list + assertAffiliateUrl helper (US00034)
 │   ├── disclosures.ts   # AFFILIATE_DISCLOSURE_VI constant — shared with F0005 page + F0006 posts (US00022)
@@ -96,7 +104,7 @@ aff-store/
 | Path                   | Source file (planned)              |
 | ---------------------- | ---------------------------------- |
 | `/`                    | `app/page.tsx` ✅                  |
-| `/san-pham`            | `app/san-pham/page.tsx`            |
+| `/san-pham`            | `app/san-pham/page.tsx` ✅         |
 | `/san-pham/[slug]`     | `app/san-pham/[slug]/page.tsx`     |
 | `/danh-muc/[category]` | `app/danh-muc/[category]/page.tsx` |
 | `/bai-viet`            | `app/bai-viet/page.tsx`            |

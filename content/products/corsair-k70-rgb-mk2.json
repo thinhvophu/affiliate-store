@@ -1,0 +1,13 @@
+{
+  "slug": "corsair-k70-rgb-mk2",
+  "name": "Bàn phím Cơ Corsair K70 RGB MK.2",
+  "category": "ban-phim-gaming",
+  "brand": "Corsair",
+  "price": 3290000,
+  "affiliateUrl": "https://shope.ee/5O6P7Q8R9S",
+  "images": ["/static/images/products/corsair-k70-rgb-mk2.jpg"],
+  "description": "Bàn phím cơ Corsair K70 RGB MK.2 full-size, Cherry MX Red, khung nhôm, USB pass-through, wrist rest.",
+  "specs": { "Switch": "Cherry MX Red", "Layout": "Full-size", "Chất liệu": "Nhôm + ABS", "Tính năng": "USB pass-through" },
+  "publishedAt": "2026-04-18",
+  "featured": false
+}
