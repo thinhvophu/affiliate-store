@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00031 + US00032 + US00033 + US00034 + US00041 (lib/format.ts — Vietnamese price-formatting chokepoint; foundation for F0004 product surfaces)
+> Last updated: US00031 + US00032 + US00033 + US00034 + US00041 + US00042 (components/ProductCard.tsx — standard product summary card; first consumer of US00032's whole-card AffiliateLink pattern)
 
 ### Top-level layout
 
@@ -85,7 +85,9 @@ aff-store/
 │   ├── ShellLayout.module.css # Scoped styles for ShellLayout; CSS Grid, card chrome, responsive breakpoints
 │   ├── SkipLink.tsx         # Server Component — skip-to-main-content link (US00023)
 │   ├── AffiliateLink.tsx        # Server Component — canonical affiliate-link primitive; baked target/rel + F0003↔F0007 seam attributes (US00031, US00033)
-│   └── AffiliateLink.module.css # Scoped styles for AffiliateLink — visually-hidden srOnly + .card whole-card surface (hover, focus-visible, prefers-reduced-motion gate) (US00031 + US00032)
+│   ├── AffiliateLink.module.css # Scoped styles for AffiliateLink — visually-hidden srOnly + .card whole-card surface (hover, focus-visible, prefers-reduced-motion gate) (US00031 + US00032)
+│   ├── ProductCard.tsx          # Server Component — standard product summary card, whole-card AffiliateLink (US00042)
+│   └── ProductCard.module.css   # Scoped styles for ProductCard — flex column, image frame, category badge, name clamp, CTA pill (US00042)
 ├── content/             # Static content sources
 │   ├── products/        # *.json — one file per product
 │   └── posts/           # *.mdx — one file per blog post
