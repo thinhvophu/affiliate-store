@@ -1,0 +1,13 @@
+{
+  "slug": "logitech-g-pro-x-superlight",
+  "name": "Chuột Gaming Logitech G Pro X Superlight",
+  "category": "chuot-gaming",
+  "brand": "Logitech",
+  "price": 3490000,
+  "affiliateUrl": "https://shope.ee/2L3M4N5O6P",
+  "images": ["/static/images/products/logitech-g-pro-x-superlight.jpg"],
+  "description": "Chuột gaming siêu nhẹ Logitech G Pro X Superlight chỉ 61g, cảm biến Hero 25K, không dây LIGHTSPEED.",
+  "specs": { "DPI": "100–25600", "Cảm biến": "Hero 25K", "Trọng lượng": "61g", "Kết nối": "Không dây LIGHTSPEED" },
+  "publishedAt": "2026-04-21",
+  "featured": true
+}

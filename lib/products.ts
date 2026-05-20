@@ -38,8 +38,10 @@ function validateProduct(data: unknown, filePath: string): Product {
     throw new Error(`[content] ${filePath}: "price" must be a non-negative number.`);
   }
 
-  if (!Array.isArray(obj.images)) {
-    throw new Error(`[content] ${filePath}: "images" must be an array of strings.`);
+  if (!Array.isArray(obj.images) || (obj.images as unknown[]).length === 0) {
+    throw new Error(
+      `[content] ${filePath}: "images" must be a non-empty array of strings.`,
+    );
   }
 
   if (typeof obj.specs !== "object" || obj.specs === null || Array.isArray(obj.specs)) {

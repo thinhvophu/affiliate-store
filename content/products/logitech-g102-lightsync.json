@@ -1,0 +1,13 @@
+{
+  "slug": "logitech-g102-lightsync",
+  "name": "Chuột Gaming Logitech G102 Lightsync",
+  "category": "chuot-gaming",
+  "brand": "Logitech",
+  "price": 390000,
+  "affiliateUrl": "https://shope.ee/1A2B3C4D5E",
+  "images": ["/static/images/products/logitech-g102-lightsync.jpg"],
+  "description": "Chuột gaming Logitech G102 với cảm biến optical chính xác, thiết kế nhẹ 85g, đèn RGB Lightsync 16.8 triệu màu.",
+  "specs": { "DPI": "200–8000", "Cảm biến": "Optical", "Trọng lượng": "85g", "Kết nối": "USB có dây" },
+  "publishedAt": "2026-05-01",
+  "featured": true
+}

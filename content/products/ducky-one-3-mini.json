@@ -1,0 +1,13 @@
+{
+  "slug": "ducky-one-3-mini",
+  "name": "Bàn phím Cơ Ducky One 3 Mini",
+  "category": "ban-phim-gaming",
+  "brand": "Ducky",
+  "price": 3490000,
+  "affiliateUrl": "https://shope.ee/8R9S0T1U2V",
+  "images": ["/static/images/products/ducky-one-3-mini.jpg"],
+  "description": "Bàn phím cơ Ducky One 3 Mini 60%, Cherry MX switches, hot-swap, PBT doubleshot keycap, RGB.",
+  "specs": { "Switch": "Cherry MX", "Layout": "60%", "Keycap": "PBT Doubleshot", "Hot-swap": "Có" },
+  "publishedAt": "2026-04-15",
+  "featured": false
+}

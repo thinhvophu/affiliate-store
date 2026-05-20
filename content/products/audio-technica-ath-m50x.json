@@ -1,0 +1,13 @@
+{
+  "slug": "audio-technica-ath-m50x",
+  "name": "Tai nghe Studio Audio-Technica ATH-M50x",
+  "category": "tai-nghe-gaming",
+  "brand": "Audio-Technica",
+  "price": 3990000,
+  "affiliateUrl": "https://shope.ee/4N5O6P7Q8R",
+  "images": ["/static/images/products/audio-technica-ath-m50x.jpg"],
+  "description": "Tai nghe monitor chuyên nghiệp Audio-Technica ATH-M50x, driver 45mm, dải tần 15Hz–28kHz, gập 90°.",
+  "specs": { "Driver": "45mm", "Dải tần": "15Hz–28kHz", "Trở kháng": "38 ohm", "Kết nối": "3.5mm detachable" },
+  "publishedAt": "2026-04-19",
+  "featured": false
+}

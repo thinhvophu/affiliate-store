@@ -1,0 +1,13 @@
+{
+  "slug": "asus-rog-strix-g15",
+  "name": "Màn hình Gaming ASUS ROG Strix G15",
+  "category": "man-hinh-gaming",
+  "brand": "ASUS",
+  "price": 5990000,
+  "affiliateUrl": "https://shope.ee/7G8H9I0J1K",
+  "images": ["/static/images/products/asus-rog-strix-g15.jpg"],
+  "description": "Màn hình gaming ASUS ROG Strix 15.6\" Full HD 144Hz, IPS, 1ms, FreeSync, thiết kế viền mỏng 3 cạnh.",
+  "specs": { "Kích thước": "15.6 inch", "Độ phân giải": "1920x1080", "Tần số quét": "144Hz", "Thời gian phản hồi": "1ms" },
+  "publishedAt": "2026-04-26",
+  "featured": true
+}

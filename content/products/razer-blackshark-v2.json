@@ -1,0 +1,13 @@
+{
+  "slug": "razer-blackshark-v2",
+  "name": "Tai nghe Gaming Razer BlackShark V2",
+  "category": "tai-nghe-gaming",
+  "brand": "Razer",
+  "price": 2290000,
+  "affiliateUrl": "https://shope.ee/6P7Q8R9S0T",
+  "images": ["/static/images/products/razer-blackshark-v2.jpg"],
+  "description": "Tai nghe gaming Razer BlackShark V2 với driver TriForce Titanium 50mm, micro Hyperclear, THX Spatial Audio.",
+  "specs": { "Driver": "50mm TriForce Titanium", "Âm thanh": "THX Spatial 7.1", "Micro": "Hyperclear Cardioid", "Kết nối": "3.5mm" },
+  "publishedAt": "2026-04-17",
+  "featured": false
+}

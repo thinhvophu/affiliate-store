@@ -1,0 +1,13 @@
+{
+  "slug": "keychron-k2-v2",
+  "name": "Bàn phím Cơ Keychron K2 V2",
+  "category": "ban-phim-gaming",
+  "brand": "Keychron",
+  "price": 2190000,
+  "affiliateUrl": "https://shope.ee/0J1K2L3M4N",
+  "images": ["/static/images/products/keychron-k2-v2.jpg"],
+  "description": "Bàn phím cơ Keychron K2 V2 layout 75%, Bluetooth 5.1 + USB-C, hot-swappable, đèn RGB, tương thích Mac/Windows.",
+  "specs": { "Switch": "Gateron Red/Blue/Brown", "Layout": "75%", "Kết nối": "Bluetooth 5.1 + USB-C", "Hot-swap": "Có" },
+  "publishedAt": "2026-04-23",
+  "featured": true
+}

@@ -1,0 +1,13 @@
+{
+  "slug": "logitech-g213-prodigy",
+  "name": "Bàn phím Gaming Logitech G213 Prodigy",
+  "category": "ban-phim-gaming",
+  "brand": "Logitech",
+  "price": 1290000,
+  "affiliateUrl": "https://shope.ee/5E6F7G8H9I",
+  "images": ["/static/images/products/logitech-g213-prodigy.jpg"],
+  "description": "Bàn phím gaming Logitech G213 với phím mecho-dome, đèn RGB Lightsync, chống nước IPX1, layout full-size.",
+  "specs": { "Switch": "Mecho-dome", "Layout": "Full-size", "Đèn": "RGB Lightsync", "Chống nước": "IPX1" },
+  "publishedAt": "2026-04-28",
+  "featured": false
+}

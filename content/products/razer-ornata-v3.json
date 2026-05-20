@@ -1,0 +1,13 @@
+{
+  "slug": "razer-ornata-v3",
+  "name": "Bàn phím Razer Ornata V3",
+  "category": "ban-phim-gaming",
+  "brand": "Razer",
+  "price": 1990000,
+  "affiliateUrl": "https://shope.ee/9S0T1U2V3W",
+  "images": ["/static/images/products/razer-ornata-v3.jpg"],
+  "description": "Bàn phím Razer Ornata V3 mecha-membrane, Chroma RGB, wrist rest từ tính, layout full-size.",
+  "specs": { "Switch": "Mecha-membrane", "Layout": "Full-size", "Đèn": "Chroma RGB", "Wrist rest": "Từ tính" },
+  "publishedAt": "2026-04-14",
+  "featured": false
+}

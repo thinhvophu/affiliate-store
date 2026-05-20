@@ -1,0 +1,13 @@
+{
+  "slug": "coolermaster-ck530-v2",
+  "name": "Bàn phím Cơ Cooler Master CK530 V2",
+  "category": "ban-phim-gaming",
+  "brand": "Cooler Master",
+  "price": 1690000,
+  "affiliateUrl": "https://shope.ee/4X5Y6Z7A8B",
+  "images": ["/static/images/products/coolermaster-ck530-v2.jpg"],
+  "description": "Bàn phím cơ Cooler Master CK530 V2 tenkeyless, Gateron switches, RGB per-key, USB-C, compact durable.",
+  "specs": { "Switch": "Gateron Red/Blue/Brown", "Layout": "Tenkeyless", "Đèn": "RGB per-key", "Kết nối": "USB-C" },
+  "publishedAt": "2026-04-09",
+  "featured": false
+}
