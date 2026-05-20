@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00043 (app/san-pham/page.tsx — paginated product listing; components/ProductListingClient.tsx, Pagination.tsx; 25 product fixtures; public/static/images/products/ convention established)
+> Last updated: US00044 (lib/filters.ts + components/CatalogFilters* + CatalogGrid + CatalogFiltersMobileTrigger — URL-driven filters & sort; Pagination extended with extraParams; page.module.css added)
 
 ### Top-level layout
 
@@ -74,7 +74,8 @@ aff-store/
 │   ├── layout.tsx       # Root layout — <html lang="vi">, imports globals.css, mounts <SpeedInsights />
 │   ├── page.tsx         # Homepage (/)
 │   └── san-pham/        # /san-pham/ route
-│       └── page.tsx     # Product listing — SSG, passes all products to ProductListingClient (US00043)
+│       ├── page.tsx     # Product listing — SSG, wires CatalogFilters + CatalogGrid + mobile trigger (US00043/44)
+│       └── page.module.css # Page heading + grid skeleton styles
 ├── components/          # Reusable React components (PascalCase.tsx; co-locate styles as <Name>.module.css)
 │   ├── Footer.tsx           # Server Component — 4-column footer, affiliate disclosure (US00022)
 │   ├── Footer.module.css    # Scoped styles for the Footer
@@ -92,8 +93,14 @@ aff-store/
 │   ├── ProductCard.module.css   # Scoped styles for ProductCard — flex column, image frame, category badge, name clamp, CTA pill (US00042)
 │   ├── ProductListingClient.tsx      # "use client" — paginated product grid, reads ?page via useSearchParams (US00043)
 │   ├── ProductListingClient.module.css # Grid CSS (2/3/4 cols), empty/error state (US00043)
-│   ├── Pagination.tsx                # Shared — crawlable page-link nav; reused by /san-pham/ and /danh-muc/[category]/ (US00043)
-│   └── Pagination.module.css         # Pagination styles — flex row, touch targets, active state (US00043)
+│   ├── Pagination.tsx                # Shared — crawlable page-link nav; accepts extraParams for filter-aware URLs (US00043/44)
+│   ├── Pagination.module.css         # Pagination styles — flex row, touch targets, active state (US00043)
+│   ├── CatalogFilters.tsx            # "use client" — left-panel filter UI; URL-driven (US00044)
+│   ├── CatalogFilters.module.css     # Scoped styles for CatalogFilters (US00044)
+│   ├── CatalogGrid.tsx               # "use client" — filtered/sorted/paginated product grid (US00044)
+│   ├── CatalogGrid.module.css        # Grid styles, empty state, no-results state (US00044)
+│   ├── CatalogFiltersMobileTrigger.tsx       # "use client" — mobile <dialog> bridge; TODO(US00025-drawer) (US00044)
+│   └── CatalogFiltersMobileTrigger.module.css # Trigger + dialog styles; hidden ≥768px (US00044)
 ├── content/             # Static content sources
 │   ├── products/        # *.json — one file per product (25 fixtures added in US00043)
 │   └── posts/           # *.mdx — one file per blog post
@@ -105,6 +112,7 @@ aff-store/
 │   ├── format.ts        # formatVnd() — single chokepoint for Vietnamese price rendering (US00041)
 │   ├── nav-items.ts     # NAV_ITEMS constant — the four primary nav routes (typed)
 │   ├── products.ts      # getAllProducts(), getProductBySlug() — now calls assertAffiliateUrl() at build time
+│   ├── filters.ts       # PRICE_BUCKETS, SORT_OPTIONS, getFilterOptions, parseFilterParams, applyFilters, compareDefault (US00044)
 │   └── posts.ts         # getAllPosts(), getPostBySlug() — reads content/posts/*.mdx
 ├── types/               # Shared TypeScript types
 │   ├── product.ts       # Product interface (canonical JSON shape)
@@ -135,6 +143,7 @@ aff-store/
 - **Imports** use the `@/*` alias (e.g., `import { getProducts } from "@/lib/products"`). Avoid deep relative paths.
 - **Affiliate URLs** are validated in one place: `lib/affiliate.ts` (`assertAffiliateUrl`). Raw `<a>` elements whose `href` targets a Shopee host (`shopee.vn`, `shopee.ee`, `shope.ee`) outside `<AffiliateLink>` are disallowed — block on review.
 - **Prices** are formatted in one place: `lib/format.ts`. Every product surface renders prices via `formatVnd(amount)`. No file outside `lib/format.ts` may use `Intl.NumberFormat`, `toLocaleString`, or hand-rolled `"₫"` concatenation on a price value.
+- **Catalog filter state** lives in the URL (`?category=`, `?brand=`, `?price=`, `?sort=`) only — no local state, no Context, no `localStorage`. Round-trips through `lib/filters.ts`; unknown values silently ignored.
 
 ### Route map
 
