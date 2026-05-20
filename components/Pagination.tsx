@@ -5,13 +5,19 @@ interface PaginationProps {
   currentPage: number;
   totalPages: number;
   basePath: string;
+  /** Extra query params to preserve in page links (e.g. active filter selections). */
+  extraParams?: Record<string, string>;
 }
 
-export function Pagination({ currentPage, totalPages, basePath }: PaginationProps) {
+export function Pagination({ currentPage, totalPages, basePath, extraParams }: PaginationProps) {
   if (totalPages <= 1) return null;
 
-  const pageHref = (page: number) =>
-    page === 1 ? basePath : `${basePath}?page=${page}`;
+  const pageHref = (page: number) => {
+    const params = new URLSearchParams(extraParams ?? {});
+    if (page > 1) params.set("page", String(page));
+    const query = params.toString();
+    return query ? `${basePath}?${query}` : basePath;
+  };
 
   return (
     <nav className={styles.nav} aria-label="Phân trang">
