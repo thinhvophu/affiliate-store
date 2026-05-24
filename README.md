@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00051 (components/AffiliateDisclosure.tsx + AffiliateDisclosure.module.css — reusable top-of-post affiliate-disclosure banner)
+> Last updated: US00052 (app/chinh-sach-bao-mat/ — Privacy Policy static page + co-located CSS)
 
 ### Top-level layout
 
@@ -73,6 +73,9 @@ aff-store/
 ├── app/                 # Next.js App Router (routes, layouts, route handlers)
 │   ├── layout.tsx       # Root layout — <html lang="vi">, imports globals.css, mounts <SpeedInsights />
 │   ├── page.tsx         # Homepage (/)
+│   ├── chinh-sach-bao-mat/  # /chinh-sach-bao-mat/ route
+│   │   ├── page.tsx                        # Privacy Policy — Static Server Component; Vietnamese legal copy (US00052)
+│   │   └── chinh-sach-bao-mat.module.css   # Page-scoped prose layout (US00052)
 │   ├── danh-muc/        # /danh-muc/ routes
 │   │   └── [category]/  # Dynamic category segment
 │   │       ├── page.tsx                    # Category page — SSG per registered category (US00045)
@@ -179,6 +182,7 @@ aff-store/
 | `/san-pham`            | `app/san-pham/page.tsx` ✅         |
 | `/san-pham/[slug]`     | `app/san-pham/[slug]/page.tsx` ✅  |
 | `/danh-muc/[category]` | `app/danh-muc/[category]/page.tsx` ✅ |
+| `/chinh-sach-bao-mat`  | `app/chinh-sach-bao-mat/page.tsx` ✅ |
 | `/bai-viet`            | `app/bai-viet/page.tsx`            |
 | `/bai-viet/[slug]`     | `app/bai-viet/[slug]/page.tsx`     |
 | `/ve-chung-toi`        | `app/ve-chung-toi/page.tsx`        |
