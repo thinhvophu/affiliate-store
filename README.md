@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00045 (app/danh-muc/[category] — SSG category pages with intro + grid + pagination; lib/categories.ts registry; assertCategoryRegistered wired into lib/products.ts; components/CategoryNav.tsx, CategoryPageClient.tsx)
+> Last updated: US00046 (app/san-pham/[slug]/page.tsx — SSG product detail page; ProductGallery client component; not-found.tsx per-route 404; images.length ≥ 1 already enforced in lib/products.ts)
 
 ### Top-level layout
 
@@ -78,8 +78,12 @@ aff-store/
 │   │       ├── page.tsx                    # Category page — SSG per registered category (US00045)
 │   │       ├── not-found.tsx               # Vietnamese 404 for unknown category slugs (US00045)
 │   │       └── category-page.module.css    # Page-scoped layout — heading + intro typography (US00045)
-│   └── san-pham/        # /san-pham/ route
-│       └── page.tsx     # Product listing — SSG, passes all products to ProductListingClient (US00043)
+│   └── san-pham/        # /san-pham/ routes
+│       ├── page.tsx     # Product listing — SSG, passes all products to ProductListingClient (US00043)
+│       └── [slug]/      # Dynamic product-detail segment
+│           ├── page.tsx                    # Product detail page — SSG per slug, generateStaticParams + notFound() (US00046)
+│           ├── not-found.tsx               # Vietnamese 404 for unknown product slugs (US00046)
+│           └── product-detail.module.css   # Page-scoped layout — 2-col grid ≥1024px, specs <dl>, CTA pill (US00046)
 ├── components/          # Reusable React components (PascalCase.tsx; co-locate styles as <Name>.module.css)
 │   ├── Footer.tsx           # Server Component — 4-column footer, affiliate disclosure (US00022)
 │   ├── Footer.module.css    # Scoped styles for the Footer
@@ -102,7 +106,9 @@ aff-store/
 │   ├── CategoryNav.tsx               # Server Component — sibling-category list for the left panel (US00045)
 │   ├── CategoryNav.module.css        # Scoped styles for CategoryNav — vertical link list (US00045)
 │   ├── CategoryPageClient.tsx        # "use client" — paginated category grid; reads ?page via useSearchParams (US00045)
-│   └── CategoryPageClient.module.css # Grid CSS (2/3/4 cols), empty/pagination styles (US00045)
+│   ├── CategoryPageClient.module.css # Grid CSS (2/3/4 cols), empty/pagination styles (US00045)
+│   ├── ProductGallery.tsx            # "use client" — single/multi-image gallery; useState activeIndex; thumbnail aria-pressed (US00046)
+│   └── ProductGallery.module.css     # Scoped styles — main 1:1 frame (object-fit: contain), thumbnail row, active-border (US00046)
 ├── content/             # Static content sources
 │   ├── products/        # *.json — one file per product (25 fixtures added in US00043)
 │   └── posts/           # *.mdx — one file per blog post
@@ -114,7 +120,7 @@ aff-store/
 │   ├── disclosures.ts   # AFFILIATE_DISCLOSURE_VI constant — shared with F0005 page + F0006 posts (US00022)
 │   ├── format.ts        # formatVnd() — single chokepoint for Vietnamese price rendering (US00041)
 │   ├── nav-items.ts     # NAV_ITEMS constant — the four primary nav routes (typed)
-│   ├── products.ts      # getAllProducts(), getProductBySlug() — calls assertAffiliateUrl() + assertCategoryRegistered() at build time
+│   ├── products.ts      # getAllProducts(), getProductBySlug() — calls assertAffiliateUrl() + assertCategoryRegistered() + images.length ≥ 1 at build time
 │   └── posts.ts         # getAllPosts(), getPostBySlug() — reads content/posts/*.mdx
 ├── types/               # Shared TypeScript types
 │   ├── product.ts       # Product interface (canonical JSON shape)
@@ -153,7 +159,7 @@ aff-store/
 | ---------------------- | ---------------------------------- |
 | `/`                    | `app/page.tsx` ✅                  |
 | `/san-pham`            | `app/san-pham/page.tsx` ✅         |
-| `/san-pham/[slug]`     | `app/san-pham/[slug]/page.tsx`     |
+| `/san-pham/[slug]`     | `app/san-pham/[slug]/page.tsx` ✅  |
 | `/danh-muc/[category]` | `app/danh-muc/[category]/page.tsx` ✅ |
 | `/bai-viet`            | `app/bai-viet/page.tsx`            |
 | `/bai-viet/[slug]`     | `app/bai-viet/[slug]/page.tsx`     |
