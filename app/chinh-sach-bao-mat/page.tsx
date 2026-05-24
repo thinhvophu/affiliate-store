@@ -23,7 +23,7 @@ export default function ChinhSachBaoMatPage() {
         </p>
 
         <p className={styles.lead}>
-          Trang web aff-store ("chúng tôi") cung cấp thông tin và đánh giá sản
+          Trang web aff-store (&ldquo;chúng tôi&rdquo;) cung cấp thông tin và đánh giá sản
           phẩm gaming, công nghệ dưới hình thức tiếp thị liên kết. Chính sách
           bảo mật này mô tả cách chúng tôi xử lý thông tin khi bạn truy cập
           trang web.
