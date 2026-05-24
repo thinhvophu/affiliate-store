@@ -1,0 +1,120 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { AffiliateLink } from "@/components/AffiliateLink";
+import { ProductGallery } from "@/components/ProductGallery";
+import { getAllProducts } from "@/lib/products";
+import { formatVnd } from "@/lib/format";
+import styles from "./product-detail.module.css";
+
+/**
+ * Product detail page — F0004 / US00046.
+ *
+ * Statically generated per product slug. Renders the canonical detail view:
+ *   - <h1>{name}</h1>
+ *   - brand, formatted price
+ *   - image gallery (single- or multi-image via <ProductGallery>)
+ *   - short description
+ *   - specs <dl> (omitted entirely when product.specs is empty)
+ *   - prominent "Mua trên Shopee" <AffiliateLink> CTA
+ *   - <RelatedProducts /> mount point (TODO: wire in once US00047 lands)
+ *
+ * No <ShellLayout /> — the page uses a full-width container inside <main>
+ * (Scenario 8). Header + Footer come from app/layout.tsx.
+ */
+
+interface PageProps {
+  params: Promise<{ slug: string }>;
+}
+
+/** Truncate a description to ≤160 chars at the nearest sentence/word boundary. */
+function truncateDescription(text: string, max = 160): string {
+  if (text.length <= max) return text;
+  const sliced = text.slice(0, max);
+  const sentenceEnd = sliced.lastIndexOf(". ");
+  if (sentenceEnd >= 80) return sliced.slice(0, sentenceEnd + 1);
+  const wordEnd = sliced.lastIndexOf(" ");
+  return (wordEnd > 0 ? sliced.slice(0, wordEnd) : sliced) + "…";
+}
+
+export async function generateStaticParams() {
+  const products = getAllProducts();
+  return products.map((p) => ({ slug: p.slug }));
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const product = getAllProducts().find((p) => p.slug === slug);
+  if (!product) return {};
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "";
+  return {
+    title: product.name,
+    description: truncateDescription(product.description),
+    alternates: {
+      canonical: `${siteUrl}/san-pham/${product.slug}/`,
+    },
+  };
+}
+
+export default async function ProductDetailPage({ params }: PageProps) {
+  const { slug } = await params;
+  const all = getAllProducts();
+  const product = all.find((p) => p.slug === slug);
+  if (!product) notFound();
+
+  const specEntries = Object.entries(product.specs);
+
+  return (
+    <div className={styles.container}>
+      <article className={styles.detail}>
+        <div className={styles.galleryColumn}>
+          <ProductGallery images={product.images} productName={product.name} />
+        </div>
+
+        <div className={styles.infoColumn}>
+          <p className={styles.brand}>{product.brand}</p>
+          <h1 className={styles.name}>{product.name}</h1>
+          <p className={styles.price}>{formatVnd(product.price)}</p>
+
+          <AffiliateLink
+            className={styles.ctaButton}
+            href={product.affiliateUrl}
+            productName={product.name}
+            productCategory={product.category}
+          >
+            <span className={styles.ctaLabel}>Mua trên Shopee</span>
+          </AffiliateLink>
+
+          {product.description && (
+            <p className={styles.description}>{product.description}</p>
+          )}
+
+          {specEntries.length > 0 && (
+            <section
+              className={styles.specsSection}
+              aria-labelledby="product-specs-heading"
+            >
+              <h2 id="product-specs-heading" className={styles.sectionHeading}>
+                Thông số kỹ thuật
+              </h2>
+              <dl className={styles.specsList}>
+                {specEntries.map(([key, value]) => (
+                  <div key={key} className={styles.specRow}>
+                    <dt className={styles.specKey}>{key}</dt>
+                    <dd className={styles.specValue}>{value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          )}
+        </div>
+      </article>
+
+      {/* TODO: mount <RelatedProducts products={related} /> once US00047 lands.
+          At that point, import getRelatedProducts from "@/lib/products" and
+          RelatedProducts from "@/components/RelatedProducts", then call:
+            const related = getRelatedProducts(product, all);
+          and render <RelatedProducts products={related} /> here. */}
+    </div>
+  );
+}
