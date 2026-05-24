@@ -1,0 +1,16 @@
+/* AffiliateDisclosure — top-of-post affiliate disclosure note (US00051) */
+
+.disclosure {
+  background: var(--color-bg-secondary);
+  border-inline-start: 4px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  margin-block-end: var(--spacing-lg);
+}
+
+.text {
+  color: var(--color-text);
+  font-size: 0.9rem;
+  line-height: var(--line-height-base);
+  margin: 0;
+}
