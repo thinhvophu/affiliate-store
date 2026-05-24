@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00052 (app/chinh-sach-bao-mat/ — Privacy Policy static page + co-located CSS)
+> Last updated: US00053 (app/cong-bo-tiep-thi-lien-ket/ — Affiliate Disclosure static page + co-located CSS)
 
 ### Top-level layout
 
@@ -37,6 +37,9 @@ aff-store/
 │   ├── chinh-sach-bao-mat/  # /chinh-sach-bao-mat/ route
 │   │   ├── page.tsx                        # Privacy Policy — Static Server Component; metadata export; 6-section Vietnamese legal copy (US00052)
 │   │   └── chinh-sach-bao-mat.module.css   # Page-scoped prose layout — reading-width container, token-based accents (US00052)
+│   ├── cong-bo-tiep-thi-lien-ket/  # /cong-bo-tiep-thi-lien-ket/ route
+│   │   ├── page.tsx                        # Affiliate Disclosure — Static Server Component; metadata export; AFFILIATE_DISCLOSURE_VI lead + 4-section Vietnamese copy (US00053)
+│   │   └── page.module.css                 # Page-scoped prose layout — reading-width container, primary-accent lead block (US00053)
 │   ├── danh-muc/        # /danh-muc/ routes
 │   │   └── [category]/  # Dynamic category segment
 │   │       ├── page.tsx                    # Category page — SSG per registered category, <CategoryNav> left panel (US00045)
@@ -146,6 +149,7 @@ aff-store/
 | `/san-pham/[slug]`     | `app/san-pham/[slug]/page.tsx` ✅  |
 | `/danh-muc/[category]` | `app/danh-muc/[category]/page.tsx` ✅ |
 | `/chinh-sach-bao-mat`  | `app/chinh-sach-bao-mat/page.tsx` ✅ |
+| `/cong-bo-tiep-thi-lien-ket` | `app/cong-bo-tiep-thi-lien-ket/page.tsx` ✅ |
 | `/bai-viet`            | `app/bai-viet/page.tsx`            |
 | `/bai-viet/[slug]`     | `app/bai-viet/[slug]/page.tsx`     |
 | `/ve-chung-toi`        | `app/ve-chung-toi/page.tsx`        |
