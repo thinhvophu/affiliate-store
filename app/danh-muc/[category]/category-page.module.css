@@ -1,0 +1,18 @@
+/* Page-level layout — inside ShellLayout's main slot. */
+
+.header {
+  margin-bottom: var(--spacing-lg);
+}
+
+.heading {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 var(--spacing-sm);
+}
+
+.intro {
+  max-width: 70ch;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}

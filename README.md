@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00043 (app/san-pham/page.tsx — paginated product listing; components/ProductListingClient.tsx, Pagination.tsx; 25 product fixtures; public/static/images/products/ convention established)
+> Last updated: US00045 (app/danh-muc/[category] — SSG category pages with intro + grid + pagination; lib/categories.ts registry; assertCategoryRegistered wired into lib/products.ts; components/CategoryNav.tsx, CategoryPageClient.tsx)
 
 ### Top-level layout
 
@@ -73,6 +73,11 @@ aff-store/
 ├── app/                 # Next.js App Router (routes, layouts, route handlers)
 │   ├── layout.tsx       # Root layout — <html lang="vi">, imports globals.css, mounts <SpeedInsights />
 │   ├── page.tsx         # Homepage (/)
+│   ├── danh-muc/        # /danh-muc/ routes
+│   │   └── [category]/  # Dynamic category segment
+│   │       ├── page.tsx                    # Category page — SSG per registered category (US00045)
+│   │       ├── not-found.tsx               # Vietnamese 404 for unknown category slugs (US00045)
+│   │       └── category-page.module.css    # Page-scoped layout — heading + intro typography (US00045)
 │   └── san-pham/        # /san-pham/ route
 │       └── page.tsx     # Product listing — SSG, passes all products to ProductListingClient (US00043)
 ├── components/          # Reusable React components (PascalCase.tsx; co-locate styles as <Name>.module.css)
@@ -92,8 +97,12 @@ aff-store/
 │   ├── ProductCard.module.css   # Scoped styles for ProductCard — flex column, image frame, category badge, name clamp, CTA pill (US00042)
 │   ├── ProductListingClient.tsx      # "use client" — paginated product grid, reads ?page via useSearchParams (US00043)
 │   ├── ProductListingClient.module.css # Grid CSS (2/3/4 cols), empty/error state (US00043)
-│   ├── Pagination.tsx                # Shared — crawlable page-link nav; reused by /san-pham/ and /danh-muc/[category]/ (US00043)
-│   └── Pagination.module.css         # Pagination styles — flex row, touch targets, active state (US00043)
+│   ├── Pagination.tsx                # Shared — crawlable page-link nav; basePath prop; reused by /san-pham/ and /danh-muc/[category]/ (US00043)
+│   ├── Pagination.module.css         # Pagination styles — flex row, touch targets, active state (US00043)
+│   ├── CategoryNav.tsx               # Server Component — sibling-category list for the left panel (US00045)
+│   ├── CategoryNav.module.css        # Scoped styles for CategoryNav — vertical link list (US00045)
+│   ├── CategoryPageClient.tsx        # "use client" — paginated category grid; reads ?page via useSearchParams (US00045)
+│   └── CategoryPageClient.module.css # Grid CSS (2/3/4 cols), empty/pagination styles (US00045)
 ├── content/             # Static content sources
 │   ├── products/        # *.json — one file per product (25 fixtures added in US00043)
 │   └── posts/           # *.mdx — one file per blog post
@@ -101,10 +110,11 @@ aff-store/
 │   └── static/images/products/ # Product images (established in US00043; referenced as /static/images/products/<slug>.jpg)
 ├── lib/                 # Pure utilities, data loaders, formatters (no React)
 │   ├── affiliate.ts     # Shopee affiliate-URL allow-list + assertAffiliateUrl helper (US00034)
+│   ├── categories.ts    # CATEGORIES map + getCategoryMeta + assertCategoryRegistered (US00045)
 │   ├── disclosures.ts   # AFFILIATE_DISCLOSURE_VI constant — shared with F0005 page + F0006 posts (US00022)
 │   ├── format.ts        # formatVnd() — single chokepoint for Vietnamese price rendering (US00041)
 │   ├── nav-items.ts     # NAV_ITEMS constant — the four primary nav routes (typed)
-│   ├── products.ts      # getAllProducts(), getProductBySlug() — now calls assertAffiliateUrl() at build time
+│   ├── products.ts      # getAllProducts(), getProductBySlug() — calls assertAffiliateUrl() + assertCategoryRegistered() at build time
 │   └── posts.ts         # getAllPosts(), getPostBySlug() — reads content/posts/*.mdx
 ├── types/               # Shared TypeScript types
 │   ├── product.ts       # Product interface (canonical JSON shape)
@@ -135,6 +145,7 @@ aff-store/
 - **Imports** use the `@/*` alias (e.g., `import { getProducts } from "@/lib/products"`). Avoid deep relative paths.
 - **Affiliate URLs** are validated in one place: `lib/affiliate.ts` (`assertAffiliateUrl`). Raw `<a>` elements whose `href` targets a Shopee host (`shopee.vn`, `shopee.ee`, `shope.ee`) outside `<AffiliateLink>` are disallowed — block on review.
 - **Prices** are formatted in one place: `lib/format.ts`. Every product surface renders prices via `formatVnd(amount)`. No file outside `lib/format.ts` may use `Intl.NumberFormat`, `toLocaleString`, or hand-rolled `"₫"` concatenation on a price value.
+- **Categories are registered.** Every distinct `product.category` must have an entry in `lib/categories.ts` (slug + Vietnamese display name + 100–200 word intro + ≤160 char meta description). The product loader calls `assertCategoryRegistered()` at build time and fails with the offending slug if a category is missing.
 
 ### Route map
 
@@ -143,7 +154,7 @@ aff-store/
 | `/`                    | `app/page.tsx` ✅                  |
 | `/san-pham`            | `app/san-pham/page.tsx` ✅         |
 | `/san-pham/[slug]`     | `app/san-pham/[slug]/page.tsx`     |
-| `/danh-muc/[category]` | `app/danh-muc/[category]/page.tsx` |
+| `/danh-muc/[category]` | `app/danh-muc/[category]/page.tsx` ✅ |
 | `/bai-viet`            | `app/bai-viet/page.tsx`            |
 | `/bai-viet/[slug]`     | `app/bai-viet/[slug]/page.tsx`     |
 | `/ve-chung-toi`        | `app/ve-chung-toi/page.tsx`        |
