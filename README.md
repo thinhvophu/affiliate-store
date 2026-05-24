@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00044 (lib/filters.ts + components/CatalogFilters* + CatalogGrid + CatalogFiltersMobileTrigger — URL-driven filters & sort; Pagination extended with extraParams; page.module.css added)
+> Last updated: US00051 (components/AffiliateDisclosure.tsx + AffiliateDisclosure.module.css — reusable top-of-post affiliate-disclosure banner)
 
 ### Top-level layout
 
@@ -121,7 +121,9 @@ aff-store/
 │   ├── CatalogGrid.tsx               # "use client" — filtered/sorted/paginated product grid (US00044)
 │   ├── CatalogGrid.module.css        # Grid styles, empty state, no-results state (US00044)
 │   ├── CatalogFiltersMobileTrigger.tsx       # "use client" — mobile <dialog> bridge; TODO(US00025-drawer) (US00044)
-│   └── CatalogFiltersMobileTrigger.module.css # Trigger + dialog styles; hidden ≥768px (US00044)
+│   ├── CatalogFiltersMobileTrigger.module.css # Trigger + dialog styles; hidden ≥768px (US00044)
+│   ├── AffiliateDisclosure.tsx     # Server Component — top-of-post affiliate-disclosure note; renders AFFILIATE_DISCLOSURE_VI (US00051)
+│   └── AffiliateDisclosure.module.css # Scoped styles — --color-primary left accent, surface bg, AA contrast (US00051)
 ├── content/             # Static content sources
 │   ├── products/        # *.json — one file per product (25 fixtures added in US00043)
 │   └── posts/           # *.mdx — one file per blog post
