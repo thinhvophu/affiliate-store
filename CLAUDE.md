@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00043 (app/san-pham/page.tsx — paginated product listing; components/ProductListingClient.tsx, Pagination.tsx; 25 product fixtures; public/static/images/products/ convention established)
+> Last updated: US00044 (lib/filters.ts + components/CatalogFilters* + CatalogGrid + CatalogFiltersMobileTrigger — URL-driven filters & sort; Pagination extended with extraParams; page.module.css added)
 
 ### Top-level layout
 
@@ -35,7 +35,8 @@ aff-store/
 │   ├── globals.css      # Global CSS reset + design tokens (US00016 + F0002 surface tokens)
 │   ├── page.tsx         # Homepage (/)
 │   └── san-pham/        # /san-pham/ route
-│       └── page.tsx     # Product listing — SSG, passes all products to ProductListingClient (US00043)
+│       ├── page.tsx     # Product listing — SSG, wires CatalogFilters + CatalogGrid + mobile trigger (US00043/44)
+│       └── page.module.css # Page heading + grid skeleton styles
 ├── components/          # Reusable React components (PascalCase.tsx; co-locate styles as <Name>.module.css)
 │   ├── Footer.tsx           # Server Component — 4-column footer, affiliate disclosure (US00022)
 │   ├── Footer.module.css    # Scoped styles for the Footer
@@ -53,8 +54,14 @@ aff-store/
 │   ├── ProductCard.module.css   # Scoped styles for ProductCard — flex column, image frame, category badge, name clamp, CTA pill (US00042)
 │   ├── ProductListingClient.tsx      # "use client" — paginated product grid, reads ?page via useSearchParams (US00043)
 │   ├── ProductListingClient.module.css # Grid CSS (2/3/4 cols), empty/error state (US00043)
-│   ├── Pagination.tsx                # Shared — crawlable page-link nav; reused by /san-pham/ and /danh-muc/[category]/ (US00043)
-│   └── Pagination.module.css         # Pagination styles — flex row, touch targets, active state (US00043)
+│   ├── Pagination.tsx                # Shared — crawlable page-link nav; accepts extraParams for filter-aware URLs (US00043/44)
+│   ├── Pagination.module.css         # Pagination styles — flex row, touch targets, active state (US00043)
+│   ├── CatalogFilters.tsx            # "use client" — left-panel filter UI; URL-driven via useSearchParams + useRouter.replace (US00044)
+│   ├── CatalogFilters.module.css     # Scoped styles for CatalogFilters — fieldsets, checkboxes, chips, sort select (US00044)
+│   ├── CatalogGrid.tsx               # "use client" — filtered/sorted/paginated product grid; reads URL params, applies applyFilters(), renders ProductCard + Pagination (US00044)
+│   ├── CatalogGrid.module.css        # Grid styles (2/3/4 cols), empty state, no-results state (US00044)
+│   ├── CatalogFiltersMobileTrigger.tsx       # "use client" — mobile <dialog> bridge until shared <Drawer> ships; TODO(US00025-drawer) (US00044)
+│   └── CatalogFiltersMobileTrigger.module.css # Trigger button + dialog panel styles; hidden ≥768px (US00044)
 ├── content/             # Static content sources
 │   ├── products/        # *.json — one file per product (25 fixtures added in US00043; see Product JSON shape)
 │   └── posts/           # *.mdx — one file per blog post
@@ -66,6 +73,7 @@ aff-store/
 │   ├── format.ts        # formatVnd() — single chokepoint for Vietnamese price rendering (US00041)
 │   ├── nav-items.ts     # NAV_ITEMS constant — the four primary nav routes (typed)
 │   ├── products.ts      # getAllProducts(), getProductBySlug() — now calls assertAffiliateUrl() at build time
+│   ├── filters.ts       # PRICE_BUCKETS, SORT_OPTIONS, getFilterOptions, parseFilterParams, serializeFilterParams, applyFilters, compareDefault, countActiveFilters (US00044)
 │   └── posts.ts         # getAllPosts(), getPostBySlug() — reads content/posts/*.mdx
 ├── static/              # Static assets served at /static/*
 │   └── images/{products,blog}/
@@ -218,6 +226,8 @@ import affiliateStyles from "@/components/AffiliateLink.module.css";
 When wrapping a full card subtree, do **not** nest interactive elements inside the children — the CTA must be a styled `<span>` (e.g., with `data-affiliate-cta`), never `<button>` or a nested `<a>`. Nested interactives produce invalid HTML, multiply tab stops, and break the single-link click target.
 
 **No raw affiliate anchors (US00034).** All affiliate destinations on the site must route through `<AffiliateLink>` (`components/AffiliateLink.tsx`). Raw `<a href="https://shope.ee/…">` — or any anchor whose host is `shopee.vn`, `shopee.ee`, or `shope.ee` — outside `<AffiliateLink>` is **disallowed**; block such PRs on review. URL validation, parsing, and any future normalization live in `lib/affiliate.ts`; no file outside that module may parse, trim, or rewrite an affiliate URL. Allow-listed hosts: `shopee.vn`, `shopee.ee`, `shope.ee` (exact host match; subdomains and `www.` are intentionally excluded so unexpected hosts surface loudly).
+
+**Catalog filter state** lives **in the URL** (`?category=`, `?brand=`, `?price=`, `?sort=`). The URL is the only source of truth — no local state, no Context, no `localStorage`. The `<CatalogFilters />` reader (`useSearchParams()`) and writer (`useRouter().replace(...)`) round-trip values through `lib/filters.ts`. Unknown values are silently ignored. Multi-value params use comma-separated values (e.g., `?category=chuot-gaming,tai-nghe`). Filter changes strip `?page` to reset pagination. Future stories adding filter dimensions must follow this same pattern.
 
 ## Required disclosures
 
