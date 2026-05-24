@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AffiliateLink } from "@/components/AffiliateLink";
 import { ProductGallery } from "@/components/ProductGallery";
-import { getAllProducts } from "@/lib/products";
+import { RelatedProducts } from "@/components/RelatedProducts";
+import { getAllProducts, getRelatedProducts } from "@/lib/products";
 import { formatVnd } from "@/lib/format";
 import styles from "./product-detail.module.css";
 
@@ -16,7 +17,7 @@ import styles from "./product-detail.module.css";
  *   - short description
  *   - specs <dl> (omitted entirely when product.specs is empty)
  *   - prominent "Mua trên Shopee" <AffiliateLink> CTA
- *   - <RelatedProducts /> mount point (TODO: wire in once US00047 lands)
+ *   - <RelatedProducts products={related} /> section (US00047)
  *
  * No <ShellLayout /> — the page uses a full-width container inside <main>
  * (Scenario 8). Header + Footer come from app/layout.tsx.
@@ -62,6 +63,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
   const product = all.find((p) => p.slug === slug);
   if (!product) notFound();
 
+  const related = getRelatedProducts(product, all);
   const specEntries = Object.entries(product.specs);
 
   return (
@@ -110,11 +112,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
         </div>
       </article>
 
-      {/* TODO: mount <RelatedProducts products={related} /> once US00047 lands.
-          At that point, import getRelatedProducts from "@/lib/products" and
-          RelatedProducts from "@/components/RelatedProducts", then call:
-            const related = getRelatedProducts(product, all);
-          and render <RelatedProducts products={related} /> here. */}
+      <RelatedProducts products={related} />
     </div>
   );
 }

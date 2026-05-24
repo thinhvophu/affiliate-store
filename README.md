@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00046 (app/san-pham/[slug]/page.tsx — SSG product detail page; ProductGallery client component; not-found.tsx per-route 404; images.length ≥ 1 already enforced in lib/products.ts)
+> Last updated: US00047 (RelatedProducts section + getRelatedProducts helper for the product detail page; components/RelatedProducts.tsx + components/RelatedProducts.module.css)
 
 ### Top-level layout
 
@@ -108,7 +108,9 @@ aff-store/
 │   ├── CategoryPageClient.tsx        # "use client" — paginated category grid; reads ?page via useSearchParams (US00045)
 │   ├── CategoryPageClient.module.css # Grid CSS (2/3/4 cols), empty/pagination styles (US00045)
 │   ├── ProductGallery.tsx            # "use client" — single/multi-image gallery; useState activeIndex; thumbnail aria-pressed (US00046)
-│   └── ProductGallery.module.css     # Scoped styles — main 1:1 frame (object-fit: contain), thumbnail row, active-border (US00046)
+│   ├── ProductGallery.module.css     # Scoped styles — main 1:1 frame (object-fit: contain), thumbnail row, active-border (US00046)
+│   ├── RelatedProducts.tsx           # Server Component — "Sản phẩm liên quan" section on product detail page (US00047)
+│   └── RelatedProducts.module.css    # Scoped grid styles for RelatedProducts; 2/3/3–4-col responsive grid (US00047)
 ├── content/             # Static content sources
 │   ├── products/        # *.json — one file per product (25 fixtures added in US00043)
 │   └── posts/           # *.mdx — one file per blog post
@@ -120,7 +122,7 @@ aff-store/
 │   ├── disclosures.ts   # AFFILIATE_DISCLOSURE_VI constant — shared with F0005 page + F0006 posts (US00022)
 │   ├── format.ts        # formatVnd() — single chokepoint for Vietnamese price rendering (US00041)
 │   ├── nav-items.ts     # NAV_ITEMS constant — the four primary nav routes (typed)
-│   ├── products.ts      # getAllProducts(), getProductBySlug() — calls assertAffiliateUrl() + assertCategoryRegistered() + images.length ≥ 1 at build time
+│   ├── products.ts      # getAllProducts(), getProductBySlug(), getRelatedProducts() — calls assertAffiliateUrl() + assertCategoryRegistered() + images.length ≥ 1 at build time
 │   └── posts.ts         # getAllPosts(), getPostBySlug() — reads content/posts/*.mdx
 ├── types/               # Shared TypeScript types
 │   ├── product.ts       # Product interface (canonical JSON shape)

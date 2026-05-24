@@ -1,0 +1,40 @@
+/* RelatedProducts — US00047
+   Scoped grid styles for the "Sản phẩm liên quan" section on product detail pages.
+   Responsive: 2 cols < 768px · 3 cols 768–1279px · 3–4 cols ≥ 1280px (D14).
+   No new transitions — hover/focus motion is inherited from AffiliateLink.module.css. */
+
+.section {
+  margin-block-start: var(--space-xl);
+  padding-block-end: var(--space-xl);
+}
+
+.heading {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-block-end: var(--space-md);
+  color: var(--color-text);
+}
+
+/* Default: 2-column grid (< 768px) */
+.grid {
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* Tablet: 3 columns (768px – 1279px) */
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Desktop: 3 or 4 columns depending on count (≥ 1280px).
+   --related-count is set inline by the component (3 or 4).
+   min(var(--related-count), 4) caps at 4 so no layout regression
+   if the helper ever returns an unexpected value. */
+@media (min-width: 1280px) {
+  .grid {
+    grid-template-columns: repeat(min(var(--related-count), 4), 1fr);
+  }
+}

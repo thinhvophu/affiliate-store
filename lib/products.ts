@@ -124,3 +124,36 @@ export function getProductBySlug(slug: string): Product | null {
   const products = getAllProducts();
   return products.find((p) => p.slug === slug) ?? null;
 }
+
+/**
+ * getRelatedProducts — US00047 / F0004
+ *
+ * Returns 3–4 products for the "Sản phẩm liên quan" section on a detail page.
+ *
+ * Algorithm (Scenarios 1–4):
+ *   Pass 1 — same-category siblings, sorted by publishedAt desc / slug asc.
+ *   Pass 2 — cross-category products (same sort) used to top-up to ≥ 3 when
+ *             Pass 1 yields fewer than 3 results.
+ *   Slice first 4. If total < 3 (catalog too small), return [] so the section
+ *   is omitted entirely (Scenario 4).
+ *
+ * @param current - The product whose detail page is being rendered.
+ * @param all     - Optional pre-loaded product array (defaults to getAllProducts()).
+ *                  Pass the already-loaded array to avoid a second disk read.
+ */
+export function getRelatedProducts(
+  current: Product,
+  all: Product[] = getAllProducts(),
+): Product[] {
+  const byRecency = (a: Product, b: Product): number => {
+    const t = new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+    return t !== 0 ? t : a.slug.localeCompare(b.slug);
+  };
+
+  const notSelf = all.filter((p) => p.slug !== current.slug);
+  const sameCat = notSelf.filter((p) => p.category === current.category).sort(byRecency);
+  const otherCat = notSelf.filter((p) => p.category !== current.category).sort(byRecency);
+
+  const merged = [...sameCat, ...otherCat].slice(0, 4);
+  return merged.length >= 3 ? merged : [];
+}
