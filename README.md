@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00047 (RelatedProducts section + getRelatedProducts helper for the product detail page; components/RelatedProducts.tsx + components/RelatedProducts.module.css)
+> Last updated: US00044 (lib/filters.ts + components/CatalogFilters* + CatalogGrid + CatalogFiltersMobileTrigger — URL-driven filters & sort; Pagination extended with extraParams; page.module.css added)
 
 ### Top-level layout
 
@@ -79,7 +79,8 @@ aff-store/
 │   │       ├── not-found.tsx               # Vietnamese 404 for unknown category slugs (US00045)
 │   │       └── category-page.module.css    # Page-scoped layout — heading + intro typography (US00045)
 │   └── san-pham/        # /san-pham/ routes
-│       ├── page.tsx     # Product listing — SSG, passes all products to ProductListingClient (US00043)
+│       ├── page.tsx     # Product listing — SSG, wires CatalogFilters + CatalogGrid + mobile trigger (US00043/44)
+│       ├── page.module.css # Page heading + grid skeleton styles (US00044)
 │       └── [slug]/      # Dynamic product-detail segment
 │           ├── page.tsx                    # Product detail page — SSG per slug, generateStaticParams + notFound() (US00046)
 │           ├── not-found.tsx               # Vietnamese 404 for unknown product slugs (US00046)
@@ -101,7 +102,7 @@ aff-store/
 │   ├── ProductCard.module.css   # Scoped styles for ProductCard — flex column, image frame, category badge, name clamp, CTA pill (US00042)
 │   ├── ProductListingClient.tsx      # "use client" — paginated product grid, reads ?page via useSearchParams (US00043)
 │   ├── ProductListingClient.module.css # Grid CSS (2/3/4 cols), empty/error state (US00043)
-│   ├── Pagination.tsx                # Shared — crawlable page-link nav; basePath prop; reused by /san-pham/ and /danh-muc/[category]/ (US00043)
+│   ├── Pagination.tsx                # Shared — crawlable page-link nav; basePath + extraParams for filter-aware URLs (US00043/44)
 │   ├── Pagination.module.css         # Pagination styles — flex row, touch targets, active state (US00043)
 │   ├── CategoryNav.tsx               # Server Component — sibling-category list for the left panel (US00045)
 │   ├── CategoryNav.module.css        # Scoped styles for CategoryNav — vertical link list (US00045)
@@ -110,7 +111,13 @@ aff-store/
 │   ├── ProductGallery.tsx            # "use client" — single/multi-image gallery; useState activeIndex; thumbnail aria-pressed (US00046)
 │   ├── ProductGallery.module.css     # Scoped styles — main 1:1 frame (object-fit: contain), thumbnail row, active-border (US00046)
 │   ├── RelatedProducts.tsx           # Server Component — "Sản phẩm liên quan" section on product detail page (US00047)
-│   └── RelatedProducts.module.css    # Scoped grid styles for RelatedProducts; 2/3/3–4-col responsive grid (US00047)
+│   ├── RelatedProducts.module.css    # Scoped grid styles for RelatedProducts; 2/3/3–4-col responsive grid (US00047)
+│   ├── CatalogFilters.tsx            # "use client" — left-panel filter UI; URL-driven (US00044)
+│   ├── CatalogFilters.module.css     # Scoped styles for CatalogFilters (US00044)
+│   ├── CatalogGrid.tsx               # "use client" — filtered/sorted/paginated product grid (US00044)
+│   ├── CatalogGrid.module.css        # Grid styles, empty state, no-results state (US00044)
+│   ├── CatalogFiltersMobileTrigger.tsx       # "use client" — mobile <dialog> bridge; TODO(US00025-drawer) (US00044)
+│   └── CatalogFiltersMobileTrigger.module.css # Trigger + dialog styles; hidden ≥768px (US00044)
 ├── content/             # Static content sources
 │   ├── products/        # *.json — one file per product (25 fixtures added in US00043)
 │   └── posts/           # *.mdx — one file per blog post
@@ -123,6 +130,7 @@ aff-store/
 │   ├── format.ts        # formatVnd() — single chokepoint for Vietnamese price rendering (US00041)
 │   ├── nav-items.ts     # NAV_ITEMS constant — the four primary nav routes (typed)
 │   ├── products.ts      # getAllProducts(), getProductBySlug(), getRelatedProducts() — calls assertAffiliateUrl() + assertCategoryRegistered() + images.length ≥ 1 at build time
+│   ├── filters.ts       # PRICE_BUCKETS, SORT_OPTIONS, getFilterOptions, parseFilterParams, applyFilters, compareDefault (US00044)
 │   └── posts.ts         # getAllPosts(), getPostBySlug() — reads content/posts/*.mdx
 ├── types/               # Shared TypeScript types
 │   ├── product.ts       # Product interface (canonical JSON shape)
@@ -154,6 +162,7 @@ aff-store/
 - **Affiliate URLs** are validated in one place: `lib/affiliate.ts` (`assertAffiliateUrl`). Raw `<a>` elements whose `href` targets a Shopee host (`shopee.vn`, `shopee.ee`, `shope.ee`) outside `<AffiliateLink>` are disallowed — block on review.
 - **Prices** are formatted in one place: `lib/format.ts`. Every product surface renders prices via `formatVnd(amount)`. No file outside `lib/format.ts` may use `Intl.NumberFormat`, `toLocaleString`, or hand-rolled `"₫"` concatenation on a price value.
 - **Categories are registered.** Every distinct `product.category` must have an entry in `lib/categories.ts` (slug + Vietnamese display name + 100–200 word intro + ≤160 char meta description). The product loader calls `assertCategoryRegistered()` at build time and fails with the offending slug if a category is missing.
+- **Catalog filter state** lives in the URL (`?category=`, `?brand=`, `?price=`, `?sort=`) only — no local state, no Context, no `localStorage`. Round-trips through `lib/filters.ts`; unknown values silently ignored.
 
 ### Route map
 

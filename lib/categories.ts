@@ -120,6 +120,11 @@ export function getAllCategorySlugs(): CategorySlug[] {
   return Object.keys(CATEGORIES);
 }
 
+/** Returns a slug → Vietnamese display name map for use in filter UIs. */
+export function getCategoryLabels(): Record<string, string> {
+  return Object.fromEntries(Object.entries(CATEGORIES).map(([slug, meta]) => [slug, meta.name]));
+}
+
 const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 /**

@@ -1,0 +1,62 @@
+/* ==========================================================================
+   CatalogGrid — filtered/sorted/paginated product grid (US00044)
+   ========================================================================== */
+
+/* 2 columns mobile / 3 tablet / 4 desktop — matches CLAUDE.md grid spec */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--spacing-lg);
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.emptyState {
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+  padding: var(--spacing-xl) 0;
+  text-align: center;
+}
+
+.noResults {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-2xl) 0;
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.noResults p {
+  margin: 0;
+  font-size: 0.9375rem;
+}
+
+.clearButton {
+  padding: 10px 20px;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.clearButton:hover {
+  opacity: 0.9;
+}

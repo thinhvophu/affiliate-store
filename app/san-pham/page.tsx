@@ -1,38 +1,42 @@
 import { Suspense } from "react";
-import { getAllProducts } from "@/lib/products";
-import { ShellLayout } from "@/components/ShellLayout";
-import { ProductCard } from "@/components/ProductCard";
-import { ProductListingClient } from "@/components/ProductListingClient";
-import styles from "@/components/ProductListingClient.module.css";
 import type { Metadata } from "next";
-
-const PAGE_SIZE = 24;
+import { ShellLayout } from "@/components/ShellLayout";
+import { CatalogFilters } from "@/components/CatalogFilters";
+import { CatalogFiltersMobileTrigger } from "@/components/CatalogFiltersMobileTrigger";
+import { CatalogGrid } from "@/components/CatalogGrid";
+import { getAllProducts } from "@/lib/products";
+import { getFilterOptions } from "@/lib/filters";
+import { getCategoryLabels } from "@/lib/categories";
+import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "Tất cả sản phẩm | TechShop",
   description: "Khám phá toàn bộ sản phẩm gaming và công nghệ với giá tốt nhất.",
+  // D15: canonical never reflects filter params — bare listing path always
   alternates: {
     canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/san-pham/`,
   },
 };
 
-export default function ProductListingPage() {
+export default function SanPhamPage() {
   const products = getAllProducts();
-  const page1 = products.slice(0, PAGE_SIZE);
+  const options = getFilterOptions(products);
+  const categoryLabels = getCategoryLabels();
 
   return (
-    <ShellLayout leftPanel={null}>
+    <ShellLayout
+      leftPanel={
+        <Suspense fallback={null}>
+          <CatalogFilters options={options} categoryLabels={categoryLabels} />
+        </Suspense>
+      }
+    >
+      <Suspense fallback={null}>
+        <CatalogFiltersMobileTrigger options={options} categoryLabels={categoryLabels} />
+      </Suspense>
       <h1 className={styles.pageHeading}>Tất cả sản phẩm</h1>
-      <Suspense
-        fallback={
-          <div className={styles.grid}>
-            {page1.map((p) => (
-              <ProductCard key={p.slug} product={p} />
-            ))}
-          </div>
-        }
-      >
-        <ProductListingClient products={products} />
+      <Suspense fallback={<div className={styles.gridSkeleton} />}>
+        <CatalogGrid products={products} />
       </Suspense>
     </ShellLayout>
   );

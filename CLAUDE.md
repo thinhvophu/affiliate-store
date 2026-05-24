@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00047 (RelatedProducts section + getRelatedProducts helper for the product detail page; components/RelatedProducts.tsx + components/RelatedProducts.module.css)
+> Last updated: US00044 (lib/filters.ts + components/CatalogFilters* + CatalogGrid + CatalogFiltersMobileTrigger — URL-driven filters & sort; Pagination extended with extraParams; page.module.css added)
 
 ### Top-level layout
 
@@ -40,7 +40,8 @@ aff-store/
 │   │       ├── not-found.tsx               # Vietnamese 404 for unknown category slugs (US00045)
 │   │       └── category-page.module.css    # Page-scoped layout — heading + intro typography (US00045)
 │   └── san-pham/        # /san-pham/ routes
-│       ├── page.tsx     # Product listing — SSG, passes all products to ProductListingClient (US00043)
+│       ├── page.tsx     # Product listing — SSG, wires CatalogFilters + CatalogGrid + mobile trigger (US00043/44)
+│       ├── page.module.css # Page heading + grid skeleton styles (US00044)
 │       └── [slug]/      # Dynamic product-detail segment
 │           ├── page.tsx                    # Product detail page — SSG per slug, generateStaticParams + notFound() (US00046)
 │           ├── not-found.tsx               # Vietnamese 404 for unknown product slugs (US00046)
@@ -62,7 +63,7 @@ aff-store/
 │   ├── ProductCard.module.css   # Scoped styles for ProductCard — flex column, image frame, category badge, name clamp, CTA pill (US00042)
 │   ├── ProductListingClient.tsx      # "use client" — paginated product grid, reads ?page via useSearchParams (US00043)
 │   ├── ProductListingClient.module.css # Grid CSS (2/3/4 cols), empty/error state (US00043)
-│   ├── Pagination.tsx                # Shared — crawlable page-link nav; accepts basePath prop; reused by /san-pham/ and /danh-muc/[category]/ (US00043)
+│   ├── Pagination.tsx                # Shared — crawlable page-link nav; accepts basePath + extraParams for filter-aware URLs (US00043/44)
 │   ├── Pagination.module.css         # Pagination styles — flex row, touch targets, active state (US00043)
 │   ├── CategoryNav.tsx               # Server Component — sibling-category list for the left panel (US00045)
 │   ├── CategoryNav.module.css        # Scoped styles for CategoryNav — vertical link list (US00045)
@@ -71,7 +72,13 @@ aff-store/
 │   ├── ProductGallery.tsx            # "use client" — single/multi-image gallery; useState activeIndex; thumbnail aria-pressed (US00046)
 │   ├── ProductGallery.module.css     # Scoped styles — main 1:1 frame (object-fit: contain), thumbnail row, active-border (US00046)
 │   ├── RelatedProducts.tsx           # Server Component — "Sản phẩm liên quan" section on product detail page (US00047)
-│   └── RelatedProducts.module.css    # Scoped grid styles for RelatedProducts; 2/3/3–4-col responsive grid (US00047)
+│   ├── RelatedProducts.module.css    # Scoped grid styles for RelatedProducts; 2/3/3–4-col responsive grid (US00047)
+│   ├── CatalogFilters.tsx            # "use client" — left-panel filter UI; URL-driven via useSearchParams + useRouter.replace (US00044)
+│   ├── CatalogFilters.module.css     # Scoped styles for CatalogFilters — fieldsets, checkboxes, chips, sort select (US00044)
+│   ├── CatalogGrid.tsx               # "use client" — filtered/sorted/paginated product grid; reads URL params, applies applyFilters(), renders ProductCard + Pagination (US00044)
+│   ├── CatalogGrid.module.css        # Grid styles (2/3/4 cols), empty state, no-results state (US00044)
+│   ├── CatalogFiltersMobileTrigger.tsx       # "use client" — mobile <dialog> bridge until shared <Drawer> ships; TODO(US00025-drawer) (US00044)
+│   └── CatalogFiltersMobileTrigger.module.css # Trigger button + dialog panel styles; hidden ≥768px (US00044)
 ├── content/             # Static content sources
 │   ├── products/        # *.json — one file per product (25 fixtures added in US00043; see Product JSON shape)
 │   └── posts/           # *.mdx — one file per blog post
@@ -84,6 +91,7 @@ aff-store/
 │   ├── format.ts        # formatVnd() — single chokepoint for Vietnamese price rendering (US00041)
 │   ├── nav-items.ts     # NAV_ITEMS constant — the four primary nav routes (typed)
 │   ├── products.ts      # getAllProducts(), getProductBySlug(), getRelatedProducts() — calls assertAffiliateUrl() + assertCategoryRegistered() + images.length ≥ 1 at build time
+│   ├── filters.ts       # PRICE_BUCKETS, SORT_OPTIONS, getFilterOptions, parseFilterParams, serializeFilterParams, applyFilters, compareDefault, countActiveFilters (US00044)
 │   └── posts.ts         # getAllPosts(), getPostBySlug() — reads content/posts/*.mdx
 ├── static/              # Static assets served at /static/*
 │   └── images/{products,blog}/
@@ -117,6 +125,7 @@ aff-store/
 - **Affiliate URLs** are validated in one place: `lib/affiliate.ts`. The product loader (`lib/products.ts`) calls `assertAffiliateUrl(url, slug)` at build time, so any product JSON with a non-Shopee or malformed `affiliateUrl` fails `next build` with the offending slug named. No file outside `lib/affiliate.ts` may parse, trim, or rewrite an affiliate URL.
 - **Categories are registered.** Every distinct `product.category` must have an entry in `lib/categories.ts` (slug + Vietnamese display name + 100–200 word intro + ≤160 char meta description). The product loader calls `assertCategoryRegistered()` at build time and fails with the offending slug if a category is missing. No file outside `lib/categories.ts` may parse, normalize, or ad-hoc look up category metadata.
 - **Prices** are formatted in one place: `lib/format.ts`. Every product surface (`<ProductCard />`, the detail page CTA price, the related-products row, future homepage featured picks) renders prices via `formatVnd(amount)`. No file outside `lib/format.ts` may use `Intl.NumberFormat`, `toLocaleString`, or hand-rolled `"₫"` concatenation on a price value. Switching to `Intl.NumberFormat` later would re-introduce ICU-version drift between build environments; if a future change is needed, edit `lib/format.ts` only.
+- **Catalog filter state** lives **in the URL** (`?category=`, `?brand=`, `?price=`, `?sort=`). The URL is the only source of truth — no local state, no Context, no `localStorage`. The `<CatalogFilters />` reader (`useSearchParams()`) and writer (`useRouter().replace(...)`) round-trip values through `lib/filters.ts`. Unknown values are silently ignored. Category display labels for the filter UI come from `getCategoryLabels()` in `lib/categories.ts`.
 
 ### Route map (planned — see "Routes" section below for SEO/render strategy)
 
@@ -237,6 +246,8 @@ import affiliateStyles from "@/components/AffiliateLink.module.css";
 When wrapping a full card subtree, do **not** nest interactive elements inside the children — the CTA must be a styled `<span>` (e.g., with `data-affiliate-cta`), never `<button>` or a nested `<a>`. Nested interactives produce invalid HTML, multiply tab stops, and break the single-link click target.
 
 **No raw affiliate anchors (US00034).** All affiliate destinations on the site must route through `<AffiliateLink>` (`components/AffiliateLink.tsx`). Raw `<a href="https://shope.ee/…">` — or any anchor whose host is `shopee.vn`, `shopee.ee`, or `shope.ee` — outside `<AffiliateLink>` is **disallowed**; block such PRs on review. URL validation, parsing, and any future normalization live in `lib/affiliate.ts`; no file outside that module may parse, trim, or rewrite an affiliate URL. Allow-listed hosts: `shopee.vn`, `shopee.ee`, `shope.ee` (exact host match; subdomains and `www.` are intentionally excluded so unexpected hosts surface loudly).
+
+**Catalog filter state** lives **in the URL** (`?category=`, `?brand=`, `?price=`, `?sort=`). The URL is the only source of truth — no local state, no Context, no `localStorage`. The `<CatalogFilters />` reader (`useSearchParams()`) and writer (`useRouter().replace(...)`) round-trip values through `lib/filters.ts`. Unknown values are silently ignored. Multi-value params use comma-separated values (e.g., `?category=chuot-gaming,tai-nghe`). Filter changes strip `?page` to reset pagination. Future stories adding filter dimensions must follow this same pattern.
 
 ## Required disclosures
 
