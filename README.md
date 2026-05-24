@@ -93,8 +93,12 @@ aff-store/
 │   ├── HeaderMobileMenu.tsx # "use client" — hamburger trigger + mobile nav panel
 │   ├── Header.module.css    # Scoped styles for the Header
 │   ├── HeaderStickyShadow.tsx   # "use client" — sticky-shadow toggle for <Header />; IntersectionObserver sentinel (US00026)
+│   ├── Drawer.tsx               # "use client" — generic slide-out drawer primitive (Esc, focus trap, scroll lock, overlay) (US00025)
+│   ├── Drawer.module.css        # Scoped styles for Drawer; overlay, slide-in panel, reduced-motion, desktop hide (US00025)
 │   ├── ShellLayout.tsx      # Server Component — opt-in two-column shell (leftPanel + children) (US00024)
 │   ├── ShellLayout.module.css # Scoped styles for ShellLayout; CSS Grid, card chrome, responsive breakpoints
+│   ├── ShellLayoutDrawer.tsx    # "use client" — mobile trigger button + Drawer wrapper for ShellLayout leftPanel (US00025)
+│   ├── ShellLayoutDrawer.module.css # Scoped styles for ShellLayoutDrawer; white-on-orange trigger, mobile-only (US00025)
 │   ├── SkipLink.tsx         # Server Component — skip-to-main-content link (US00023)
 │   ├── AffiliateLink.tsx        # Server Component — canonical affiliate-link primitive; baked target/rel + F0003↔F0007 seam attributes (US00031, US00033)
 │   ├── AffiliateLink.module.css # Scoped styles for AffiliateLink — visually-hidden srOnly + .card whole-card surface (hover, focus-visible, prefers-reduced-motion gate) (US00031 + US00032)
@@ -125,6 +129,7 @@ aff-store/
 │   └── static/images/products/ # Product images (established in US00043; referenced as /static/images/products/<slug>.jpg)
 ├── lib/                 # Pure utilities, data loaders, formatters (no React)
 │   ├── affiliate.ts     # Shopee affiliate-URL allow-list + assertAffiliateUrl helper (US00034)
+│   ├── breakpoints.ts   # BREAKPOINT_TABLET_PX / BREAKPOINT_DESKTOP_PX / MOBILE_MEDIA_QUERY — JS mirror of globals.css tokens (US00025)
 │   ├── categories.ts    # CATEGORIES map + getCategoryMeta + assertCategoryRegistered (US00045)
 │   ├── disclosures.ts   # AFFILIATE_DISCLOSURE_VI constant — shared with F0005 page + F0006 posts (US00022)
 │   ├── format.ts        # formatVnd() — single chokepoint for Vietnamese price rendering (US00041)

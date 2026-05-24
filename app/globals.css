@@ -35,6 +35,8 @@
      Use these raw values in media queries:
        @media (min-width: 768px)  { ... }   tablet
        @media (min-width: 1280px) { ... }   desktop
+     JS mirror: lib/breakpoints.ts — BREAKPOINT_TABLET_PX / BREAKPOINT_DESKTOP_PX.
+     If you change these values, update lib/breakpoints.ts too.
   -- */
   --breakpoint-tablet: 768px;
   --breakpoint-desktop: 1280px;
