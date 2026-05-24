@@ -6,6 +6,7 @@ import { CatalogFiltersMobileTrigger } from "@/components/CatalogFiltersMobileTr
 import { CatalogGrid } from "@/components/CatalogGrid";
 import { getAllProducts } from "@/lib/products";
 import { getFilterOptions } from "@/lib/filters";
+import { getCategoryLabels } from "@/lib/categories";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
@@ -20,17 +21,18 @@ export const metadata: Metadata = {
 export default function SanPhamPage() {
   const products = getAllProducts();
   const options = getFilterOptions(products);
+  const categoryLabels = getCategoryLabels();
 
   return (
     <ShellLayout
       leftPanel={
         <Suspense fallback={null}>
-          <CatalogFilters options={options} />
+          <CatalogFilters options={options} categoryLabels={categoryLabels} />
         </Suspense>
       }
     >
       <Suspense fallback={null}>
-        <CatalogFiltersMobileTrigger options={options} />
+        <CatalogFiltersMobileTrigger options={options} categoryLabels={categoryLabels} />
       </Suspense>
       <h1 className={styles.pageHeading}>Tất cả sản phẩm</h1>
       <Suspense fallback={<div className={styles.gridSkeleton} />}>
