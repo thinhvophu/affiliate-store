@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00062 (PostBody MDX rendering engine — components/PostBody, components/mdx/, lib/mdx-slug.ts, content/posts/ fixtures)
+> Last updated: US00063 (MdxProductCard — inline `<ProductCard slug>` MDX adapter; components/MdxProductCard.tsx; MDX map ProductCard→MdxProductCard)
 
 ### Top-level layout
 
@@ -130,10 +130,11 @@ aff-store/
 │   ├── CatalogFiltersMobileTrigger.module.css # Trigger + dialog styles; hidden ≥768px (US00044)
 │   ├── AffiliateDisclosure.tsx     # Server Component — top-of-post affiliate-disclosure note; renders AFFILIATE_DISCLOSURE_VI (US00051)
 │   ├── AffiliateDisclosure.module.css # Scoped styles — --color-primary left accent, surface bg, AA contrast (US00051)
+│   ├── MdxProductCard.tsx       # Server Component — MDX adapter: resolves <ProductCard slug="…" /> via getProductBySlug at build time, renders the US00042 card; throws on unknown slug (US00063)
 │   ├── PostBody.tsx             # Async Server Component — evaluates Post.content via @mdx-js/mdx + remark-gfm + heading-slug plugin + shared MDX map (US00062)
 │   ├── PostBody.module.css      # Prose container styles (US00062)
 │   └── mdx/                     # MDX element→component map
-│       ├── mdx-components.tsx   # getMdxComponents() — img→next/image, heading/table/list/code/a overrides, ProductCard stub (US00062)
+│       ├── mdx-components.tsx   # getMdxComponents() — img→next/image, heading/table/list/code/a overrides, ProductCard→MdxProductCard (US00062, US00063)
 │       └── mdx-components.module.css # Scoped styles for MDX element overrides (US00062)
 ├── content/             # Static content sources
 │   ├── products/        # *.json — one file per product (25 fixtures added in US00043)
@@ -184,6 +185,7 @@ aff-store/
 - **Categories are registered.** Every distinct `product.category` must have an entry in `lib/categories.ts` (slug + Vietnamese display name + 100–200 word intro + ≤160 char meta description). The product loader calls `assertCategoryRegistered()` at build time and fails with the offending slug if a category is missing.
 - **Catalog filter state** lives in the URL (`?category=`, `?brand=`, `?price=`, `?sort=`) only — no local state, no Context, no `localStorage`. Round-trips through `lib/filters.ts`; unknown values silently ignored.
 - **Blog MDX bodies render through `<PostBody>`** via `@mdx-js/mdx` `evaluate()`. The element/component map lives in `components/mdx/mdx-components.tsx`; the root `mdx-components.tsx` re-exports it. New MDX components register in the shared map only.
+- **MDX inline product cards:** Authors type `<ProductCard slug="…" />` in `.mdx` posts. The map key `ProductCard` resolves to `MdxProductCard` (the slug adapter in `components/MdxProductCard.tsx`), not the prop-based `components/ProductCard`. The adapter calls `getProductBySlug` at build time and throws a slug-named `Error` on miss so `next build` fails loudly.
 - **Heading slugs** come from `lib/mdx-slug.ts` (`createHeadingSlugger` wrapping `github-slugger`). No other file may call `github-slugger` or hand-roll heading slugs.
 
 ### Route map

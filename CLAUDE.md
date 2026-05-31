@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00062 (PostBody MDX rendering engine — components/PostBody, components/mdx/, lib/mdx-slug.ts, content/posts/ fixtures)
+> Last updated: US00063 (MdxProductCard — inline `<ProductCard slug>` MDX adapter; components/MdxProductCard.tsx; MDX map ProductCard→MdxProductCard)
 
 ### Top-level layout
 
@@ -91,10 +91,11 @@ aff-store/
 │   ├── CatalogFiltersMobileTrigger.module.css # Trigger button + dialog panel styles; hidden ≥768px (US00044)
 │   ├── AffiliateDisclosure.tsx     # Server Component — top-of-post affiliate-disclosure note; renders AFFILIATE_DISCLOSURE_VI (US00051)
 │   ├── AffiliateDisclosure.module.css # Scoped styles — --color-primary left accent, surface bg, AA contrast (US00051)
+│   ├── MdxProductCard.tsx       # Server Component — MDX adapter: resolves <ProductCard slug="…" /> via getProductBySlug at build time, renders the US00042 card; throws on unknown slug (US00063)
 │   ├── PostBody.tsx             # Async Server Component — evaluates Post.content string via @mdx-js/mdx evaluate() + remark-gfm + rehypeHeadingSlugs + shared MDX component map (US00062)
 │   ├── PostBody.module.css      # Prose container styles — reading-width, line-height, reduced-motion safe (US00062)
 │   └── mdx/                     # MDX element→component map (React; kept out of lib/ per "no JSX in lib/" rule)
-│       ├── mdx-components.tsx   # getMdxComponents() — canonical map: img→next/image (fill+aspect wrapper), h1–h4, table/th/td, ul/ol/li, blockquote, pre/code, a, ProductCard stub (US00062; stub replaced by US00063)
+│       ├── mdx-components.tsx   # getMdxComponents() — canonical map: img→next/image, h1–h4, table, ul/ol/li, blockquote, pre/code, a, ProductCard→MdxProductCard (US00062, US00063)
 │       └── mdx-components.module.css # Scoped styles for all MDX element overrides (US00062)
 ├── content/             # Static content sources
 │   ├── products/        # *.json — one file per product (25 fixtures added in US00043; see Product JSON shape)
@@ -146,7 +147,8 @@ aff-store/
 - **Prices** are formatted in one place: `lib/format.ts`. Every product surface (`<ProductCard />`, the detail page CTA price, the related-products row, future homepage featured picks) renders prices via `formatVnd(amount)`. No file outside `lib/format.ts` may use `Intl.NumberFormat`, `toLocaleString`, or hand-rolled `"₫"` concatenation on a price value. Switching to `Intl.NumberFormat` later would re-introduce ICU-version drift between build environments; if a future change is needed, edit `lib/format.ts` only.
 - **Dates** are formatted in one place: `lib/format.ts`. Every blog surface (listing item, post header, related-post card) renders post dates via `formatPostDate(iso)`. No file outside `lib/format.ts` may call `toLocaleDateString`, `Intl.DateTimeFormat`, or hand-roll a `tháng …` string on a post date. Same SSG-determinism rationale as `formatVnd` — ICU output can drift between Node/Vercel build pools.
 - **Catalog filter state** lives **in the URL** (`?category=`, `?brand=`, `?price=`, `?sort=`). The URL is the only source of truth — no local state, no Context, no `localStorage`. The `<CatalogFilters />` reader (`useSearchParams()`) and writer (`useRouter().replace(...)`) round-trip values through `lib/filters.ts`. Unknown values are silently ignored. Category display labels for the filter UI come from `getCategoryLabels()` in `lib/categories.ts`.
-- **Blog MDX bodies render through `<PostBody>`** via `@mdx-js/mdx` `evaluate()`. The element/component map lives in one place (`components/mdx/mdx-components.tsx`); the root `mdx-components.tsx` re-exports it. Inline MDX images go through `next/image` (`<Image fill>` + aspect wrapper). New MDX components (e.g. `<ProductCard slug>`) register in the shared map only (`components/mdx/mdx-components.tsx`). The `next.config.ts` global plugin list uses the string form `"remark-gfm"` (Turbopack-safe); the `rehypeHeadingSlugs` plugin is local to `PostBody`'s `evaluate()` call and is **not** in the global list.
+- **Blog MDX bodies render through `<PostBody>`** via `@mdx-js/mdx` `evaluate()`. The element/component map lives in one place (`components/mdx/mdx-components.tsx`); the root `mdx-components.tsx` re-exports it. Inline MDX images go through `next/image` (`<Image fill>` + aspect wrapper). New MDX components register in the shared map only (`components/mdx/mdx-components.tsx`). The `next.config.ts` global plugin list uses the string form `"remark-gfm"` (Turbopack-safe); the `rehypeHeadingSlugs` plugin is local to `PostBody`'s `evaluate()` call and is **not** in the global list.
+- **MDX inline product cards:** Authors type `<ProductCard slug="…" />` in `.mdx` posts. The map key `ProductCard` resolves to `MdxProductCard` (the slug adapter in `components/MdxProductCard.tsx`), **not** the prop-based `@/components/ProductCard` (which takes `{ product: Product }`). The adapter calls `getProductBySlug` at build time and throws a slug-named `Error` on miss so `next build` fails loudly. No prop union, no name collision between the two identifiers.
 - **Heading slugs for MDX bodies** come from `lib/mdx-slug.ts`. No other file may call `github-slugger` or hand-roll heading slugs; `createHeadingSlugger()` returns a fresh per-document instance (so dedupe state doesn't leak across posts), and `rehypeHeadingSlugs` uses it to assign `id` attributes. US00068's TOC builder imports `createHeadingSlugger` from the same file — identical slugs by construction.
 
 ### Route map (planned — see "Routes" section below for SEO/render strategy)
