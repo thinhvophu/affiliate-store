@@ -126,15 +126,3 @@
 .a:hover {
   opacity: 0.8;
 }
-
-.productCardStub {
-  display: block;
-  padding: 1rem;
-  margin: 1.5rem 0;
-  border: 2px dashed var(--color-primary, #ee4d2d);
-  border-radius: 6px;
-  color: var(--color-primary, #ee4d2d);
-  font-weight: 600;
-  text-align: center;
-  background: var(--color-surface-raised, #fff5f3);
-}

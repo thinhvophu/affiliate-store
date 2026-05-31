@@ -1,5 +1,6 @@
 import type { MDXComponents } from "mdx/types";
 import Image from "next/image";
+import { MdxProductCard } from "@/components/MdxProductCard";
 import styles from "./mdx-components.module.css";
 
 function MdxImg({
@@ -20,14 +21,6 @@ function MdxImg({
         className={styles.img}
       />
     </span>
-  );
-}
-
-function ProductCardStub({ slug }: { slug?: string }) {
-  return (
-    <div className={styles.productCardStub} data-slug={slug}>
-      [ProductCard: {slug}]
-    </div>
   );
 }
 
@@ -60,6 +53,6 @@ export function getMdxComponents(): MDXComponents {
         {children}
       </a>
     ),
-    ProductCard: ProductCardStub as unknown as MDXComponents[string],
+    ProductCard: MdxProductCard as unknown as MDXComponents[string],
   };
 }
