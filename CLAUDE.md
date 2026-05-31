@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00063 (MdxProductCard — inline `<ProductCard slug>` MDX adapter; components/MdxProductCard.tsx; MDX map ProductCard→MdxProductCard)
+> Last updated: US00064 (PostCard + PostListingClient + app/bai-viet/ route — blog post listing page with 12/page pagination)
 
 ### Top-level layout
 
@@ -45,6 +45,9 @@ aff-store/
 │   │       ├── page.tsx                    # Category page — SSG per registered category, <CategoryNav> left panel (US00045)
 │   │       ├── not-found.tsx               # Vietnamese 404 for unknown category slugs (US00045)
 │   │       └── category-page.module.css    # Page-scoped layout — heading + intro typography (US00045)
+│   ├── bai-viet/        # /bai-viet/ routes
+│   │   ├── page.tsx     # Blog listing — SSG, getAllPosts() sorted newest-first, Suspense-wrapped <PostListingClient> (US00064)
+│   │   └── page.module.css # Page heading + grid skeleton styles (US00064)
 │   └── san-pham/        # /san-pham/ routes
 │       ├── page.tsx     # Product listing — SSG, wires CatalogFilters + CatalogGrid + mobile trigger (US00043/44)
 │       ├── page.module.css # Page heading + grid skeleton styles (US00044)
@@ -92,6 +95,10 @@ aff-store/
 │   ├── AffiliateDisclosure.tsx     # Server Component — top-of-post affiliate-disclosure note; renders AFFILIATE_DISCLOSURE_VI (US00051)
 │   ├── AffiliateDisclosure.module.css # Scoped styles — --color-primary left accent, surface bg, AA contrast (US00051)
 │   ├── MdxProductCard.tsx       # Server Component — MDX adapter: resolves <ProductCard slug="…" /> via getProductBySlug at build time, renders the US00042 card; throws on unknown slug (US00063)
+│   ├── PostCard.tsx             # Server Component — blog listing item: cover image (next/image 16:9 fill), h2 title, clamped summary, date (formatPostDate) + category tag meta row (US00064)
+│   ├── PostCard.module.css      # Card chrome, 16:9 image frame, title clamp, summary clamp, meta flex row (US00064)
+│   ├── PostListingClient.tsx    # "use client" — paginated blog grid (PAGE_SIZE=12); reads ?page via useSearchParams; empty + out-of-range guards; renders <PostCard> + <Pagination> (US00064)
+│   ├── PostListingClient.module.css # 2/3/3-col responsive grid + .emptyState (US00064)
 │   ├── PostBody.tsx             # Async Server Component — evaluates Post.content string via @mdx-js/mdx evaluate() + remark-gfm + rehypeHeadingSlugs + shared MDX component map (US00062)
 │   ├── PostBody.module.css      # Prose container styles — reading-width, line-height, reduced-motion safe (US00062)
 │   └── mdx/                     # MDX element→component map (React; kept out of lib/ per "no JSX in lib/" rule)
@@ -161,7 +168,7 @@ aff-store/
 | `/danh-muc/[category]` | `app/danh-muc/[category]/page.tsx` ✅ |
 | `/chinh-sach-bao-mat`  | `app/chinh-sach-bao-mat/page.tsx` ✅ |
 | `/cong-bo-tiep-thi-lien-ket` | `app/cong-bo-tiep-thi-lien-ket/page.tsx` ✅ |
-| `/bai-viet`            | `app/bai-viet/page.tsx`            |
+| `/bai-viet`            | `app/bai-viet/page.tsx` ✅         |
 | `/bai-viet/[slug]`     | `app/bai-viet/[slug]/page.tsx`     |
 | `/ve-chung-toi`        | `app/ve-chung-toi/page.tsx`        |
 | `/sitemap.xml`         | `app/sitemap.ts`                   |
