@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00053 (app/cong-bo-tiep-thi-lien-ket/ — Affiliate Disclosure static page + co-located CSS)
+> Last updated: US00061 (lib/format.ts — formatPostDate() Vietnamese date chokepoint)
 
 ### Top-level layout
 
@@ -101,7 +101,7 @@ aff-store/
 │   ├── breakpoints.ts   # BREAKPOINT_TABLET_PX / BREAKPOINT_DESKTOP_PX / MOBILE_MEDIA_QUERY — JS mirror of globals.css tokens (US00025)
 │   ├── categories.ts    # CATEGORIES map + getCategoryMeta + assertCategoryRegistered (US00045)
 │   ├── disclosures.ts   # AFFILIATE_DISCLOSURE_VI constant — shared with F0005 page + F0006 posts (US00022)
-│   ├── format.ts        # formatVnd() — single chokepoint for Vietnamese price rendering (US00041)
+│   ├── format.ts        # formatVnd() + formatPostDate() — single chokepoints for VN price & date rendering (US00041, US00061)
 │   ├── nav-items.ts     # NAV_ITEMS constant — the four primary nav routes (typed)
 │   ├── products.ts      # getAllProducts(), getProductBySlug(), getRelatedProducts() — calls assertAffiliateUrl() + assertCategoryRegistered() + images.length ≥ 1 at build time
 │   ├── filters.ts       # PRICE_BUCKETS, SORT_OPTIONS, getFilterOptions, parseFilterParams, serializeFilterParams, applyFilters, compareDefault, countActiveFilters (US00044)
@@ -138,6 +138,7 @@ aff-store/
 - **Affiliate URLs** are validated in one place: `lib/affiliate.ts`. The product loader (`lib/products.ts`) calls `assertAffiliateUrl(url, slug)` at build time, so any product JSON with a non-Shopee or malformed `affiliateUrl` fails `next build` with the offending slug named. No file outside `lib/affiliate.ts` may parse, trim, or rewrite an affiliate URL.
 - **Categories are registered.** Every distinct `product.category` must have an entry in `lib/categories.ts` (slug + Vietnamese display name + 100–200 word intro + ≤160 char meta description). The product loader calls `assertCategoryRegistered()` at build time and fails with the offending slug if a category is missing. No file outside `lib/categories.ts` may parse, normalize, or ad-hoc look up category metadata.
 - **Prices** are formatted in one place: `lib/format.ts`. Every product surface (`<ProductCard />`, the detail page CTA price, the related-products row, future homepage featured picks) renders prices via `formatVnd(amount)`. No file outside `lib/format.ts` may use `Intl.NumberFormat`, `toLocaleString`, or hand-rolled `"₫"` concatenation on a price value. Switching to `Intl.NumberFormat` later would re-introduce ICU-version drift between build environments; if a future change is needed, edit `lib/format.ts` only.
+- **Dates** are formatted in one place: `lib/format.ts`. Every blog surface (listing item, post header, related-post card) renders post dates via `formatPostDate(iso)`. No file outside `lib/format.ts` may call `toLocaleDateString`, `Intl.DateTimeFormat`, or hand-roll a `tháng …` string on a post date. Same SSG-determinism rationale as `formatVnd` — ICU output can drift between Node/Vercel build pools.
 - **Catalog filter state** lives **in the URL** (`?category=`, `?brand=`, `?price=`, `?sort=`). The URL is the only source of truth — no local state, no Context, no `localStorage`. The `<CatalogFilters />` reader (`useSearchParams()`) and writer (`useRouter().replace(...)`) round-trip values through `lib/filters.ts`. Unknown values are silently ignored. Category display labels for the filter UI come from `getCategoryLabels()` in `lib/categories.ts`.
 
 ### Route map (planned — see "Routes" section below for SEO/render strategy)
