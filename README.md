@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00061 (lib/format.ts — formatPostDate() Vietnamese date chokepoint)
+> Last updated: US00062 (PostBody MDX rendering engine — components/PostBody, components/mdx/, lib/mdx-slug.ts, content/posts/ fixtures)
 
 ### Top-level layout
 
@@ -129,7 +129,12 @@ aff-store/
 │   ├── CatalogFiltersMobileTrigger.tsx       # "use client" — mobile <dialog> bridge; TODO(US00025-drawer) (US00044)
 │   ├── CatalogFiltersMobileTrigger.module.css # Trigger + dialog styles; hidden ≥768px (US00044)
 │   ├── AffiliateDisclosure.tsx     # Server Component — top-of-post affiliate-disclosure note; renders AFFILIATE_DISCLOSURE_VI (US00051)
-│   └── AffiliateDisclosure.module.css # Scoped styles — --color-primary left accent, surface bg, AA contrast (US00051)
+│   ├── AffiliateDisclosure.module.css # Scoped styles — --color-primary left accent, surface bg, AA contrast (US00051)
+│   ├── PostBody.tsx             # Async Server Component — evaluates Post.content via @mdx-js/mdx + remark-gfm + heading-slug plugin + shared MDX map (US00062)
+│   ├── PostBody.module.css      # Prose container styles (US00062)
+│   └── mdx/                     # MDX element→component map
+│       ├── mdx-components.tsx   # getMdxComponents() — img→next/image, heading/table/list/code/a overrides, ProductCard stub (US00062)
+│       └── mdx-components.module.css # Scoped styles for MDX element overrides (US00062)
 ├── content/             # Static content sources
 │   ├── products/        # *.json — one file per product (25 fixtures added in US00043)
 │   └── posts/           # *.mdx — one file per blog post
@@ -144,7 +149,8 @@ aff-store/
 │   ├── nav-items.ts     # NAV_ITEMS constant — the four primary nav routes (typed)
 │   ├── products.ts      # getAllProducts(), getProductBySlug(), getRelatedProducts() — calls assertAffiliateUrl() + assertCategoryRegistered() + images.length ≥ 1 at build time
 │   ├── filters.ts       # PRICE_BUCKETS, SORT_OPTIONS, getFilterOptions, parseFilterParams, applyFilters, compareDefault (US00044)
-│   └── posts.ts         # getAllPosts(), getPostBySlug() — reads content/posts/*.mdx
+│   ├── posts.ts         # getAllPosts(), getPostBySlug() — reads content/posts/*.mdx
+│   └── mdx-slug.ts      # createHeadingSlugger() + rehypeHeadingSlugs — heading-slug chokepoint for PostBody + TOC (US00062)
 ├── types/               # Shared TypeScript types
 │   ├── product.ts       # Product interface (canonical JSON shape)
 │   ├── post.ts          # PostFrontmatter + Post interfaces (MDX frontmatter + content)
@@ -177,6 +183,8 @@ aff-store/
 - **Dates** are formatted in one place: `lib/format.ts`. Every blog surface renders post dates via `formatPostDate(iso)`. No file outside `lib/format.ts` may call `toLocaleDateString`, `Intl.DateTimeFormat`, or hand-roll a `tháng …` string on a post date.
 - **Categories are registered.** Every distinct `product.category` must have an entry in `lib/categories.ts` (slug + Vietnamese display name + 100–200 word intro + ≤160 char meta description). The product loader calls `assertCategoryRegistered()` at build time and fails with the offending slug if a category is missing.
 - **Catalog filter state** lives in the URL (`?category=`, `?brand=`, `?price=`, `?sort=`) only — no local state, no Context, no `localStorage`. Round-trips through `lib/filters.ts`; unknown values silently ignored.
+- **Blog MDX bodies render through `<PostBody>`** via `@mdx-js/mdx` `evaluate()`. The element/component map lives in `components/mdx/mdx-components.tsx`; the root `mdx-components.tsx` re-exports it. New MDX components register in the shared map only.
+- **Heading slugs** come from `lib/mdx-slug.ts` (`createHeadingSlugger` wrapping `github-slugger`). No other file may call `github-slugger` or hand-roll heading slugs.
 
 ### Route map
 

@@ -1,0 +1,23 @@
+.prose {
+  max-width: 760px;
+  width: 100%;
+  line-height: 1.75;
+  color: var(--color-text, #111);
+  font-size: 1rem;
+}
+
+.prose > * + * {
+  margin-top: 1rem;
+}
+
+.prose p {
+  margin: 1rem 0;
+  line-height: 1.75;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prose * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
