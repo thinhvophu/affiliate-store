@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import type { Post } from "@/types";
+import { assertCategoryRegistered } from "@/lib/categories";
 
 const POSTS_DIR = path.join(process.cwd(), "content", "posts");
 
@@ -54,6 +55,7 @@ export function getAllPosts(): Post[] {
     validatePostFrontmatter(frontmatter, filePath);
 
     const slug = path.basename(file, ".mdx");
+    assertCategoryRegistered(frontmatter.category as string, slug);
 
     const existing = slugMap.get(slug);
     if (existing) {

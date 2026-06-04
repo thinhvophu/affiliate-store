@@ -1,0 +1,32 @@
+/* ==========================================================================
+   PostListingGrid — filtered + paginated blog grid (US00065)
+   ========================================================================== */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.emptyState {
+  color: var(--color-text-secondary);
+  padding: var(--spacing-xl) 0;
+}
+
+.noResults {
+  color: var(--color-text-secondary);
+  padding: var(--spacing-xl) 0;
+  font-style: italic;
+}
