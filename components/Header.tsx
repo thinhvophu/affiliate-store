@@ -3,8 +3,7 @@ import styles from "@/components/Header.module.css";
 import { HeaderNav } from "@/components/HeaderNav";
 import { HeaderMobileMenu } from "@/components/HeaderMobileMenu";
 import { HeaderStickyShadow } from "@/components/HeaderStickyShadow";
-
-const SITE_NAME = "aff-store";
+import { SITE_NAME } from "@/lib/site";
 
 export function Header() {
   return (
