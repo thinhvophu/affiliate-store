@@ -1,0 +1,72 @@
+import type { Metadata } from "next";
+import Image from "next/image";
+import { notFound } from "next/navigation";
+import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
+import { PostBody } from "@/components/PostBody";
+import { getAllPosts, getPostBySlug } from "@/lib/posts";
+import { formatPostDate } from "@/lib/format";
+import { SITE_NAME } from "@/lib/site";
+import styles from "./post-detail.module.css";
+
+interface PageProps {
+  params: Promise<{ slug: string }>;
+}
+
+export async function generateStaticParams() {
+  return getAllPosts().map((p) => ({ slug: p.slug }));
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const post = getPostBySlug(slug);
+  if (!post) return {};
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "";
+  return {
+    title: post.title,
+    description: post.summary,
+    alternates: {
+      canonical: `${siteUrl}/bai-viet/${slug}/`,
+    },
+  };
+}
+
+export default async function PostDetailPage({ params }: PageProps) {
+  const { slug } = await params;
+  const post = getPostBySlug(slug);
+  if (!post) notFound();
+
+  return (
+    <div className={styles.container}>
+      <article className={styles.post}>
+        <header className={styles.postHeader}>
+          {post.coverImage && (
+            <div className={styles.hero}>
+              <Image
+                src={post.coverImage}
+                alt={post.title}
+                fill
+                priority
+                sizes="(min-width: 1024px) 760px, 100vw"
+                className={styles.heroImg}
+              />
+            </div>
+          )}
+          <h1 className={styles.title}>{post.title}</h1>
+          <p className={styles.meta}>
+            <time dateTime={post.publishedAt}>{formatPostDate(post.publishedAt)}</time>
+            <span className={styles.byline}>{SITE_NAME}</span>
+          </p>
+        </header>
+
+        <AffiliateDisclosure />
+
+        <div className={styles.prose}>
+          <PostBody content={post.content} />
+        </div>
+
+        {/* RESERVED — US00067 related posts mounts here: <RelatedPosts post={post} /> */}
+      </article>
+    </div>
+  );
+}
