@@ -3,8 +3,10 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
 import { PostBody } from "@/components/PostBody";
+import { TableOfContents } from "@/components/TableOfContents";
 import { getAllPosts, getPostBySlug, getRelatedPosts } from "@/lib/posts";
 import { RelatedPosts } from "@/components/RelatedPosts";
+import { extractToc } from "@/lib/toc";
 import { formatPostDate } from "@/lib/format";
 import { SITE_NAME } from "@/lib/site";
 import styles from "./post-detail.module.css";
@@ -38,10 +40,17 @@ export default async function PostDetailPage({ params }: PageProps) {
   const post = all.find((p) => p.slug === slug);
   if (!post) notFound();
   const related = getRelatedPosts(post, all);
+  const toc = extractToc(post.content);
+  const hasToc = toc.length > 0;
 
   return (
-    <div className={styles.container}>
-      <article className={styles.post}>
+    <div className={hasToc ? styles.shellWithToc : styles.container}>
+      {hasToc && (
+        <aside className={styles.tocPanel}>
+          <TableOfContents entries={toc} />
+        </aside>
+      )}
+      <article className={hasToc ? styles.post : styles.postCentered}>
         <header className={styles.postHeader}>
           {post.coverImage && (
             <div className={styles.hero}>

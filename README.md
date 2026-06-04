@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00067 (components/RelatedPosts.tsx + RelatedPosts.module.css — related posts section; lib/posts.ts getRelatedPosts())
+> Last updated: US00068 (components/TableOfContents.tsx + TableOfContents.module.css — sticky TOC; lib/toc.ts extractToc() + TocEntry)
 
 ### Top-level layout
 
@@ -135,6 +135,8 @@ aff-store/
 │   ├── PostBody.module.css      # Prose container styles (US00062)
 │   ├── RelatedPosts.tsx         # Server Component — "Bài viết liên quan" section; null when empty; consumes PostCard (US00067)
 │   ├── RelatedPosts.module.css  # Scoped grid styles for RelatedPosts (US00067)
+│   ├── TableOfContents.tsx      # Server Component — sticky left-panel TOC; renders null when entries empty (US00068)
+│   ├── TableOfContents.module.css # Sticky + max-height/overflow, h3 indent, primary hover accent (US00068)
 │   └── mdx/                     # MDX element→component map
 │       ├── mdx-components.tsx   # getMdxComponents() — img→next/image, heading/table/list/code/a overrides, ProductCard→MdxProductCard (US00062, US00063)
 │       └── mdx-components.module.css # Scoped styles for MDX element overrides (US00062)
@@ -153,6 +155,7 @@ aff-store/
 │   ├── products.ts      # getAllProducts(), getProductBySlug(), getRelatedProducts() — calls assertAffiliateUrl() + assertCategoryRegistered() + images.length ≥ 1 at build time
 │   ├── filters.ts       # PRICE_BUCKETS, SORT_OPTIONS, getFilterOptions, parseFilterParams, applyFilters, compareDefault (US00044)
 │   ├── posts.ts         # getAllPosts(), getPostBySlug(), getRelatedPosts() — reads content/posts/*.mdx (US00067)
+│   ├── toc.ts           # extractToc(content): TocEntry[] — AST walk via remark-parse + unist-util-visit; slugs via createHeadingSlugger(); h2+h3 only (US00068)
 │   └── mdx-slug.ts      # createHeadingSlugger() + rehypeHeadingSlugs — heading-slug chokepoint for PostBody + TOC (US00062)
 ├── types/               # Shared TypeScript types
 │   ├── product.ts       # Product interface (canonical JSON shape)
@@ -200,8 +203,8 @@ aff-store/
 | `/danh-muc/[category]` | `app/danh-muc/[category]/page.tsx` ✅ |
 | `/chinh-sach-bao-mat`  | `app/chinh-sach-bao-mat/page.tsx` ✅ |
 | `/cong-bo-tiep-thi-lien-ket` | `app/cong-bo-tiep-thi-lien-ket/page.tsx` ✅ |
-| `/bai-viet`            | `app/bai-viet/page.tsx`            |
-| `/bai-viet/[slug]`     | `app/bai-viet/[slug]/page.tsx`     |
+| `/bai-viet`            | `app/bai-viet/page.tsx` ✅         |
+| `/bai-viet/[slug]`     | `app/bai-viet/[slug]/page.tsx` ✅  |
 | `/ve-chung-toi`        | `app/ve-chung-toi/page.tsx`        |
 | `/sitemap.xml`         | `app/sitemap.ts`                   |
 | `/robots.txt`          | `app/robots.ts`                    |
