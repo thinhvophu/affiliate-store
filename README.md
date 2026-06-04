@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00063 (MdxProductCard — inline `<ProductCard slug>` MDX adapter; components/MdxProductCard.tsx; MDX map ProductCard→MdxProductCard)
+> Last updated: US00067 (components/RelatedPosts.tsx + RelatedPosts.module.css — related posts section; lib/posts.ts getRelatedPosts())
 
 ### Top-level layout
 
@@ -133,6 +133,8 @@ aff-store/
 │   ├── MdxProductCard.tsx       # Server Component — MDX adapter: resolves <ProductCard slug="…" /> via getProductBySlug at build time, renders the US00042 card; throws on unknown slug (US00063)
 │   ├── PostBody.tsx             # Async Server Component — evaluates Post.content via @mdx-js/mdx + remark-gfm + heading-slug plugin + shared MDX map (US00062)
 │   ├── PostBody.module.css      # Prose container styles (US00062)
+│   ├── RelatedPosts.tsx         # Server Component — "Bài viết liên quan" section; null when empty; consumes PostCard (US00067)
+│   ├── RelatedPosts.module.css  # Scoped grid styles for RelatedPosts (US00067)
 │   └── mdx/                     # MDX element→component map
 │       ├── mdx-components.tsx   # getMdxComponents() — img→next/image, heading/table/list/code/a overrides, ProductCard→MdxProductCard (US00062, US00063)
 │       └── mdx-components.module.css # Scoped styles for MDX element overrides (US00062)
@@ -150,7 +152,7 @@ aff-store/
 │   ├── nav-items.ts     # NAV_ITEMS constant — the four primary nav routes (typed)
 │   ├── products.ts      # getAllProducts(), getProductBySlug(), getRelatedProducts() — calls assertAffiliateUrl() + assertCategoryRegistered() + images.length ≥ 1 at build time
 │   ├── filters.ts       # PRICE_BUCKETS, SORT_OPTIONS, getFilterOptions, parseFilterParams, applyFilters, compareDefault (US00044)
-│   ├── posts.ts         # getAllPosts(), getPostBySlug() — reads content/posts/*.mdx
+│   ├── posts.ts         # getAllPosts(), getPostBySlug(), getRelatedPosts() — reads content/posts/*.mdx (US00067)
 │   └── mdx-slug.ts      # createHeadingSlugger() + rehypeHeadingSlugs — heading-slug chokepoint for PostBody + TOC (US00062)
 ├── types/               # Shared TypeScript types
 │   ├── product.ts       # Product interface (canonical JSON shape)
