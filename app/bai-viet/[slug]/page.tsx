@@ -3,7 +3,8 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
 import { PostBody } from "@/components/PostBody";
-import { getAllPosts, getPostBySlug } from "@/lib/posts";
+import { getAllPosts, getPostBySlug, getRelatedPosts } from "@/lib/posts";
+import { RelatedPosts } from "@/components/RelatedPosts";
 import { formatPostDate } from "@/lib/format";
 import { SITE_NAME } from "@/lib/site";
 import styles from "./post-detail.module.css";
@@ -33,8 +34,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function PostDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const all = getAllPosts();
+  const post = all.find((p) => p.slug === slug);
   if (!post) notFound();
+  const related = getRelatedPosts(post, all);
 
   return (
     <div className={styles.container}>
@@ -65,7 +68,7 @@ export default async function PostDetailPage({ params }: PageProps) {
           <PostBody content={post.content} />
         </div>
 
-        {/* RESERVED — US00067 related posts mounts here: <RelatedPosts post={post} /> */}
+        <RelatedPosts posts={related} />
       </article>
     </div>
   );

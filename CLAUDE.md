@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00066 (app/bai-viet/[slug]/ — blog post detail page: page.tsx, not-found.tsx, post-detail.module.css; lib/site.ts SITE_NAME shared constant)
+> Last updated: US00067 (components/RelatedPosts.tsx + RelatedPosts.module.css — related posts section; lib/posts.ts getRelatedPosts())
 
 ### Top-level layout
 
@@ -109,6 +109,8 @@ aff-store/
 │   ├── PostListingGrid.module.css # Grid (2/3/3-col responsive) + .emptyState + .noResults (US00065)
 │   ├── PostBody.tsx             # Async Server Component — evaluates Post.content string via @mdx-js/mdx evaluate() + remark-gfm + rehypeHeadingSlugs + shared MDX component map (US00062)
 │   ├── PostBody.module.css      # Prose container styles — reading-width, line-height, reduced-motion safe (US00062)
+│   ├── RelatedPosts.tsx         # Server Component — "Bài viết liên quan" section; null when empty; consumes PostCard; same-category cards from getRelatedPosts() (US00067)
+│   ├── RelatedPosts.module.css  # Scoped grid styles for RelatedPosts; 2/3/responsive cols, token-based spacing (US00067)
 │   └── mdx/                     # MDX element→component map (React; kept out of lib/ per "no JSX in lib/" rule)
 │       ├── mdx-components.tsx   # getMdxComponents() — canonical map: img→next/image, h1–h4, table, ul/ol/li, blockquote, pre/code, a, ProductCard→MdxProductCard (US00062, US00063)
 │       └── mdx-components.module.css # Scoped styles for all MDX element overrides (US00062)
@@ -126,7 +128,7 @@ aff-store/
 │   ├── nav-items.ts     # NAV_ITEMS constant — the four primary nav routes (typed)
 │   ├── products.ts      # getAllProducts(), getProductBySlug(), getRelatedProducts() — calls assertAffiliateUrl() + assertCategoryRegistered() + images.length ≥ 1 at build time
 │   ├── filters.ts       # PRICE_BUCKETS, SORT_OPTIONS, getFilterOptions, parseFilterParams, serializeFilterParams, applyFilters, compareDefault, countActiveFilters (US00044)
-│   ├── posts.ts         # getAllPosts(), getPostBySlug() — reads content/posts/*.mdx; calls assertCategoryRegistered() per post at build time (US00065)
+│   ├── posts.ts         # getAllPosts(), getPostBySlug(), getRelatedPosts() — reads content/posts/*.mdx; calls assertCategoryRegistered() per post at build time (US00065, US00067)
 │   ├── post-filters.ts  # getPostFilterOptions, parsePostFilterParams, serializePostFilterParams, applyPostFilters, countActivePostFilters — URL-driven blog-listing filter helpers (post-shaped sibling of lib/filters.ts) (US00065)
 │   ├── site.ts          # SITE_NAME constant — shared site name used by Header, blog post byline, and any future surface (US00066)
 │   └── mdx-slug.ts      # createHeadingSlugger() (wraps github-slugger, fresh per-document) + rehypeHeadingSlugs rehype plugin — heading-slug chokepoint shared by PostBody (US00062) and TOC builder (US00068)

@@ -89,3 +89,12 @@ export function getPostBySlug(slug: string): Post | null {
   const posts = getAllPosts();
   return posts.find((p) => p.slug === slug) ?? null;
 }
+
+export function getRelatedPosts(
+  current: Post,
+  all: Post[] = getAllPosts(),
+): Post[] {
+  return all
+    .filter((p) => p.slug !== current.slug && p.category === current.category)
+    .slice(0, 3);
+}

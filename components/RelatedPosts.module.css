@@ -1,0 +1,37 @@
+/* RelatedPosts — US00067
+   Scoped grid styles for the "Bài viết liên quan" section on blog post pages.
+   Responsive: 2 cols < 768px · 3 cols ≥ 768px · capped at related-count ≥ 1280px. */
+
+.section {
+  margin-block-start: var(--space-xl);
+  padding-block-end: var(--space-xl);
+}
+
+.heading {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-block-end: var(--space-md);
+  color: var(--color-text);
+}
+
+/* Default: 2-column grid (< 768px) */
+.grid {
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* Tablet+: 3 columns (≥ 768px) */
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Desktop: cap at actual count, max 3 (≥ 1280px).
+   --related-count is set inline by the component (1–3). */
+@media (min-width: 1280px) {
+  .grid {
+    grid-template-columns: repeat(min(var(--related-count), 3), 1fr);
+  }
+}
