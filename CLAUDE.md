@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00065 (PostFilters + PostListingGrid + lib/post-filters.ts — blog listing left-panel category/tag filter with ShellLayout + Drawer)
+> Last updated: US00066 (app/bai-viet/[slug]/ — blog post detail page: page.tsx, not-found.tsx, post-detail.module.css; lib/site.ts SITE_NAME shared constant)
 
 ### Top-level layout
 
@@ -47,7 +47,11 @@ aff-store/
 │   │       └── category-page.module.css    # Page-scoped layout — heading + intro typography (US00045)
 │   ├── bai-viet/        # /bai-viet/ routes
 │   │   ├── page.tsx     # Blog listing — SSG, ShellLayout + PostFilters left panel + PostListingGrid; filter options derived at build time (US00064, US00065)
-│   │   └── page.module.css # Page heading + grid skeleton styles (US00064)
+│   │   ├── page.module.css # Page heading + grid skeleton styles (US00064)
+│   │   └── [slug]/      # Dynamic blog-post segment
+│   │       ├── page.tsx                    # Blog post detail — SSG per slug, generateStaticParams + notFound(), hero + h1 + date/byline + AffiliateDisclosure + PostBody (US00066)
+│   │       ├── not-found.tsx               # Vietnamese 404 for unknown post slugs (US00066)
+│   │       └── post-detail.module.css      # Page-scoped layout — container, hero, header, meta; body typography owned by PostBody.module.css (US00066)
 │   └── san-pham/        # /san-pham/ routes
 │       ├── page.tsx     # Product listing — SSG, wires CatalogFilters + CatalogGrid + mobile trigger (US00043/44)
 │       ├── page.module.css # Page heading + grid skeleton styles (US00044)
@@ -124,6 +128,7 @@ aff-store/
 │   ├── filters.ts       # PRICE_BUCKETS, SORT_OPTIONS, getFilterOptions, parseFilterParams, serializeFilterParams, applyFilters, compareDefault, countActiveFilters (US00044)
 │   ├── posts.ts         # getAllPosts(), getPostBySlug() — reads content/posts/*.mdx; calls assertCategoryRegistered() per post at build time (US00065)
 │   ├── post-filters.ts  # getPostFilterOptions, parsePostFilterParams, serializePostFilterParams, applyPostFilters, countActivePostFilters — URL-driven blog-listing filter helpers (post-shaped sibling of lib/filters.ts) (US00065)
+│   ├── site.ts          # SITE_NAME constant — shared site name used by Header, blog post byline, and any future surface (US00066)
 │   └── mdx-slug.ts      # createHeadingSlugger() (wraps github-slugger, fresh per-document) + rehypeHeadingSlugs rehype plugin — heading-slug chokepoint shared by PostBody (US00062) and TOC builder (US00068)
 ├── static/              # Static assets served at /static/*
 │   └── images/{products,blog}/
@@ -175,7 +180,7 @@ aff-store/
 | `/chinh-sach-bao-mat`  | `app/chinh-sach-bao-mat/page.tsx` ✅ |
 | `/cong-bo-tiep-thi-lien-ket` | `app/cong-bo-tiep-thi-lien-ket/page.tsx` ✅ |
 | `/bai-viet`            | `app/bai-viet/page.tsx` ✅         |
-| `/bai-viet/[slug]`     | `app/bai-viet/[slug]/page.tsx`     |
+| `/bai-viet/[slug]`     | `app/bai-viet/[slug]/page.tsx` ✅  |
 | `/ve-chung-toi`        | `app/ve-chung-toi/page.tsx`        |
 | `/sitemap.xml`         | `app/sitemap.ts`                   |
 | `/robots.txt`          | `app/robots.ts`                    |

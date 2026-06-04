@@ -1,0 +1,79 @@
+/* ==========================================================================
+   Blog post detail page layout — F0006 / US00066
+   --------------------------------------------------------------------------
+   Single reading-width column with a left-panel slot reserved for US00068 TOC.
+   Page chrome only — body typography is owned by PostBody.module.css (US00062).
+   ========================================================================== */
+
+.container {
+  max-width: var(--max-width, 1280px);
+  margin-inline: auto;
+  padding-inline: var(--spacing-md);
+  padding-block: var(--spacing-xl);
+}
+
+/* --- article reading column ------------------------------------------------ */
+
+.post {
+  max-width: 760px;
+  margin-inline: auto;
+}
+
+/* --- hero image ------------------------------------------------------------ */
+
+.hero {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-xl);
+  background: var(--color-bg-secondary);
+}
+
+.heroImg {
+  object-fit: cover;
+}
+
+/* --- post header ----------------------------------------------------------- */
+
+.postHeader {
+  margin-bottom: var(--spacing-xl);
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--color-text);
+  margin: 0 0 var(--spacing-md);
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: 2.5rem;
+  }
+}
+
+/* --- meta row: date + byline ----------------------------------------------- */
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.byline::before {
+  content: "·";
+  margin-right: var(--spacing-sm);
+}
+
+/* --- body prose wrapper ---------------------------------------------------- */
+
+.prose {
+  margin-top: var(--spacing-xl);
+}
