@@ -7,7 +7,7 @@ import { TableOfContents } from "@/components/TableOfContents";
 import { getAllPosts, getPostBySlug, getRelatedPosts } from "@/lib/posts";
 import { RelatedPosts } from "@/components/RelatedPosts";
 import { extractToc } from "@/lib/toc";
-import { formatPostDate } from "@/lib/format";
+import { formatPostDate, readingTimeVi } from "@/lib/format";
 import { SITE_NAME } from "@/lib/site";
 import styles from "./post-detail.module.css";
 
@@ -68,6 +68,7 @@ export default async function PostDetailPage({ params }: PageProps) {
           <p className={styles.meta}>
             <time dateTime={post.publishedAt}>{formatPostDate(post.publishedAt)}</time>
             <span className={styles.byline}>{SITE_NAME}</span>
+            <span className={styles.readTime}>{readingTimeVi(post.content)}</span>
           </p>
         </header>
 
