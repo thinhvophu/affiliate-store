@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00067 (components/RelatedPosts.tsx + RelatedPosts.module.css — related posts section; lib/posts.ts getRelatedPosts())
+> Last updated: US00068 (components/TableOfContents.tsx + TableOfContents.module.css — sticky TOC; lib/toc.ts extractToc() + TocEntry)
 
 ### Top-level layout
 
@@ -49,9 +49,9 @@ aff-store/
 │   │   ├── page.tsx     # Blog listing — SSG, ShellLayout + PostFilters left panel + PostListingGrid; filter options derived at build time (US00064, US00065)
 │   │   ├── page.module.css # Page heading + grid skeleton styles (US00064)
 │   │   └── [slug]/      # Dynamic blog-post segment
-│   │       ├── page.tsx                    # Blog post detail — SSG per slug, generateStaticParams + notFound(), hero + h1 + date/byline + AffiliateDisclosure + PostBody (US00066)
+│   │       ├── page.tsx                    # Blog post detail — SSG per slug, generateStaticParams + notFound(), optional two-column shell (TOC left + article right), hero + h1 + date/byline + AffiliateDisclosure + PostBody (US00066, US00068)
 │   │       ├── not-found.tsx               # Vietnamese 404 for unknown post slugs (US00066)
-│   │       └── post-detail.module.css      # Page-scoped layout — container, hero, header, meta; body typography owned by PostBody.module.css (US00066)
+│   │       └── post-detail.module.css      # Page-scoped layout — .container/.postCentered (no TOC) + .shellWithToc/.tocPanel/.post (with TOC); hero, header, meta; body typography owned by PostBody.module.css (US00066, US00068)
 │   └── san-pham/        # /san-pham/ routes
 │       ├── page.tsx     # Product listing — SSG, wires CatalogFilters + CatalogGrid + mobile trigger (US00043/44)
 │       ├── page.module.css # Page heading + grid skeleton styles (US00044)
@@ -111,6 +111,8 @@ aff-store/
 │   ├── PostBody.module.css      # Prose container styles — reading-width, line-height, reduced-motion safe (US00062)
 │   ├── RelatedPosts.tsx         # Server Component — "Bài viết liên quan" section; null when empty; consumes PostCard; same-category cards from getRelatedPosts() (US00067)
 │   ├── RelatedPosts.module.css  # Scoped grid styles for RelatedPosts; 2/3/responsive cols, token-based spacing (US00067)
+│   ├── TableOfContents.tsx      # Server Component — left-panel TOC for blog post detail; renders <nav> with h2/h3 entries from TocEntry[]; returns null when empty (US00068)
+│   ├── TableOfContents.module.css # Sticky positioning (top: header+gap), max-height + overflow-y:auto, h3 indent, hover accent; hidden on mobile via parent .tocPanel CSS (US00068)
 │   └── mdx/                     # MDX element→component map (React; kept out of lib/ per "no JSX in lib/" rule)
 │       ├── mdx-components.tsx   # getMdxComponents() — canonical map: img→next/image, h1–h4, table, ul/ol/li, blockquote, pre/code, a, ProductCard→MdxProductCard (US00062, US00063)
 │       └── mdx-components.module.css # Scoped styles for all MDX element overrides (US00062)
@@ -130,6 +132,7 @@ aff-store/
 │   ├── filters.ts       # PRICE_BUCKETS, SORT_OPTIONS, getFilterOptions, parseFilterParams, serializeFilterParams, applyFilters, compareDefault, countActiveFilters (US00044)
 │   ├── posts.ts         # getAllPosts(), getPostBySlug(), getRelatedPosts() — reads content/posts/*.mdx; calls assertCategoryRegistered() per post at build time (US00065, US00067)
 │   ├── post-filters.ts  # getPostFilterOptions, parsePostFilterParams, serializePostFilterParams, applyPostFilters, countActivePostFilters — URL-driven blog-listing filter helpers (post-shaped sibling of lib/filters.ts) (US00065)
+│   ├── toc.ts           # extractToc(content: string): TocEntry[] — AST walk (remark-parse + unist-util-visit) on raw MDX string; slugs via createHeadingSlugger() from lib/mdx-slug.ts; depth 2+3 only; slug counter advances for all h1–h6 to stay in sync with rehypeHeadingSlugs (US00068)
 │   ├── site.ts          # SITE_NAME constant — shared site name used by Header, blog post byline, and any future surface (US00066)
 │   └── mdx-slug.ts      # createHeadingSlugger() (wraps github-slugger, fresh per-document) + rehypeHeadingSlugs rehype plugin — heading-slug chokepoint shared by PostBody (US00062) and TOC builder (US00068)
 ├── static/              # Static assets served at /static/*

@@ -77,6 +77,12 @@ html {
   text-size-adjust: 100%;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 body {
   font-family: var(--font-family-base);
   font-size: var(--font-size-base);

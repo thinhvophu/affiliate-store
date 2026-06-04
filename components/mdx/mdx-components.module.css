@@ -28,6 +28,7 @@
   color: var(--color-text, #111);
   border-bottom: 2px solid var(--color-primary, #ee4d2d);
   padding-bottom: 0.25rem;
+  scroll-margin-top: calc(var(--header-height, 64px) + 1rem);
 }
 
 .h3 {
@@ -36,6 +37,7 @@
   margin: 1.5rem 0 0.5rem;
   line-height: 1.35;
   color: var(--color-text, #111);
+  scroll-margin-top: calc(var(--header-height, 64px) + 1rem);
 }
 
 .h4 {
