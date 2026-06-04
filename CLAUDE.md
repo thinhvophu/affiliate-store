@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00064 (PostCard + PostListingClient + app/bai-viet/ route — blog post listing page with 12/page pagination)
+> Last updated: US00065 (PostFilters + PostListingGrid + lib/post-filters.ts — blog listing left-panel category/tag filter with ShellLayout + Drawer)
 
 ### Top-level layout
 
@@ -46,7 +46,7 @@ aff-store/
 │   │       ├── not-found.tsx               # Vietnamese 404 for unknown category slugs (US00045)
 │   │       └── category-page.module.css    # Page-scoped layout — heading + intro typography (US00045)
 │   ├── bai-viet/        # /bai-viet/ routes
-│   │   ├── page.tsx     # Blog listing — SSG, getAllPosts() sorted newest-first, Suspense-wrapped <PostListingClient> (US00064)
+│   │   ├── page.tsx     # Blog listing — SSG, ShellLayout + PostFilters left panel + PostListingGrid; filter options derived at build time (US00064, US00065)
 │   │   └── page.module.css # Page heading + grid skeleton styles (US00064)
 │   └── san-pham/        # /san-pham/ routes
 │       ├── page.tsx     # Product listing — SSG, wires CatalogFilters + CatalogGrid + mobile trigger (US00043/44)
@@ -99,6 +99,10 @@ aff-store/
 │   ├── PostCard.module.css      # Card chrome, 16:9 image frame, title clamp, summary clamp, meta flex row (US00064)
 │   ├── PostListingClient.tsx    # "use client" — paginated blog grid (PAGE_SIZE=12); reads ?page via useSearchParams; empty + out-of-range guards; renders <PostCard> + <Pagination> (US00064)
 │   ├── PostListingClient.module.css # 2/3/3-col responsive grid + .emptyState (US00064)
+│   ├── PostFilters.tsx          # "use client" — left-panel blog filter UI; category checkboxes (labels via getCategoryLabels()), tag checkboxes (free-form strings), active chips + "Xóa tất cả"; URL-driven via useSearchParams + useRouter.replace (US00065)
+│   ├── PostFilters.module.css   # Scoped styles for PostFilters — fieldsets, checkboxes, chips; mirrors CatalogFilters F0004 visual language (US00065)
+│   ├── PostListingGrid.tsx      # "use client" — filtered + paginated blog grid; reads URL via useSearchParams, runs parsePostFilterParams + applyPostFilters, paginates 12/page; distinct filtered-no-results state; renders PostCard + Pagination (US00065)
+│   ├── PostListingGrid.module.css # Grid (2/3/3-col responsive) + .emptyState + .noResults (US00065)
 │   ├── PostBody.tsx             # Async Server Component — evaluates Post.content string via @mdx-js/mdx evaluate() + remark-gfm + rehypeHeadingSlugs + shared MDX component map (US00062)
 │   ├── PostBody.module.css      # Prose container styles — reading-width, line-height, reduced-motion safe (US00062)
 │   └── mdx/                     # MDX element→component map (React; kept out of lib/ per "no JSX in lib/" rule)
@@ -118,7 +122,8 @@ aff-store/
 │   ├── nav-items.ts     # NAV_ITEMS constant — the four primary nav routes (typed)
 │   ├── products.ts      # getAllProducts(), getProductBySlug(), getRelatedProducts() — calls assertAffiliateUrl() + assertCategoryRegistered() + images.length ≥ 1 at build time
 │   ├── filters.ts       # PRICE_BUCKETS, SORT_OPTIONS, getFilterOptions, parseFilterParams, serializeFilterParams, applyFilters, compareDefault, countActiveFilters (US00044)
-│   ├── posts.ts         # getAllPosts(), getPostBySlug() — reads content/posts/*.mdx
+│   ├── posts.ts         # getAllPosts(), getPostBySlug() — reads content/posts/*.mdx; calls assertCategoryRegistered() per post at build time (US00065)
+│   ├── post-filters.ts  # getPostFilterOptions, parsePostFilterParams, serializePostFilterParams, applyPostFilters, countActivePostFilters — URL-driven blog-listing filter helpers (post-shaped sibling of lib/filters.ts) (US00065)
 │   └── mdx-slug.ts      # createHeadingSlugger() (wraps github-slugger, fresh per-document) + rehypeHeadingSlugs rehype plugin — heading-slug chokepoint shared by PostBody (US00062) and TOC builder (US00068)
 ├── static/              # Static assets served at /static/*
 │   └── images/{products,blog}/
@@ -154,6 +159,7 @@ aff-store/
 - **Prices** are formatted in one place: `lib/format.ts`. Every product surface (`<ProductCard />`, the detail page CTA price, the related-products row, future homepage featured picks) renders prices via `formatVnd(amount)`. No file outside `lib/format.ts` may use `Intl.NumberFormat`, `toLocaleString`, or hand-rolled `"₫"` concatenation on a price value. Switching to `Intl.NumberFormat` later would re-introduce ICU-version drift between build environments; if a future change is needed, edit `lib/format.ts` only.
 - **Dates** are formatted in one place: `lib/format.ts`. Every blog surface (listing item, post header, related-post card) renders post dates via `formatPostDate(iso)`. No file outside `lib/format.ts` may call `toLocaleDateString`, `Intl.DateTimeFormat`, or hand-roll a `tháng …` string on a post date. Same SSG-determinism rationale as `formatVnd` — ICU output can drift between Node/Vercel build pools.
 - **Catalog filter state** lives **in the URL** (`?category=`, `?brand=`, `?price=`, `?sort=`). The URL is the only source of truth — no local state, no Context, no `localStorage`. The `<CatalogFilters />` reader (`useSearchParams()`) and writer (`useRouter().replace(...)`) round-trip values through `lib/filters.ts`. Unknown values are silently ignored. Category display labels for the filter UI come from `getCategoryLabels()` in `lib/categories.ts`.
+- **Blog listing filter state** follows the same URL-as-source-of-truth pattern using `?category=` + `?tag=` (comma-separated multi-value), round-tripped through `lib/post-filters.ts`. Category labels reuse `lib/categories.ts` (`getCategoryLabels()`); tags are free-form strings shown as-is (no registry). Post categories share the product taxonomy in `lib/categories.ts` — `lib/posts.ts` calls `assertCategoryRegistered()` per post at build time so an unregistered post category fails `next build` with the offending post slug named.
 - **Blog MDX bodies render through `<PostBody>`** via `@mdx-js/mdx` `evaluate()`. The element/component map lives in one place (`components/mdx/mdx-components.tsx`); the root `mdx-components.tsx` re-exports it. Inline MDX images go through `next/image` (`<Image fill>` + aspect wrapper). New MDX components register in the shared map only (`components/mdx/mdx-components.tsx`). The `next.config.ts` global plugin list uses the string form `"remark-gfm"` (Turbopack-safe); the `rehypeHeadingSlugs` plugin is local to `PostBody`'s `evaluate()` call and is **not** in the global list.
 - **MDX inline product cards:** Authors type `<ProductCard slug="…" />` in `.mdx` posts. The map key `ProductCard` resolves to `MdxProductCard` (the slug adapter in `components/MdxProductCard.tsx`), **not** the prop-based `@/components/ProductCard` (which takes `{ product: Product }`). The adapter calls `getProductBySlug` at build time and throws a slug-named `Error` on miss so `next build` fails loudly. No prop union, no name collision between the two identifiers.
 - **Heading slugs for MDX bodies** come from `lib/mdx-slug.ts`. No other file may call `github-slugger` or hand-roll heading slugs; `createHeadingSlugger()` returns a fresh per-document instance (so dedupe state doesn't leak across posts), and `rehypeHeadingSlugs` uses it to assign `id` attributes. US00068's TOC builder imports `createHeadingSlugger` from the same file — identical slugs by construction.

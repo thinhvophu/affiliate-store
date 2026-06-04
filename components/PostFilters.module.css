@@ -1,0 +1,123 @@
+/* ==========================================================================
+   PostFilters — left-panel filter UI (US00065)
+   Mirrors CatalogFilters visual language (F0004)
+   ========================================================================== */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* Active filter status row */
+.status {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border-hairline);
+}
+
+.statusRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+}
+
+.statusCount {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.clearAll {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.875rem;
+  color: var(--color-primary);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.clearAll:hover {
+  opacity: 0.8;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: #fff3f0;
+  border: 1px solid var(--color-primary);
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  color: var(--color-primary);
+  cursor: pointer;
+  min-height: 28px;
+  white-space: nowrap;
+}
+
+.chip:hover {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+/* Filter groups */
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.legend {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-xs);
+  padding: 0;
+  display: block;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 0.875rem;
+  color: var(--color-text);
+  cursor: pointer;
+  min-height: 44px;
+  padding-block: 4px;
+}
+
+.option input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+  accent-color: var(--color-primary);
+}
+
+.option:hover span {
+  color: var(--color-primary);
+}
+
+.empty {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
