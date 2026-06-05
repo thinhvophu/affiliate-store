@@ -62,6 +62,34 @@ export function formatPostDate(iso: string): string {
   return `${day} tháng ${month}, ${year}`;
 }
 
+const WORDS_PER_MINUTE = 200;
+
+function countWords(content: string): number {
+  const stripped = content
+    .replace(/```[\s\S]*?```/g, "")
+    .replace(/<[^>]+>/g, "")
+    .replace(/!\[.*?\]\(.*?\)/g, "")
+    .replace(/\[.*?\]\(.*?\)/g, "")
+    .replace(/[#*_`>~\-|]/g, " ");
+  return stripped.split(/\s+/).filter(Boolean).length;
+}
+
+/**
+ * Estimate read time from a post's raw MDX body and render it in Vietnamese,
+ * e.g. "5 phút đọc". Always returns at least "1 phút đọc" for non-empty bodies.
+ *
+ * SSG determinism: no Intl, no locale APIs — byte-identical across build pools.
+ *
+ * @example
+ *   readingTimeVi("…400 words…") // "2 phút đọc"
+ *   readingTimeVi("")            // "1 phút đọc"
+ */
+export function readingTimeVi(content: string): string {
+  const words = countWords(content);
+  const minutes = Math.max(1, Math.round(words / WORDS_PER_MINUTE));
+  return `${minutes} phút đọc`;
+}
+
 export function formatVnd(amount: number): string {
   const rounded = Math.round(amount);
 

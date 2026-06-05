@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00068 (components/TableOfContents.tsx + TableOfContents.module.css — sticky TOC; lib/toc.ts extractToc() + TocEntry)
+> Last updated: US00069 (lib/format.ts readingTimeVi() — read-time estimate helper; wired into PostCard + bai-viet/[slug]/page.tsx; vitest setup)
 
 ### Top-level layout
 
@@ -126,7 +126,7 @@ aff-store/
 │   ├── breakpoints.ts   # BREAKPOINT_TABLET_PX / BREAKPOINT_DESKTOP_PX / MOBILE_MEDIA_QUERY — JS mirror of globals.css tokens (US00025)
 │   ├── categories.ts    # CATEGORIES map + getCategoryMeta + assertCategoryRegistered (US00045)
 │   ├── disclosures.ts   # AFFILIATE_DISCLOSURE_VI constant — shared with F0005 page + F0006 posts (US00022)
-│   ├── format.ts        # formatVnd() + formatPostDate() — single chokepoints for VN price & date rendering (US00041, US00061)
+│   ├── format.ts        # formatVnd() + formatPostDate() + readingTimeVi() — single chokepoints for VN price, date & read-time rendering (US00041, US00061, US00069)
 │   ├── nav-items.ts     # NAV_ITEMS constant — the four primary nav routes (typed)
 │   ├── products.ts      # getAllProducts(), getProductBySlug(), getRelatedProducts() — calls assertAffiliateUrl() + assertCategoryRegistered() + images.length ≥ 1 at build time
 │   ├── filters.ts       # PRICE_BUCKETS, SORT_OPTIONS, getFilterOptions, parseFilterParams, serializeFilterParams, applyFilters, compareDefault, countActiveFilters (US00044)
@@ -168,6 +168,7 @@ aff-store/
 - **Categories are registered.** Every distinct `product.category` must have an entry in `lib/categories.ts` (slug + Vietnamese display name + 100–200 word intro + ≤160 char meta description). The product loader calls `assertCategoryRegistered()` at build time and fails with the offending slug if a category is missing. No file outside `lib/categories.ts` may parse, normalize, or ad-hoc look up category metadata.
 - **Prices** are formatted in one place: `lib/format.ts`. Every product surface (`<ProductCard />`, the detail page CTA price, the related-products row, future homepage featured picks) renders prices via `formatVnd(amount)`. No file outside `lib/format.ts` may use `Intl.NumberFormat`, `toLocaleString`, or hand-rolled `"₫"` concatenation on a price value. Switching to `Intl.NumberFormat` later would re-introduce ICU-version drift between build environments; if a future change is needed, edit `lib/format.ts` only.
 - **Dates** are formatted in one place: `lib/format.ts`. Every blog surface (listing item, post header, related-post card) renders post dates via `formatPostDate(iso)`. No file outside `lib/format.ts` may call `toLocaleDateString`, `Intl.DateTimeFormat`, or hand-roll a `tháng …` string on a post date. Same SSG-determinism rationale as `formatVnd` — ICU output can drift between Node/Vercel build pools.
+- **Read-time estimates** are computed in one place: `lib/format.ts`. Every blog surface that shows a read-time chip calls `readingTimeVi(content)`. No file outside `lib/format.ts` may compute word counts or format `"N phút đọc"` strings. The helper strips code blocks, inline JSX, and markdown image syntax before counting words; rate is 200 WPM; result is clamped to a 1-minute floor. No `Intl`, no locale APIs — deterministic across build pools (US00069).
 - **Catalog filter state** lives **in the URL** (`?category=`, `?brand=`, `?price=`, `?sort=`). The URL is the only source of truth — no local state, no Context, no `localStorage`. The `<CatalogFilters />` reader (`useSearchParams()`) and writer (`useRouter().replace(...)`) round-trip values through `lib/filters.ts`. Unknown values are silently ignored. Category display labels for the filter UI come from `getCategoryLabels()` in `lib/categories.ts`.
 - **Blog listing filter state** follows the same URL-as-source-of-truth pattern using `?category=` + `?tag=` (comma-separated multi-value), round-tripped through `lib/post-filters.ts`. Category labels reuse `lib/categories.ts` (`getCategoryLabels()`); tags are free-form strings shown as-is (no registry). Post categories share the product taxonomy in `lib/categories.ts` — `lib/posts.ts` calls `assertCategoryRegistered()` per post at build time so an unregistered post category fails `next build` with the offending post slug named.
 - **Blog MDX bodies render through `<PostBody>`** via `@mdx-js/mdx` `evaluate()`. The element/component map lives in one place (`components/mdx/mdx-components.tsx`); the root `mdx-components.tsx` re-exports it. Inline MDX images go through `next/image` (`<Image fill>` + aspect wrapper). New MDX components register in the shared map only (`components/mdx/mdx-components.tsx`). The `next.config.ts` global plugin list uses the string form `"remark-gfm"` (Turbopack-safe); the `rehypeHeadingSlugs` plugin is local to `PostBody`'s `evaluate()` call and is **not** in the global list.

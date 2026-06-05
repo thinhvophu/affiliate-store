@@ -113,6 +113,11 @@
   margin-right: var(--spacing-sm);
 }
 
+.readTime::before {
+  content: "·";
+  margin-right: var(--spacing-sm);
+}
+
 /* --- body prose wrapper ---------------------------------------------------- */
 
 .prose {
