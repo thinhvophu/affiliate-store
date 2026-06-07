@@ -110,6 +110,7 @@ export const CATEGORIES: Record<CategorySlug, CategoryMeta> = {
     metaDescription:
       "Ghế gaming ergonomic giá tốt — so sánh chất liệu, khả năng điều chỉnh và link mua Shopee tiếp thị liên kết.",
   },
+
 };
 
 export function getCategoryMeta(slug: string): CategoryMeta | undefined {

@@ -6,6 +6,7 @@ import {
   FeaturedProducts,
   MAX_FEATURED_PRODUCTS,
 } from "@/components/FeaturedProducts";
+import { CategoryHighlights } from "@/components/CategoryHighlights";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
@@ -26,7 +27,7 @@ export default function HomePage() {
     <div className={styles.container}>
       <HomeHero />
       <FeaturedProducts products={featured} />
-      {/* US00083 placeholder: <CategoryHighlights /> */}
+      <CategoryHighlights />
       {/* US00084 placeholder: <LatestPosts /> */}
     </div>
   );
