@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { SITE_NAME } from "@/lib/site";
+import { getAllProducts } from "@/lib/products";
 import HomeHero from "@/components/HomeHero";
+import {
+  FeaturedProducts,
+  MAX_FEATURED_PRODUCTS,
+} from "@/components/FeaturedProducts";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
@@ -13,10 +18,14 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
+  const featured = getAllProducts()
+    .filter((p) => p.featured)
+    .slice(0, MAX_FEATURED_PRODUCTS);
+
   return (
     <div className={styles.container}>
       <HomeHero />
-      {/* US00082 placeholder: <FeaturedProducts /> */}
+      <FeaturedProducts products={featured} />
       {/* US00083 placeholder: <CategoryHighlights /> */}
       {/* US00084 placeholder: <LatestPosts /> */}
     </div>
