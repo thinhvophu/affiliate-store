@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00069 (lib/format.ts readingTimeVi() — read-time estimate helper; wired into PostCard + bai-viet/[slug]/page.tsx; vitest setup)
+> Last updated: US00081 (Homepage shell — app/page.tsx hero + baseline metadata; components/HomeHero.tsx + HomeHero.module.css; app/page.module.css full-width container)
 
 ### Top-level layout
 
@@ -72,7 +72,8 @@ Living map of the repository. **Update this section** whenever a story adds/move
 aff-store/
 ├── app/                 # Next.js App Router (routes, layouts, route handlers)
 │   ├── layout.tsx       # Root layout — <html lang="vi">, imports globals.css, mounts <SpeedInsights />
-│   ├── page.tsx         # Homepage (/)
+│   ├── page.tsx         # Homepage (/) — Hero shell + baseline metadata (US00081); full-width, no ShellLayout; future US00082–84 sections compose here
+│   ├── page.module.css  # Full-width .container (max-width, centered, horizontal padding, mobile→desktop breakpoints) (US00081)
 │   ├── chinh-sach-bao-mat/  # /chinh-sach-bao-mat/ route
 │   │   ├── page.tsx                        # Privacy Policy — Static Server Component; Vietnamese legal copy (US00052)
 │   │   └── chinh-sach-bao-mat.module.css   # Page-scoped prose layout (US00052)
@@ -137,6 +138,8 @@ aff-store/
 │   ├── RelatedPosts.module.css  # Scoped grid styles for RelatedPosts (US00067)
 │   ├── TableOfContents.tsx      # Server Component — sticky left-panel TOC; renders null when entries empty (US00068)
 │   ├── TableOfContents.module.css # Sticky + max-height/overflow, h3 indent, primary hover accent (US00068)
+│   ├── HomeHero.tsx             # Server Component — homepage hero: eyebrow + h1 + tagline + two CTA Links (US00081)
+│   ├── HomeHero.module.css      # Scoped styles — .hero/.eyebrow/.heading/.tagline/.ctaGroup/.ctaPrimary/.ctaSecondary; token-based; 768px + 1280px breakpoints (US00081)
 │   └── mdx/                     # MDX element→component map
 │       ├── mdx-components.tsx   # getMdxComponents() — img→next/image, heading/table/list/code/a overrides, ProductCard→MdxProductCard (US00062, US00063)
 │       └── mdx-components.module.css # Scoped styles for MDX element overrides (US00062)

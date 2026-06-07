@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00069 (lib/format.ts readingTimeVi() — read-time estimate helper; wired into PostCard + bai-viet/[slug]/page.tsx; vitest setup)
+> Last updated: US00081 (Homepage shell — app/page.tsx hero + baseline metadata; components/HomeHero.tsx + HomeHero.module.css; app/page.module.css full-width container)
 
 ### Top-level layout
 
@@ -33,7 +33,8 @@ aff-store/
 ├── app/                 # Next.js App Router (routes, layouts, route handlers)
 │   ├── layout.tsx       # Root layout — <html lang="vi">, imports globals.css, mounts <SkipLink />, <Header />, <main>, <Footer />, <SpeedInsights />
 │   ├── globals.css      # Global CSS reset + design tokens (US00016 + F0002 surface tokens)
-│   ├── page.tsx         # Homepage (/)
+│   ├── page.tsx         # Homepage (/) — Hero shell + baseline metadata (US00081); full-width, no ShellLayout; future US00082–84 sections compose here
+│   ├── page.module.css  # Full-width .container (max-width, centered, horizontal padding, mobile→desktop breakpoints) (US00081)
 │   ├── chinh-sach-bao-mat/  # /chinh-sach-bao-mat/ route
 │   │   ├── page.tsx                        # Privacy Policy — Static Server Component; metadata export; 6-section Vietnamese legal copy (US00052)
 │   │   └── chinh-sach-bao-mat.module.css   # Page-scoped prose layout — reading-width container, token-based accents (US00052)
@@ -113,6 +114,8 @@ aff-store/
 │   ├── RelatedPosts.module.css  # Scoped grid styles for RelatedPosts; 2/3/responsive cols, token-based spacing (US00067)
 │   ├── TableOfContents.tsx      # Server Component — left-panel TOC for blog post detail; renders <nav> with h2/h3 entries from TocEntry[]; returns null when empty (US00068)
 │   ├── TableOfContents.module.css # Sticky positioning (top: header+gap), max-height + overflow-y:auto, h3 indent, hover accent; hidden on mobile via parent .tocPanel CSS (US00068)
+│   ├── HomeHero.tsx             # Server Component — homepage hero section: eyebrow + h1 + tagline + two CTA Links (/san-pham/, /bai-viet/); imports SITE_NAME (US00081)
+│   ├── HomeHero.module.css      # Scoped styles — .hero, .eyebrow, .heading, .tagline, .ctaGroup, .ctaPrimary, .ctaSecondary; token-based; reduced-motion gate; 768px + 1280px breakpoints (US00081)
 │   └── mdx/                     # MDX element→component map (React; kept out of lib/ per "no JSX in lib/" rule)
 │       ├── mdx-components.tsx   # getMdxComponents() — canonical map: img→next/image, h1–h4, table, ul/ol/li, blockquote, pre/code, a, ProductCard→MdxProductCard (US00062, US00063)
 │       └── mdx-components.module.css # Scoped styles for all MDX element overrides (US00062)
