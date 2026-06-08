@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00083 (components/CategoryHighlights.tsx — homepage "Danh mục" section; derives category tiles from lib/categories.ts; F0008)
+> Last updated: US00084 (components/LatestPosts.tsx — homepage "Bài viết mới nhất" strip; renders up to 4 newest posts via PostCard; null when no posts; F0008)
 
 ### Top-level layout
 
@@ -33,7 +33,7 @@ aff-store/
 ├── app/                 # Next.js App Router (routes, layouts, route handlers)
 │   ├── layout.tsx       # Root layout — <html lang="vi">, imports globals.css, mounts <SkipLink />, <Header />, <main>, <Footer />, <SpeedInsights />
 │   ├── globals.css      # Global CSS reset + design tokens (US00016 + F0002 surface tokens)
-│   ├── page.tsx         # Homepage (/) — Server Component; hero (US00081) + FeaturedProducts (US00082) + CategoryHighlights (US00083); full-width, no ShellLayout; US00084 section composes here
+│   ├── page.tsx         # Homepage (/) — Server Component; hero (US00081) + FeaturedProducts (US00082) + CategoryHighlights (US00083) + LatestPosts (US00084); full-width, no ShellLayout
 │   ├── page.module.css  # Full-width .container (max-width, centered, horizontal padding, mobile→desktop breakpoints) (US00081)
 │   ├── chinh-sach-bao-mat/  # /chinh-sach-bao-mat/ route
 │   │   ├── page.tsx                        # Privacy Policy — Static Server Component; metadata export; 6-section Vietnamese legal copy (US00052)
@@ -120,6 +120,8 @@ aff-store/
 │   ├── FeaturedProducts.module.css # Scoped styles — 2/3/4 responsive grid, heading row, "Xem tất cả" link, empty state (US00082)
 │   ├── CategoryHighlights.tsx   # Server Component — homepage "Danh mục" section; renders one link per registered category from lib/categories.ts using getCategoryLabels() (US00083)
 │   ├── CategoryHighlights.module.css # Scoped styles for CategoryHighlights — responsive 2/3/5-col grid of category tiles, token-based hover/focus (US00083)
+│   ├── LatestPosts.tsx          # Server Component — homepage "Bài viết mới nhất" strip; renders up to 4 newest posts via <PostCard>; null when no posts (US00084)
+│   └── LatestPosts.module.css   # Section chrome + header (heading/Xem-tất-cả link) + responsive grid (2 cols mobile/tablet, up to 4 cols desktop) (US00084)
 │   └── mdx/                     # MDX element→component map (React; kept out of lib/ per "no JSX in lib/" rule)
 │       ├── mdx-components.tsx   # getMdxComponents() — canonical map: img→next/image, h1–h4, table, ul/ol/li, blockquote, pre/code, a, ProductCard→MdxProductCard (US00062, US00063)
 │       └── mdx-components.module.css # Scoped styles for all MDX element overrides (US00062)
