@@ -4,9 +4,13 @@ import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
 import { CONTACT_EMAIL } from "@/lib/site";
 import styles from "./ve-chung-toi.module.css";
 
-// Placeholder — final SEO metadata is owned by US00103.
 export const metadata: Metadata = {
   title: "Về chúng tôi | aff-store",
+  description:
+    "aff-store là trang đánh giá và gợi ý mua sắm thiết bị gaming, công nghệ tại Việt Nam. Tìm hiểu sứ mệnh, đội ngũ và cách chúng tôi chọn sản phẩm để giới thiệu.",
+  alternates: {
+    canonical: `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/ve-chung-toi/`,
+  },
 };
 
 export default function VeChungToiPage() {
