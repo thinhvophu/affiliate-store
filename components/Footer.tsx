@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { AFFILIATE_DISCLOSURE_VI } from "@/lib/disclosures";
+import { CONTACT_EMAIL } from "@/lib/site";
 import styles from "./Footer.module.css";
-
-const CONTACT_EMAIL = "ttln1201@gmail.com";
 
 export function Footer() {
   const year = new Date().getUTCFullYear();

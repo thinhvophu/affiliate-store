@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { CONTACT_EMAIL } from "@/lib/site";
 import styles from "./chinh-sach-bao-mat.module.css";
 
 export const metadata: Metadata = {
@@ -10,8 +11,6 @@ export const metadata: Metadata = {
     canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/chinh-sach-bao-mat/`,
   },
 };
-
-const CONTACT_EMAIL = "ttln1201@gmail.com";
 
 export default function ChinhSachBaoMatPage() {
   return (

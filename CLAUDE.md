@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00101 (app/ve-chung-toi/page.tsx — About page route, shell & editorial content; F0010)
+> Last updated: US00102 (lib/site.ts — CONTACT_EMAIL extracted; ve-chung-toi/page.tsx — disclosure + contact blocks; F0010)
 
 ### Top-level layout
 
@@ -61,8 +61,8 @@ aff-store/
 │   │       ├── not-found.tsx               # Vietnamese 404 for unknown product slugs (US00046)
 │   │       └── product-detail.module.css   # Page-scoped layout — 2-col grid ≥1024px, specs <dl>, CTA pill (US00046)
 │   └── ve-chung-toi/    # /ve-chung-toi/ route
-│       ├── page.tsx                # About page — Static Server Component; metadata export; single <h1>; 3 editorial Vietnamese sections (mission, who we are, how we pick products) (US00101)
-│       └── ve-chung-toi.module.css # Page-scoped prose layout — reading-width container, F0005 policy-page accent (US00101)
+│       ├── page.tsx                # About page — Static Server Component; metadata export; single <h1>; 3 editorial Vietnamese sections (mission, who we are, how we pick products); renders <AffiliateDisclosure /> + Liên hệ section sourcing CONTACT_EMAIL from lib/site.ts (US00101, US00102)
+│       └── ve-chung-toi.module.css # Page-scoped prose layout — reading-width container, F0005 policy-page accent (US00101, US00102)
 ├── components/          # Reusable React components (PascalCase.tsx; co-locate styles as <Name>.module.css)
 │   ├── Footer.tsx           # Server Component — 4-column footer, affiliate disclosure (US00022)
 │   ├── Footer.module.css    # Scoped styles for the Footer
@@ -145,7 +145,7 @@ aff-store/
 │   ├── posts.ts         # getAllPosts(), getPostBySlug(), getRelatedPosts() — reads content/posts/*.mdx; calls assertCategoryRegistered() per post at build time (US00065, US00067)
 │   ├── post-filters.ts  # getPostFilterOptions, parsePostFilterParams, serializePostFilterParams, applyPostFilters, countActivePostFilters — URL-driven blog-listing filter helpers (post-shaped sibling of lib/filters.ts) (US00065)
 │   ├── toc.ts           # extractToc(content: string): TocEntry[] — AST walk (remark-parse + unist-util-visit) on raw MDX string; slugs via createHeadingSlugger() from lib/mdx-slug.ts; depth 2+3 only; slug counter advances for all h1–h6 to stay in sync with rehypeHeadingSlugs (US00068)
-│   ├── site.ts          # SITE_NAME constant — shared site name used by Header, blog post byline, and any future surface (US00066)
+│   ├── site.ts          # SITE_NAME + CONTACT_EMAIL constants — shared site name and primary contact email used by Header, Footer, policy pages, and the About page (US00066, US00102)
 │   └── mdx-slug.ts      # createHeadingSlugger() (wraps github-slugger, fresh per-document) + rehypeHeadingSlugs rehype plugin — heading-slug chokepoint shared by PostBody (US00062) and TOC builder (US00068)
 ├── static/              # Static assets served at /static/*
 │   └── images/{products,blog}/
@@ -181,6 +181,7 @@ aff-store/
 - **Prices** are formatted in one place: `lib/format.ts`. Every product surface (`<ProductCard />`, the detail page CTA price, the related-products row, future homepage featured picks) renders prices via `formatVnd(amount)`. No file outside `lib/format.ts` may use `Intl.NumberFormat`, `toLocaleString`, or hand-rolled `"₫"` concatenation on a price value. Switching to `Intl.NumberFormat` later would re-introduce ICU-version drift between build environments; if a future change is needed, edit `lib/format.ts` only.
 - **Dates** are formatted in one place: `lib/format.ts`. Every blog surface (listing item, post header, related-post card) renders post dates via `formatPostDate(iso)`. No file outside `lib/format.ts` may call `toLocaleDateString`, `Intl.DateTimeFormat`, or hand-roll a `tháng …` string on a post date. Same SSG-determinism rationale as `formatVnd` — ICU output can drift between Node/Vercel build pools.
 - **Read-time estimates** are computed in one place: `lib/format.ts`. Every blog surface that shows a read-time chip calls `readingTimeVi(content)`. No file outside `lib/format.ts` may compute word counts or format `"N phút đọc"` strings. The helper strips code blocks, inline JSX, and markdown image syntax before counting words; rate is 200 WPM; result is clamped to a 1-minute floor. No `Intl`, no locale APIs — deterministic across build pools (US00069).
+- **Contact email lives in one place: `lib/site.ts` (`CONTACT_EMAIL`).** No file outside `lib/site.ts` may inline `ttln1201@gmail.com` or any future replacement — Footer, policy pages, and the About page all import the constant. Changing `CONTACT_EMAIL` in `lib/site.ts` propagates to all surfaces automatically.
 - **Catalog filter state** lives **in the URL** (`?category=`, `?brand=`, `?price=`, `?sort=`). The URL is the only source of truth — no local state, no Context, no `localStorage`. The `<CatalogFilters />` reader (`useSearchParams()`) and writer (`useRouter().replace(...)`) round-trip values through `lib/filters.ts`. Unknown values are silently ignored. Category display labels for the filter UI come from `getCategoryLabels()` in `lib/categories.ts`.
 - **Blog listing filter state** follows the same URL-as-source-of-truth pattern using `?category=` + `?tag=` (comma-separated multi-value), round-tripped through `lib/post-filters.ts`. Category labels reuse `lib/categories.ts` (`getCategoryLabels()`); tags are free-form strings shown as-is (no registry). Post categories share the product taxonomy in `lib/categories.ts` — `lib/posts.ts` calls `assertCategoryRegistered()` per post at build time so an unregistered post category fails `next build` with the offending post slug named.
 - **Blog MDX bodies render through `<PostBody>`** via `@mdx-js/mdx` `evaluate()`. The element/component map lives in one place (`components/mdx/mdx-components.tsx`); the root `mdx-components.tsx` re-exports it. Inline MDX images go through `next/image` (`<Image fill>` + aspect wrapper). New MDX components register in the shared map only (`components/mdx/mdx-components.tsx`). The `next.config.ts` global plugin list uses the string form `"remark-gfm"` (Turbopack-safe); the `rehypeHeadingSlugs` plugin is local to `PostBody`'s `evaluate()` call and is **not** in the global list.
