@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00084 (components/LatestPosts.tsx — homepage "Bài viết mới nhất" strip; renders up to 4 newest posts via PostCard; null when no posts; F0008)
+> Last updated: US00102 (lib/site.ts — CONTACT_EMAIL extracted; ve-chung-toi/page.tsx — disclosure + contact blocks; F0010)
 
 ### Top-level layout
 
@@ -93,8 +93,8 @@ aff-store/
 │   │       ├── not-found.tsx               # Vietnamese 404 for unknown product slugs (US00046)
 │   │       └── product-detail.module.css   # Page-scoped layout — 2-col grid ≥1024px, specs <dl>, CTA pill (US00046)
 │   └── ve-chung-toi/    # /ve-chung-toi/ route
-│       ├── page.tsx                # About page — Static Server Component; 3 editorial Vietnamese sections (US00101)
-│       └── ve-chung-toi.module.css # Page-scoped prose layout — reading-width container, F0005 accent (US00101)
+│       ├── page.tsx                # About page — Static Server Component; 3 editorial sections + <AffiliateDisclosure /> + Liên hệ section sourcing CONTACT_EMAIL from lib/site.ts (US00101, US00102)
+│       └── ve-chung-toi.module.css # Page-scoped prose layout — reading-width container, F0005 accent (US00101, US00102)
 ├── components/          # Reusable React components (PascalCase.tsx; co-locate styles as <Name>.module.css)
 │   ├── Footer.tsx           # Server Component — 4-column footer, affiliate disclosure (US00022)
 │   ├── Footer.module.css    # Scoped styles for the Footer
@@ -164,6 +164,7 @@ aff-store/
 │   ├── disclosures.ts   # AFFILIATE_DISCLOSURE_VI constant — shared with F0005 page + F0006 posts (US00022)
 │   ├── format.ts        # formatVnd() + formatPostDate() + readingTimeVi() — single chokepoints for VN price, date & read-time rendering (US00041, US00061, US00069)
 │   ├── nav-items.ts     # NAV_ITEMS constant — the four primary nav routes (typed)
+│   ├── site.ts          # SITE_NAME + CONTACT_EMAIL constants — shared site name and primary contact email used by Header, Footer, policy pages, and the About page (US00066, US00102)
 │   ├── products.ts      # getAllProducts(), getProductBySlug(), getRelatedProducts() — calls assertAffiliateUrl() + assertCategoryRegistered() + images.length ≥ 1 at build time
 │   ├── filters.ts       # PRICE_BUCKETS, SORT_OPTIONS, getFilterOptions, parseFilterParams, applyFilters, compareDefault (US00044)
 │   ├── posts.ts         # getAllPosts(), getPostBySlug(), getRelatedPosts() — reads content/posts/*.mdx (US00067)
@@ -199,6 +200,7 @@ aff-store/
 - **Affiliate URLs** are validated in one place: `lib/affiliate.ts` (`assertAffiliateUrl`). Raw `<a>` elements whose `href` targets a Shopee host (`shopee.vn`, `shopee.ee`, `shope.ee`) outside `<AffiliateLink>` are disallowed — block on review.
 - **Prices** are formatted in one place: `lib/format.ts`. Every product surface renders prices via `formatVnd(amount)`. No file outside `lib/format.ts` may use `Intl.NumberFormat`, `toLocaleString`, or hand-rolled `"₫"` concatenation on a price value.
 - **Dates** are formatted in one place: `lib/format.ts`. Every blog surface renders post dates via `formatPostDate(iso)`. No file outside `lib/format.ts` may call `toLocaleDateString`, `Intl.DateTimeFormat`, or hand-roll a `tháng …` string on a post date.
+- **Contact email lives in one place: `lib/site.ts` (`CONTACT_EMAIL`).** No file outside `lib/site.ts` may inline `ttln1201@gmail.com` — Footer, policy pages, and the About page all import the constant.
 - **Categories are registered.** Every distinct `product.category` must have an entry in `lib/categories.ts` (slug + Vietnamese display name + 100–200 word intro + ≤160 char meta description). The product loader calls `assertCategoryRegistered()` at build time and fails with the offending slug if a category is missing.
 - **Catalog filter state** lives in the URL (`?category=`, `?brand=`, `?price=`, `?sort=`) only — no local state, no Context, no `localStorage`. Round-trips through `lib/filters.ts`; unknown values silently ignored.
 - **Blog MDX bodies render through `<PostBody>`** via `@mdx-js/mdx` `evaluate()`. The element/component map lives in `components/mdx/mdx-components.tsx`; the root `mdx-components.tsx` re-exports it. New MDX components register in the shared map only.

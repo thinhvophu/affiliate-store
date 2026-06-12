@@ -1,4 +1,7 @@
+import Link from "next/link";
 import type { Metadata } from "next";
+import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
+import { CONTACT_EMAIL } from "@/lib/site";
 import styles from "./ve-chung-toi.module.css";
 
 // Placeholder — final SEO metadata is owned by US00103.
@@ -110,6 +113,33 @@ export default function VeChungToiPage() {
             đổi đáng kể, chúng tôi sẽ cập nhật lại bài viết và ghi rõ ngày cập nhật.
             Nếu bạn phát hiện một đề xuất đã lỗi thời hoặc chưa chính xác, rất mong
             nhận được phản hồi qua email liên hệ.
+          </p>
+        </section>
+
+        <section className={styles.section} aria-labelledby="sec-disclosure">
+          <h2 id="sec-disclosure" className={styles.sectionHeading}>
+            Công bố tiếp thị liên kết
+          </h2>
+          <AffiliateDisclosure />
+          <p className={styles.disclosureMore}>
+            Đọc đầy đủ tại{" "}
+            <Link href="/cong-bo-tiep-thi-lien-ket/" className={styles.internalLink}>
+              Công bố tiếp thị liên kết
+            </Link>
+            .
+          </p>
+        </section>
+
+        <section className={styles.section} aria-labelledby="sec-contact">
+          <h2 id="sec-contact" className={styles.sectionHeading}>
+            Liên hệ
+          </h2>
+          <p>
+            Mọi câu hỏi, góp ý, hay đề xuất sản phẩm, mời bạn gửi email cho chúng tôi tại{" "}
+            <a href={`mailto:${CONTACT_EMAIL}`} className={styles.internalLink}>
+              {CONTACT_EMAIL}
+            </a>
+            .
           </p>
         </section>
       </article>

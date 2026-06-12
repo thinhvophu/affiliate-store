@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { AFFILIATE_DISCLOSURE_VI } from "@/lib/disclosures";
+import { CONTACT_EMAIL } from "@/lib/site";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
@@ -101,10 +102,10 @@ export default function CongBoTiepThiLienKetPage() {
             của chúng tôi. Nếu bạn có câu hỏi về chương trình tiếp thị liên
             kết, vui lòng liên hệ qua email{" "}
             <a
-              href="mailto:ttln1201@gmail.com"
+              href={`mailto:${CONTACT_EMAIL}`}
               className={styles.internalLink}
             >
-              ttln1201@gmail.com
+              {CONTACT_EMAIL}
             </a>
             .
           </p>

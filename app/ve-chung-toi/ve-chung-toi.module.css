@@ -62,6 +62,23 @@
   margin-bottom: var(--spacing-xs);
 }
 
+.disclosureMore {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  margin: var(--spacing-sm) 0 0;
+}
+
+.internalLink {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.internalLink:hover {
+  text-decoration: none;
+}
+
 @media (min-width: 768px) {
   .container {
     padding: var(--spacing-2xl) var(--spacing-xl);
