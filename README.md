@@ -85,13 +85,16 @@ aff-store/
 │   │       ├── page.tsx                    # Category page — SSG per registered category (US00045)
 │   │       ├── not-found.tsx               # Vietnamese 404 for unknown category slugs (US00045)
 │   │       └── category-page.module.css    # Page-scoped layout — heading + intro typography (US00045)
-│   └── san-pham/        # /san-pham/ routes
-│       ├── page.tsx     # Product listing — SSG, wires CatalogFilters + CatalogGrid + mobile trigger (US00043/44)
-│       ├── page.module.css # Page heading + grid skeleton styles (US00044)
-│       └── [slug]/      # Dynamic product-detail segment
-│           ├── page.tsx                    # Product detail page — SSG per slug, generateStaticParams + notFound() (US00046)
-│           ├── not-found.tsx               # Vietnamese 404 for unknown product slugs (US00046)
-│           └── product-detail.module.css   # Page-scoped layout — 2-col grid ≥1024px, specs <dl>, CTA pill (US00046)
+│   ├── san-pham/        # /san-pham/ routes
+│   │   ├── page.tsx     # Product listing — SSG, wires CatalogFilters + CatalogGrid + mobile trigger (US00043/44)
+│   │   ├── page.module.css # Page heading + grid skeleton styles (US00044)
+│   │   └── [slug]/      # Dynamic product-detail segment
+│   │       ├── page.tsx                    # Product detail page — SSG per slug, generateStaticParams + notFound() (US00046)
+│   │       ├── not-found.tsx               # Vietnamese 404 for unknown product slugs (US00046)
+│   │       └── product-detail.module.css   # Page-scoped layout — 2-col grid ≥1024px, specs <dl>, CTA pill (US00046)
+│   └── ve-chung-toi/    # /ve-chung-toi/ route
+│       ├── page.tsx                # About page — Static Server Component; 3 editorial Vietnamese sections (US00101)
+│       └── ve-chung-toi.module.css # Page-scoped prose layout — reading-width container, F0005 accent (US00101)
 ├── components/          # Reusable React components (PascalCase.tsx; co-locate styles as <Name>.module.css)
 │   ├── Footer.tsx           # Server Component — 4-column footer, affiliate disclosure (US00022)
 │   ├── Footer.module.css    # Scoped styles for the Footer
@@ -214,7 +217,7 @@ aff-store/
 | `/cong-bo-tiep-thi-lien-ket` | `app/cong-bo-tiep-thi-lien-ket/page.tsx` ✅ |
 | `/bai-viet`            | `app/bai-viet/page.tsx` ✅         |
 | `/bai-viet/[slug]`     | `app/bai-viet/[slug]/page.tsx` ✅  |
-| `/ve-chung-toi`        | `app/ve-chung-toi/page.tsx`        |
+| `/ve-chung-toi`        | `app/ve-chung-toi/page.tsx` ✅     |
 | `/sitemap.xml`         | `app/sitemap.ts`                   |
 | `/robots.txt`          | `app/robots.ts`                    |
 
