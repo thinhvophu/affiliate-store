@@ -1,0 +1,73 @@
+.container {
+  padding: var(--spacing-xl) var(--spacing-md);
+}
+
+.article {
+  max-width: 72ch;
+  margin: 0 auto;
+}
+
+.heading {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 var(--spacing-md);
+  line-height: 1.2;
+}
+
+.lead {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--color-text);
+  margin: 0 0 var(--spacing-xl);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.section {
+  margin-top: var(--spacing-xl);
+}
+
+.sectionHeading {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 var(--spacing-md);
+  padding-left: var(--spacing-sm);
+  border-left: 3px solid var(--color-primary);
+  line-height: 1.4;
+}
+
+.section p {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--color-text);
+  margin: 0 0 var(--spacing-md);
+}
+
+.section p:last-child {
+  margin-bottom: 0;
+}
+
+.list {
+  margin: var(--spacing-sm) 0 var(--spacing-md) var(--spacing-lg);
+  padding: 0;
+  list-style: decimal;
+}
+
+.list li {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-xs);
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: var(--spacing-2xl) var(--spacing-xl);
+  }
+
+  .heading {
+    font-size: 2.25rem;
+  }
+}
