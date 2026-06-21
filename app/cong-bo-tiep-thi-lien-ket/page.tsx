@@ -5,7 +5,7 @@ import { CONTACT_EMAIL } from "@/lib/site";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
-  title: "Công bố tiếp thị liên kết | aff-store",
+  title: "Công bố tiếp thị liên kết",
   description:
     "aff-store sử dụng liên kết tiếp thị liên kết Shopee. Chúng tôi có thể nhận hoa hồng khi bạn mua hàng, không phát sinh thêm chi phí cho bạn. Tìm hiểu thêm về cam kết minh bạch của chúng tôi.",
   alternates: {

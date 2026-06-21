@@ -4,7 +4,7 @@ import { CONTACT_EMAIL } from "@/lib/site";
 import styles from "./chinh-sach-bao-mat.module.css";
 
 export const metadata: Metadata = {
-  title: "Chính sách bảo mật | aff-store",
+  title: "Chính sách bảo mật",
   description:
     "Tìm hiểu cách aff-store thu thập dữ liệu ẩn danh qua Google Analytics, sử dụng cookie, và liên kết đến dịch vụ bên thứ ba như Shopee và Google AdSense.",
   alternates: {

@@ -9,5 +9,8 @@ export default defineConfig({
   },
   test: {
     environment: "node",
+    env: {
+      NEXT_PUBLIC_SITE_URL: "https://example.com",
+    },
   },
 });
