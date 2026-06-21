@@ -5,7 +5,7 @@ import { CONTACT_EMAIL } from "@/lib/site";
 import styles from "./ve-chung-toi.module.css";
 
 export const metadata: Metadata = {
-  title: "Về chúng tôi | aff-store",
+  title: "Về chúng tôi",
   description:
     "aff-store là trang đánh giá và gợi ý mua sắm thiết bị gaming, công nghệ tại Việt Nam. Tìm hiểu sứ mệnh, đội ngũ và cách chúng tôi chọn sản phẩm để giới thiệu.",
   alternates: {

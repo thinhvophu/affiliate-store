@@ -25,7 +25,7 @@ export async function generateMetadata({
   // Use no-trailing-slash canonical (trailingSlash: false is the Next.js default).
   // Pages 2+ append ?page=N — handled client-side; metadata reflects page 1 canonical.
   return {
-    title: `${meta.name} | aff-store`,
+    title: meta.name,
     description: meta.metaDescription,
     alternates: { canonical: `/danh-muc/${meta.slug}` },
   };

@@ -24,14 +24,14 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00102 (lib/site.ts — CONTACT_EMAIL extracted; ve-chung-toi/page.tsx — disclosure + contact blocks; F0010)
+> Last updated: US00091 (lib/seo.ts — shared SEO helper; app/layout.tsx — root metadata; public/static/images/og-default.png; F0009)
 
 ### Top-level layout
 
 ```
 aff-store/
 ├── app/                 # Next.js App Router (routes, layouts, route handlers)
-│   ├── layout.tsx       # Root layout — <html lang="vi">, imports globals.css, mounts <SkipLink />, <Header />, <main>, <Footer />, <SpeedInsights />
+│   ├── layout.tsx       # Root layout — <html lang="vi">, imports globals.css, mounts <SkipLink />, <Header />, <main>, <Footer />, <SpeedInsights />; exports root `metadata` via `buildRootMetadata()` (metadataBase, title template, default OG/Twitter, default OG image) (US00091)
 │   ├── globals.css      # Global CSS reset + design tokens (US00016 + F0002 surface tokens)
 │   ├── page.tsx         # Homepage (/) — Server Component; hero (US00081) + FeaturedProducts (US00082) + CategoryHighlights (US00083) + LatestPosts (US00084); full-width, no ShellLayout
 │   ├── page.module.css  # Full-width .container (max-width, centered, horizontal padding, mobile→desktop breakpoints) (US00081)
@@ -132,7 +132,9 @@ aff-store/
 │   ├── products/        # *.json — one file per product (25 fixtures added in US00043; see Product JSON shape)
 │   └── posts/           # *.mdx — one file per blog post
 ├── public/              # Static assets served at the root (Next.js convention)
-│   └── static/images/products/ # Product images (established in US00043; referenced as /static/images/products/<slug>.jpg)
+│   └── static/images/
+│       ├── products/    # Product images (established in US00043; referenced as /static/images/products/<slug>.jpg)
+│       └── og-default.png # Site-wide default Open Graph image (1200×630); referenced by root metadata `openGraph.images` (US00091)
 ├── lib/                 # Pure utilities, data loaders, formatters (no React)
 │   ├── affiliate.ts     # Shopee affiliate-URL allow-list + assertAffiliateUrl helper (US00034)
 │   ├── breakpoints.ts   # BREAKPOINT_TABLET_PX / BREAKPOINT_DESKTOP_PX / MOBILE_MEDIA_QUERY — JS mirror of globals.css tokens (US00025)
@@ -146,6 +148,7 @@ aff-store/
 │   ├── post-filters.ts  # getPostFilterOptions, parsePostFilterParams, serializePostFilterParams, applyPostFilters, countActivePostFilters — URL-driven blog-listing filter helpers (post-shaped sibling of lib/filters.ts) (US00065)
 │   ├── toc.ts           # extractToc(content: string): TocEntry[] — AST walk (remark-parse + unist-util-visit) on raw MDX string; slugs via createHeadingSlugger() from lib/mdx-slug.ts; depth 2+3 only; slug counter advances for all h1–h6 to stay in sync with rehypeHeadingSlugs (US00068)
 │   ├── site.ts          # SITE_NAME + CONTACT_EMAIL constants — shared site name and primary contact email used by Header, Footer, policy pages, and the About page (US00066, US00102)
+│   ├── seo.ts           # Shared SEO helper: getSiteUrl(), absoluteUrl(), buildCanonicalPath(), buildRootMetadata(), buildPageMetadata() + DEFAULT_OG_IMAGE/DEFAULT_OG_LOCALE constants — single chokepoint for canonical + OG URL composition; consumed by app/layout.tsx root metadata (US00091)
 │   └── mdx-slug.ts      # createHeadingSlugger() (wraps github-slugger, fresh per-document) + rehypeHeadingSlugs rehype plugin — heading-slug chokepoint shared by PostBody (US00062) and TOC builder (US00068)
 ├── static/              # Static assets served at /static/*
 │   └── images/{products,blog}/
@@ -187,6 +190,7 @@ aff-store/
 - **Blog MDX bodies render through `<PostBody>`** via `@mdx-js/mdx` `evaluate()`. The element/component map lives in one place (`components/mdx/mdx-components.tsx`); the root `mdx-components.tsx` re-exports it. Inline MDX images go through `next/image` (`<Image fill>` + aspect wrapper). New MDX components register in the shared map only (`components/mdx/mdx-components.tsx`). The `next.config.ts` global plugin list uses the string form `"remark-gfm"` (Turbopack-safe); the `rehypeHeadingSlugs` plugin is local to `PostBody`'s `evaluate()` call and is **not** in the global list.
 - **MDX inline product cards:** Authors type `<ProductCard slug="…" />` in `.mdx` posts. The map key `ProductCard` resolves to `MdxProductCard` (the slug adapter in `components/MdxProductCard.tsx`), **not** the prop-based `@/components/ProductCard` (which takes `{ product: Product }`). The adapter calls `getProductBySlug` at build time and throws a slug-named `Error` on miss so `next build` fails loudly. No prop union, no name collision between the two identifiers.
 - **Heading slugs for MDX bodies** come from `lib/mdx-slug.ts`. No other file may call `github-slugger` or hand-roll heading slugs; `createHeadingSlugger()` returns a fresh per-document instance (so dedupe state doesn't leak across posts), and `rehypeHeadingSlugs` uses it to assign `id` attributes. US00068's TOC builder imports `createHeadingSlugger` from the same file — identical slugs by construction.
+- **Canonical / OG URLs are composed in one place: `lib/seo.ts`.** The root layout sets `metadataBase` from `env.NEXT_PUBLIC_SITE_URL`; per-page `alternates.canonical` and `openGraph.url` are **relative paths** resolved by Next.js against `metadataBase`. No file outside `lib/seo.ts` may concatenate `process.env.NEXT_PUBLIC_SITE_URL` into a metadata URL string. The string-template pattern `` `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/...` `` is **deprecated** and replaced by `buildCanonicalPath(...)` / a bare relative string. (US00091 establishes; US00092 migrates remaining call sites.) Per-page `title` strings must **not** bake in `" | aff-store"` — the root `title.template` adds that suffix automatically; a page should set only its own short title (e.g. `"Về chúng tôi"`, not `"Về chúng tôi | aff-store"`).
 
 ### Route map (planned — see "Routes" section below for SEO/render strategy)
 

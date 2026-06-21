@@ -10,7 +10,7 @@ import { getCategoryLabels } from "@/lib/categories";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
-  title: "Tất cả sản phẩm | TechShop",
+  title: "Tất cả sản phẩm",
   description: "Khám phá toàn bộ sản phẩm gaming và công nghệ với giá tốt nhất.",
   // D15: canonical never reflects filter params — bare listing path always
   alternates: {

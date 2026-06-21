@@ -64,14 +64,14 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00102 (lib/site.ts — CONTACT_EMAIL extracted; ve-chung-toi/page.tsx — disclosure + contact blocks; F0010)
+> Last updated: US00091 (lib/seo.ts — shared SEO helper; app/layout.tsx — root metadata; public/static/images/og-default.png; F0009)
 
 ### Top-level layout
 
 ```
 aff-store/
 ├── app/                 # Next.js App Router (routes, layouts, route handlers)
-│   ├── layout.tsx       # Root layout — <html lang="vi">, imports globals.css, mounts <SpeedInsights />
+│   ├── layout.tsx       # Root layout — <html lang="vi">, imports globals.css, mounts <SpeedInsights />; exports root `metadata` via `buildRootMetadata()` (US00091)
 │   ├── page.tsx         # Homepage (/) — Server Component; hero (US00081) + FeaturedProducts (US00082) + CategoryHighlights (US00083) + LatestPosts (US00084); full-width, no ShellLayout
 │   ├── page.module.css  # Full-width .container (max-width, centered, horizontal padding, mobile→desktop breakpoints) (US00081)
 │   ├── chinh-sach-bao-mat/  # /chinh-sach-bao-mat/ route
@@ -156,7 +156,9 @@ aff-store/
 │   ├── products/        # *.json — one file per product (25 fixtures added in US00043)
 │   └── posts/           # *.mdx — one file per blog post
 ├── public/              # Static assets served at the root (Next.js convention)
-│   └── static/images/products/ # Product images (established in US00043; referenced as /static/images/products/<slug>.jpg)
+│   └── static/images/
+│       ├── products/    # Product images (established in US00043; referenced as /static/images/products/<slug>.jpg)
+│       └── og-default.png # Site-wide default Open Graph image (1200×630) (US00091)
 ├── lib/                 # Pure utilities, data loaders, formatters (no React)
 │   ├── affiliate.ts     # Shopee affiliate-URL allow-list + assertAffiliateUrl helper (US00034)
 │   ├── breakpoints.ts   # BREAKPOINT_TABLET_PX / BREAKPOINT_DESKTOP_PX / MOBILE_MEDIA_QUERY — JS mirror of globals.css tokens (US00025)
@@ -165,6 +167,7 @@ aff-store/
 │   ├── format.ts        # formatVnd() + formatPostDate() + readingTimeVi() — single chokepoints for VN price, date & read-time rendering (US00041, US00061, US00069)
 │   ├── nav-items.ts     # NAV_ITEMS constant — the four primary nav routes (typed)
 │   ├── site.ts          # SITE_NAME + CONTACT_EMAIL constants — shared site name and primary contact email used by Header, Footer, policy pages, and the About page (US00066, US00102)
+│   ├── seo.ts           # Shared SEO helper: getSiteUrl(), absoluteUrl(), buildCanonicalPath(), buildRootMetadata(), buildPageMetadata() — single chokepoint for canonical + OG URL composition (US00091)
 │   ├── products.ts      # getAllProducts(), getProductBySlug(), getRelatedProducts() — calls assertAffiliateUrl() + assertCategoryRegistered() + images.length ≥ 1 at build time
 │   ├── filters.ts       # PRICE_BUCKETS, SORT_OPTIONS, getFilterOptions, parseFilterParams, applyFilters, compareDefault (US00044)
 │   ├── posts.ts         # getAllPosts(), getPostBySlug(), getRelatedPosts() — reads content/posts/*.mdx (US00067)
@@ -206,6 +209,7 @@ aff-store/
 - **Blog MDX bodies render through `<PostBody>`** via `@mdx-js/mdx` `evaluate()`. The element/component map lives in `components/mdx/mdx-components.tsx`; the root `mdx-components.tsx` re-exports it. New MDX components register in the shared map only.
 - **MDX inline product cards:** Authors type `<ProductCard slug="…" />` in `.mdx` posts. The map key `ProductCard` resolves to `MdxProductCard` (the slug adapter in `components/MdxProductCard.tsx`), not the prop-based `components/ProductCard`. The adapter calls `getProductBySlug` at build time and throws a slug-named `Error` on miss so `next build` fails loudly.
 - **Heading slugs** come from `lib/mdx-slug.ts` (`createHeadingSlugger` wrapping `github-slugger`). No other file may call `github-slugger` or hand-roll heading slugs.
+- **Canonical / OG URLs are composed in one place: `lib/seo.ts`.** The root layout sets `metadataBase`; per-page `alternates.canonical` / `openGraph.url` are relative paths resolved against it. The `` `${process.env.NEXT_PUBLIC_SITE_URL}/...` `` string-template pattern is deprecated in favor of `buildCanonicalPath(...)`. Per-page `title` strings must not bake in `" | aff-store"` — the root `title.template` adds that suffix automatically.
 
 ### Route map
 
