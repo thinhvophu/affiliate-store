@@ -5,6 +5,7 @@ import { ProductGallery } from "@/components/ProductGallery";
 import { RelatedProducts } from "@/components/RelatedProducts";
 import { getAllProducts, getRelatedProducts } from "@/lib/products";
 import { formatVnd } from "@/lib/format";
+import { buildPageMetadata } from "@/lib/seo";
 import styles from "./product-detail.module.css";
 
 /**
@@ -27,16 +28,6 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-/** Truncate a description to ≤160 chars at the nearest sentence/word boundary. */
-function truncateDescription(text: string, max = 160): string {
-  if (text.length <= max) return text;
-  const sliced = text.slice(0, max);
-  const sentenceEnd = sliced.lastIndexOf(". ");
-  if (sentenceEnd >= 80) return sliced.slice(0, sentenceEnd + 1);
-  const wordEnd = sliced.lastIndexOf(" ");
-  return (wordEnd > 0 ? sliced.slice(0, wordEnd) : sliced) + "…";
-}
-
 export async function generateStaticParams() {
   const products = getAllProducts();
   return products.map((p) => ({ slug: p.slug }));
@@ -47,14 +38,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const product = getAllProducts().find((p) => p.slug === slug);
   if (!product) return {};
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "";
-  return {
+  return buildPageMetadata({
     title: product.name,
-    description: truncateDescription(product.description),
-    alternates: {
-      canonical: `${siteUrl}/san-pham/${product.slug}/`,
-    },
-  };
+    description: product.description,
+    path: `/san-pham/${product.slug}/`,
+    ogImage: product.images[0],
+    ogImageAlt: product.name,
+    ogType: "article",
+  });
 }
 
 export default async function ProductDetailPage({ params }: PageProps) {

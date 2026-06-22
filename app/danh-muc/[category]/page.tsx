@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getAllProducts } from "@/lib/products";
 import { getAllCategorySlugs, getCategoryMeta } from "@/lib/categories";
+import { buildPageMetadata } from "@/lib/seo";
 import { ShellLayout } from "@/components/ShellLayout";
 import { CategoryNav } from "@/components/CategoryNav";
 import { CategoryPageClient } from "@/components/CategoryPageClient";
@@ -22,13 +23,12 @@ export async function generateMetadata({
   const meta = getCategoryMeta(category);
   if (!meta) return {};
 
-  // Use no-trailing-slash canonical (trailingSlash: false is the Next.js default).
   // Pages 2+ append ?page=N — handled client-side; metadata reflects page 1 canonical.
-  return {
+  return buildPageMetadata({
     title: meta.name,
     description: meta.metaDescription,
-    alternates: { canonical: `/danh-muc/${meta.slug}` },
-  };
+    path: `/danh-muc/${meta.slug}/`,
+  });
 }
 
 export default async function CategoryPage({

@@ -2,16 +2,15 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { AFFILIATE_DISCLOSURE_VI } from "@/lib/disclosures";
 import { CONTACT_EMAIL } from "@/lib/site";
+import { buildPageMetadata } from "@/lib/seo";
 import styles from "./page.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Công bố tiếp thị liên kết",
   description:
     "aff-store sử dụng liên kết tiếp thị liên kết Shopee. Chúng tôi có thể nhận hoa hồng khi bạn mua hàng, không phát sinh thêm chi phí cho bạn. Tìm hiểu thêm về cam kết minh bạch của chúng tôi.",
-  alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/cong-bo-tiep-thi-lien-ket/`,
-  },
-};
+  path: "/cong-bo-tiep-thi-lien-ket/",
+});
 
 export default function CongBoTiepThiLienKetPage() {
   return (
