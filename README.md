@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00091 (lib/seo.ts — shared SEO helper; app/layout.tsx — root metadata; public/static/images/og-default.png; F0009)
+> Last updated: US00092 (lib/seo.ts — buildPageMetadata + truncateMetaDescription; all 9 routes migrated off legacy NEXT_PUBLIC_SITE_URL string-template canonicals; F0009)
 
 ### Top-level layout
 
@@ -167,7 +167,7 @@ aff-store/
 │   ├── format.ts        # formatVnd() + formatPostDate() + readingTimeVi() — single chokepoints for VN price, date & read-time rendering (US00041, US00061, US00069)
 │   ├── nav-items.ts     # NAV_ITEMS constant — the four primary nav routes (typed)
 │   ├── site.ts          # SITE_NAME + CONTACT_EMAIL constants — shared site name and primary contact email used by Header, Footer, policy pages, and the About page (US00066, US00102)
-│   ├── seo.ts           # Shared SEO helper: getSiteUrl(), absoluteUrl(), buildCanonicalPath(), buildRootMetadata(), buildPageMetadata() — single chokepoint for canonical + OG URL composition (US00091)
+│   ├── seo.ts           # Shared SEO helper: getSiteUrl(), absoluteUrl(), buildCanonicalPath(), buildRootMetadata(), truncateMetaDescription(), buildPageMetadata() — single chokepoint for canonical + OG URL composition, description truncation, and per-page Metadata assembly (US00091, US00092)
 │   ├── products.ts      # getAllProducts(), getProductBySlug(), getRelatedProducts() — calls assertAffiliateUrl() + assertCategoryRegistered() + images.length ≥ 1 at build time
 │   ├── filters.ts       # PRICE_BUCKETS, SORT_OPTIONS, getFilterOptions, parseFilterParams, applyFilters, compareDefault (US00044)
 │   ├── posts.ts         # getAllPosts(), getPostBySlug(), getRelatedPosts() — reads content/posts/*.mdx (US00067)
@@ -209,7 +209,8 @@ aff-store/
 - **Blog MDX bodies render through `<PostBody>`** via `@mdx-js/mdx` `evaluate()`. The element/component map lives in `components/mdx/mdx-components.tsx`; the root `mdx-components.tsx` re-exports it. New MDX components register in the shared map only.
 - **MDX inline product cards:** Authors type `<ProductCard slug="…" />` in `.mdx` posts. The map key `ProductCard` resolves to `MdxProductCard` (the slug adapter in `components/MdxProductCard.tsx`), not the prop-based `components/ProductCard`. The adapter calls `getProductBySlug` at build time and throws a slug-named `Error` on miss so `next build` fails loudly.
 - **Heading slugs** come from `lib/mdx-slug.ts` (`createHeadingSlugger` wrapping `github-slugger`). No other file may call `github-slugger` or hand-roll heading slugs.
-- **Canonical / OG URLs are composed in one place: `lib/seo.ts`.** The root layout sets `metadataBase`; per-page `alternates.canonical` / `openGraph.url` are relative paths resolved against it. The `` `${process.env.NEXT_PUBLIC_SITE_URL}/...` `` string-template pattern is deprecated in favor of `buildCanonicalPath(...)`. Per-page `title` strings must not bake in `" | aff-store"` — the root `title.template` adds that suffix automatically.
+- **Canonical / OG URLs are composed in one place: `lib/seo.ts`.** The root layout sets `metadataBase`; per-page `alternates.canonical` / `openGraph.url` are relative paths resolved against it. The `` `${process.env.NEXT_PUBLIC_SITE_URL}/...` `` string-template pattern is deprecated and removed — all 9 routes call `buildPageMetadata(...)`. Per-page `title` strings must not bake in `" | aff-store"` — the root `title.template` adds that suffix automatically (the homepage is the one exception, using a `title.absolute` override).
+- **Page metadata is built in one place: `lib/seo.ts`.** Every route's `metadata` / `generateMetadata` returns `buildPageMetadata(...)`. No file outside `lib/seo.ts` may compose canonical URLs, truncate `<meta description>`, or hand-assemble `openGraph` / `twitter` objects. OG image falls back to `DEFAULT_OG_IMAGE` when a page doesn't pass `ogImage`.
 
 ### Route map
 
