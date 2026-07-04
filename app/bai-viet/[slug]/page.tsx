@@ -3,6 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { JsonLd } from "@/components/JsonLd";
 import { PostBody } from "@/components/PostBody";
 import { TableOfContents } from "@/components/TableOfContents";
 import { getAllPosts, getPostBySlug, getRelatedPosts } from "@/lib/posts";
@@ -12,6 +13,7 @@ import { formatPostDate, readingTimeVi } from "@/lib/format";
 import { SITE_NAME } from "@/lib/site";
 import { buildPageMetadata } from "@/lib/seo";
 import { buildPostBreadcrumbs } from "@/lib/breadcrumbs";
+import { buildArticleSchema } from "@/lib/article-schema";
 import styles from "./post-detail.module.css";
 
 interface PageProps {
@@ -46,6 +48,7 @@ export default async function PostDetailPage({ params }: PageProps) {
   const toc = extractToc(post.content);
   const hasToc = toc.length > 0;
   const crumbs = buildPostBreadcrumbs(post);
+  const articleSchema = buildArticleSchema(post);
 
   return (
     <div className={hasToc ? styles.shellWithToc : styles.container}>
@@ -84,6 +87,7 @@ export default async function PostDetailPage({ params }: PageProps) {
         </div>
 
         <RelatedPosts posts={related} />
+        <JsonLd data={articleSchema} />
       </article>
     </div>
   );

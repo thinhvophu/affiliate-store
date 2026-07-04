@@ -7,6 +7,7 @@ export function getSiteUrl(): string {
 }
 
 export function absoluteUrl(path: string): string {
+  if (/^https?:\/\//.test(path)) return path;
   const base = getSiteUrl();
   const suffix = path.startsWith("/") ? path : `/${path}`;
   return `${base}${suffix}`;
