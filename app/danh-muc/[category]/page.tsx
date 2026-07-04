@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { getAllProducts } from "@/lib/products";
 import { getAllCategorySlugs, getCategoryMeta } from "@/lib/categories";
 import { buildPageMetadata } from "@/lib/seo";
+import { Breadcrumb } from "@/components/Breadcrumb";
+import { buildCategoryBreadcrumbs } from "@/lib/breadcrumbs";
 import { ShellLayout } from "@/components/ShellLayout";
 import { CategoryNav } from "@/components/CategoryNav";
 import { CategoryPageClient } from "@/components/CategoryPageClient";
@@ -50,9 +52,12 @@ export default async function CategoryPage({
       return dt !== 0 ? dt : a.slug.localeCompare(b.slug);
     });
 
+  const crumbs = buildCategoryBreadcrumbs(meta.slug);
+
   return (
     <ShellLayout leftPanel={<CategoryNav currentSlug={meta.slug} />}>
       <article>
+        <Breadcrumb items={crumbs} />
         <header className={styles.header}>
           <h1 className={styles.heading}>{meta.name}</h1>
           <p className={styles.intro}>{meta.intro}</p>
