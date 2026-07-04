@@ -54,33 +54,74 @@ export function buildRootMetadata(): Metadata {
   };
 }
 
-export interface BuildPageMetadataOpts {
-  title: string;
-  description: string;
-  path: string;
-  image?: string;
-  type?: "website" | "article";
-  publishedTime?: string;
+/** Maximum length for <meta description>. SERP snippets are typically ~150–160 chars. */
+export const MAX_META_DESCRIPTION_LENGTH = 160;
+
+/**
+ * Truncate a description to ≤max chars at a sentence/word boundary.
+ * Order of preference: full text → sentence boundary (last ". ") ≥ 80 chars in →
+ * last word boundary → hard slice + ellipsis. Never cuts a word in half.
+ */
+export function truncateMetaDescription(
+  text: string,
+  max: number = MAX_META_DESCRIPTION_LENGTH,
+): string {
+  if (text.length <= max) return text;
+
+  const slice = text.slice(0, max);
+  const sentenceEnd = slice.lastIndexOf(". ");
+  if (sentenceEnd >= 80) return slice.slice(0, sentenceEnd + 1);
+
+  const wordEnd = slice.lastIndexOf(" ");
+  const truncated = wordEnd > 0 ? slice.slice(0, wordEnd) : slice;
+  return `${truncated}…`;
 }
 
-export function buildPageMetadata(opts: BuildPageMetadataOpts): Metadata {
-  const { title, description, path, image, type = "website", publishedTime } = opts;
+export interface PageMetadataInput {
+  /** Page title (raw — title template adds " | <site name>"). */
+  title: string;
+  /** Long-form description; truncated for <meta description>. */
+  description: string;
+  /** Absolute-from-root path WITH trailing slash, e.g. "/san-pham/". */
+  path: string;
+  /** Optional per-page OG image (absolute or root-relative). Falls back to DEFAULT_OG_IMAGE. */
+  ogImage?: string;
+  /** Optional OG image alt text. Falls back to title. */
+  ogImageAlt?: string;
+  /** OG type. Defaults to "website"; product/post details pass "article". */
+  ogType?: "website" | "article";
+}
+
+/** Per-page metadata builder lives in one place: lib/seo.ts. No file outside this module
+ * may build a canonical URL, truncate a meta description, or assemble an OG/Twitter object. */
+export function buildPageMetadata(input: PageMetadataInput): Metadata {
+  const { title, description, path, ogImage, ogImageAlt, ogType = "website" } = input;
+  const truncatedDescription = truncateMetaDescription(description);
+  const image = ogImage ?? DEFAULT_OG_IMAGE;
+
   return {
     title,
-    description,
+    description: truncatedDescription,
     alternates: { canonical: path },
     openGraph: {
       title,
-      description,
+      description: truncatedDescription,
       url: path,
-      type,
-      ...(publishedTime ? { publishedTime } : {}),
-      ...(image ? { images: [{ url: image }] } : {}),
+      type: ogType,
+      images: [
+        {
+          url: image,
+          width: 1200,
+          height: 630,
+          alt: ogImageAlt ?? title,
+        },
+      ],
     },
     twitter: {
+      card: "summary_large_image",
       title,
-      description,
-      ...(image ? { images: [image] } : {}),
+      description: truncatedDescription,
+      images: [image],
     },
   };
 }

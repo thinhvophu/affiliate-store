@@ -9,6 +9,7 @@ import { RelatedPosts } from "@/components/RelatedPosts";
 import { extractToc } from "@/lib/toc";
 import { formatPostDate, readingTimeVi } from "@/lib/format";
 import { SITE_NAME } from "@/lib/site";
+import { buildPageMetadata } from "@/lib/seo";
 import styles from "./post-detail.module.css";
 
 interface PageProps {
@@ -24,14 +25,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const post = getPostBySlug(slug);
   if (!post) return {};
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "";
-  return {
+  return buildPageMetadata({
     title: post.title,
     description: post.summary,
-    alternates: {
-      canonical: `${siteUrl}/bai-viet/${slug}/`,
-    },
-  };
+    path: `/bai-viet/${post.slug}/`,
+    ogImage: post.coverImage,
+    ogImageAlt: post.title,
+    ogType: "article",
+  });
 }
 
 export default async function PostDetailPage({ params }: PageProps) {

@@ -6,15 +6,16 @@ import { PostListingGrid } from "@/components/PostListingGrid";
 import { getAllPosts } from "@/lib/posts";
 import { getPostFilterOptions } from "@/lib/post-filters";
 import { getCategoryLabels } from "@/lib/categories";
+import { buildPageMetadata } from "@/lib/seo";
 import styles from "./page.module.css";
 
-export const metadata: Metadata = {
+// canonical never reflects filter params — bare path always
+export const metadata: Metadata = buildPageMetadata({
   title: "Bài viết & hướng dẫn mua sắm",
   description:
     "Đánh giá, hướng dẫn mua sắm và mẹo chọn thiết bị gaming, công nghệ — cập nhật mới nhất.",
-  // canonical never reflects filter params — bare path always
-  alternates: { canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/bai-viet/` },
-};
+  path: "/bai-viet/",
+});
 
 export default function BaiVietPage() {
   const posts = getAllPosts();

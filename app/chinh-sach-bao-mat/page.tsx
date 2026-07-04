@@ -1,16 +1,15 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { CONTACT_EMAIL } from "@/lib/site";
+import { buildPageMetadata } from "@/lib/seo";
 import styles from "./chinh-sach-bao-mat.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "Chính sách bảo mật",
   description:
     "Tìm hiểu cách aff-store thu thập dữ liệu ẩn danh qua Google Analytics, sử dụng cookie, và liên kết đến dịch vụ bên thứ ba như Shopee và Google AdSense.",
-  alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/chinh-sach-bao-mat/`,
-  },
-};
+  path: "/chinh-sach-bao-mat/",
+});
 
 export default function ChinhSachBaoMatPage() {
   return (
