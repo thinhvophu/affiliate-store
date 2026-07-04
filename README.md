@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00092 (lib/seo.ts — buildPageMetadata + truncateMetaDescription; all 9 routes migrated off legacy NEXT_PUBLIC_SITE_URL string-template canonicals; F0009)
+> Last updated: US00093 (components/Breadcrumb.tsx + Breadcrumb.module.css + lib/breadcrumbs.ts — visible breadcrumb on product, category, post pages; F0009)
 
 ### Top-level layout
 
@@ -96,6 +96,8 @@ aff-store/
 │       ├── page.tsx                # About page — Static Server Component; 3 editorial sections + <AffiliateDisclosure /> + Liên hệ section sourcing CONTACT_EMAIL from lib/site.ts (US00101, US00102)
 │       └── ve-chung-toi.module.css # Page-scoped prose layout — reading-width container, F0005 accent (US00101, US00102)
 ├── components/          # Reusable React components (PascalCase.tsx; co-locate styles as <Name>.module.css)
+│   ├── Breadcrumb.tsx           # Server Component — semantic <nav aria-label="Breadcrumb">; ancestor <Link>s + aria-current="page" last item; consumes BreadcrumbItem[] from lib/breadcrumbs.ts (US00093)
+│   ├── Breadcrumb.module.css    # Scoped styles for Breadcrumb — token-driven, decorative ::after separator, focus-visible, mobile ellipsis (US00093)
 │   ├── Footer.tsx           # Server Component — 4-column footer, affiliate disclosure (US00022)
 │   ├── Footer.module.css    # Scoped styles for the Footer
 │   ├── Header.tsx           # Server Component — orange brand band, logo, site name
@@ -162,6 +164,7 @@ aff-store/
 ├── lib/                 # Pure utilities, data loaders, formatters (no React)
 │   ├── affiliate.ts     # Shopee affiliate-URL allow-list + assertAffiliateUrl helper (US00034)
 │   ├── breakpoints.ts   # BREAKPOINT_TABLET_PX / BREAKPOINT_DESKTOP_PX / MOBILE_MEDIA_QUERY — JS mirror of globals.css tokens (US00025)
+│   ├── breadcrumbs.ts   # BreadcrumbItem type + buildProductBreadcrumbs / buildCategoryBreadcrumbs / buildPostBreadcrumbs — single source of trail data shared with US00096 BreadcrumbList JSON-LD; category labels via getCategoryMeta() (US00093)
 │   ├── categories.ts    # CATEGORIES map + getCategoryMeta + assertCategoryRegistered (US00045)
 │   ├── disclosures.ts   # AFFILIATE_DISCLOSURE_VI constant — shared with F0005 page + F0006 posts (US00022)
 │   ├── format.ts        # formatVnd() + formatPostDate() + readingTimeVi() — single chokepoints for VN price, date & read-time rendering (US00041, US00061, US00069)

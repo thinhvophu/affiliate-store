@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00092 (lib/seo.ts — buildPageMetadata + truncateMetaDescription; all 9 routes migrated off legacy NEXT_PUBLIC_SITE_URL string-template canonicals; F0009)
+> Last updated: US00093 (components/Breadcrumb.tsx + Breadcrumb.module.css + lib/breadcrumbs.ts — visible breadcrumb on product, category, post pages; F0009)
 
 ### Top-level layout
 
@@ -64,6 +64,8 @@ aff-store/
 │       ├── page.tsx                # About page — Static Server Component; metadata export; single <h1>; 3 editorial Vietnamese sections (mission, who we are, how we pick products); renders <AffiliateDisclosure /> + Liên hệ section sourcing CONTACT_EMAIL from lib/site.ts (US00101, US00102)
 │       └── ve-chung-toi.module.css # Page-scoped prose layout — reading-width container, F0005 policy-page accent (US00101, US00102)
 ├── components/          # Reusable React components (PascalCase.tsx; co-locate styles as <Name>.module.css)
+│   ├── Breadcrumb.tsx           # Server Component — semantic <nav aria-label="Breadcrumb">; ancestor <Link>s + aria-current="page" last item; consumes BreadcrumbItem[] from lib/breadcrumbs.ts (US00093)
+│   ├── Breadcrumb.module.css    # Scoped styles for Breadcrumb — token-driven, decorative ::after separator, focus-visible, mobile ellipsis (US00093)
 │   ├── Footer.tsx           # Server Component — 4-column footer, affiliate disclosure (US00022)
 │   ├── Footer.module.css    # Scoped styles for the Footer
 │   ├── Header.tsx           # Server Component — orange brand band, logo, site name
@@ -138,6 +140,7 @@ aff-store/
 ├── lib/                 # Pure utilities, data loaders, formatters (no React)
 │   ├── affiliate.ts     # Shopee affiliate-URL allow-list + assertAffiliateUrl helper (US00034)
 │   ├── breakpoints.ts   # BREAKPOINT_TABLET_PX / BREAKPOINT_DESKTOP_PX / MOBILE_MEDIA_QUERY — JS mirror of globals.css tokens (US00025)
+│   ├── breadcrumbs.ts   # BreadcrumbItem type + buildProductBreadcrumbs / buildCategoryBreadcrumbs / buildPostBreadcrumbs — single source of trail data shared with US00096 BreadcrumbList JSON-LD; category labels via getCategoryMeta() (US00093)
 │   ├── categories.ts    # CATEGORIES map + getCategoryMeta + assertCategoryRegistered (US00045)
 │   ├── disclosures.ts   # AFFILIATE_DISCLOSURE_VI constant — shared with F0005 page + F0006 posts (US00022)
 │   ├── format.ts        # formatVnd() + formatPostDate() + readingTimeVi() — single chokepoints for VN price, date & read-time rendering (US00041, US00061, US00069)
@@ -190,6 +193,7 @@ aff-store/
 - **Blog MDX bodies render through `<PostBody>`** via `@mdx-js/mdx` `evaluate()`. The element/component map lives in one place (`components/mdx/mdx-components.tsx`); the root `mdx-components.tsx` re-exports it. Inline MDX images go through `next/image` (`<Image fill>` + aspect wrapper). New MDX components register in the shared map only (`components/mdx/mdx-components.tsx`). The `next.config.ts` global plugin list uses the string form `"remark-gfm"` (Turbopack-safe); the `rehypeHeadingSlugs` plugin is local to `PostBody`'s `evaluate()` call and is **not** in the global list.
 - **MDX inline product cards:** Authors type `<ProductCard slug="…" />` in `.mdx` posts. The map key `ProductCard` resolves to `MdxProductCard` (the slug adapter in `components/MdxProductCard.tsx`), **not** the prop-based `@/components/ProductCard` (which takes `{ product: Product }`). The adapter calls `getProductBySlug` at build time and throws a slug-named `Error` on miss so `next build` fails loudly. No prop union, no name collision between the two identifiers.
 - **Heading slugs for MDX bodies** come from `lib/mdx-slug.ts`. No other file may call `github-slugger` or hand-roll heading slugs; `createHeadingSlugger()` returns a fresh per-document instance (so dedupe state doesn't leak across posts), and `rehypeHeadingSlugs` uses it to assign `id` attributes. US00068's TOC builder imports `createHeadingSlugger` from the same file — identical slugs by construction.
+- **Breadcrumb trails live in one place: `lib/breadcrumbs.ts`.** Every page that renders `<Breadcrumb>` calls one of the typed builders (`buildProductBreadcrumbs`, `buildCategoryBreadcrumbs`, `buildPostBreadcrumbs`). The same `BreadcrumbItem[]` array also feeds the `BreadcrumbList` JSON-LD emitter (F0009 / US00096) so the visible trail and structured data are guaranteed to match. Category labels in breadcrumb crumbs come from `getCategoryMeta()` in `lib/categories.ts` — no ad-hoc lookups. (US00093)
 - **Canonical / OG URLs are composed in one place: `lib/seo.ts`.** The root layout sets `metadataBase` from `env.NEXT_PUBLIC_SITE_URL`; per-page `alternates.canonical` and `openGraph.url` are **relative paths** resolved by Next.js against `metadataBase`. No file outside `lib/seo.ts` may concatenate `process.env.NEXT_PUBLIC_SITE_URL` into a metadata URL string. The string-template pattern `` `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/...` `` is **deprecated and removed** — all 9 routes now call `buildCanonicalPath(...)` / `buildPageMetadata(...)` (US00091 establishes; US00092 migrates every remaining call site — zero hits for `grep -rn "NEXT_PUBLIC_SITE_URL" app/`). Per-page `title` strings must **not** bake in `" | aff-store"` — the root `title.template` adds that suffix automatically; a page should set only its own short title (e.g. `"Về chúng tôi"`, not `"Về chúng tôi | aff-store"`). The homepage (`app/page.tsx`) is the one exception: it overrides `title` to `{ absolute: HOME_TITLE }` after spreading `buildPageMetadata(...)` because its title is identical to the root `title.default` and must not be double-suffixed.
 - **Page metadata is built in one place: `lib/seo.ts`.** Every route's `metadata` / `generateMetadata` returns `buildPageMetadata(...)`. No file outside `lib/seo.ts` may compose canonical URLs from `NEXT_PUBLIC_SITE_URL`, truncate `<meta description>` (`truncateMetaDescription`, ≤`MAX_META_DESCRIPTION_LENGTH` chars, word/sentence-boundary safe), or hand-assemble `openGraph` / `twitter` objects. `buildPageMetadata` fills `og:image`/`twitter:image` with `ogImage` (product `images[0]` / post `coverImage`) or falls back to `DEFAULT_OG_IMAGE`; `ogType` defaults to `"website"`, pass `"article"` for product/post detail pages.
 
