@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AffiliateLink } from "@/components/AffiliateLink";
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { JsonLd } from "@/components/JsonLd";
 import { ProductGallery } from "@/components/ProductGallery";
 import { RelatedProducts } from "@/components/RelatedProducts";
 import { getAllProducts, getRelatedProducts } from "@/lib/products";
 import { formatVnd } from "@/lib/format";
 import { buildPageMetadata } from "@/lib/seo";
 import { buildProductBreadcrumbs } from "@/lib/breadcrumbs";
+import { buildProductSchema } from "@/lib/product-schema";
 import styles from "./product-detail.module.css";
 
 /**
@@ -59,9 +61,11 @@ export default async function ProductDetailPage({ params }: PageProps) {
   const related = getRelatedProducts(product, all);
   const specEntries = Object.entries(product.specs);
   const crumbs = buildProductBreadcrumbs(product);
+  const productSchema = buildProductSchema(product);
 
   return (
     <div className={styles.container}>
+      <JsonLd data={productSchema} />
       <Breadcrumb items={crumbs} />
       <article className={styles.detail}>
         <div className={styles.galleryColumn}>
