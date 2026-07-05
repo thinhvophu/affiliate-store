@@ -4,7 +4,8 @@ import { getAllProducts } from "@/lib/products";
 import { getAllCategorySlugs, getCategoryMeta } from "@/lib/categories";
 import { buildPageMetadata } from "@/lib/seo";
 import { Breadcrumb } from "@/components/Breadcrumb";
-import { buildCategoryBreadcrumbs } from "@/lib/breadcrumbs";
+import { JsonLd } from "@/components/JsonLd";
+import { buildCategoryBreadcrumbs, breadcrumbListJsonLd } from "@/lib/breadcrumbs";
 import { ShellLayout } from "@/components/ShellLayout";
 import { CategoryNav } from "@/components/CategoryNav";
 import { CategoryPageClient } from "@/components/CategoryPageClient";
@@ -57,6 +58,7 @@ export default async function CategoryPage({
   return (
     <ShellLayout leftPanel={<CategoryNav currentSlug={meta.slug} />}>
       <article>
+        <JsonLd data={breadcrumbListJsonLd(crumbs)} />
         <Breadcrumb items={crumbs} />
         <header className={styles.header}>
           <h1 className={styles.heading}>{meta.name}</h1>

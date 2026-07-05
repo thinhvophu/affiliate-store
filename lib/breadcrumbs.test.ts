@@ -3,6 +3,7 @@ import {
   buildCategoryBreadcrumbs,
   buildProductBreadcrumbs,
   buildPostBreadcrumbs,
+  breadcrumbListJsonLd,
 } from "@/lib/breadcrumbs";
 import type { Product } from "@/types";
 import type { Post } from "@/types";
@@ -80,5 +81,65 @@ describe("buildPostBreadcrumbs", () => {
       label: fixturePost.title,
       href: `/bai-viet/${fixturePost.slug}/`,
     });
+  });
+});
+
+interface ListItem {
+  "@type": "ListItem";
+  position: number;
+  name: string;
+  item: string;
+}
+
+describe("breadcrumbListJsonLd", () => {
+  it("maps a three-item trail to three ListItems with 1-indexed positions", () => {
+    const crumbs = buildCategoryBreadcrumbs("chuot-gaming");
+    const schema = breadcrumbListJsonLd(crumbs);
+    const itemListElement = schema.itemListElement as ListItem[];
+
+    expect(schema["@context"]).toBe("https://schema.org");
+    expect(schema["@type"]).toBe("BreadcrumbList");
+    expect(itemListElement).toHaveLength(3);
+    itemListElement.forEach((entry, i) => {
+      expect(entry["@type"]).toBe("ListItem");
+      expect(entry.position).toBe(i + 1);
+    });
+  });
+
+  it("passes name through verbatim, including diacritics", () => {
+    const crumbs = buildProductBreadcrumbs(fixtureProduct);
+    const itemListElement = breadcrumbListJsonLd(crumbs).itemListElement as ListItem[];
+
+    expect(itemListElement.map((e) => e.name)).toEqual(crumbs.map((c) => c.label));
+    expect(itemListElement[2].name).toBe("Chuột gaming");
+  });
+
+  it("builds absolute item URLs from NEXT_PUBLIC_SITE_URL, preserving the path", () => {
+    const crumbs = buildProductBreadcrumbs(fixtureProduct);
+    const itemListElement = breadcrumbListJsonLd(crumbs).itemListElement as ListItem[];
+
+    itemListElement.forEach((entry, i) => {
+      expect(entry.item).toBe(`https://example.com${crumbs[i].href}`);
+    });
+    expect(itemListElement[3].item).toBe(
+      `https://example.com/san-pham/${fixtureProduct.slug}/`,
+    );
+  });
+
+  it("returns an empty itemListElement for an empty items array", () => {
+    const schema = breadcrumbListJsonLd([]);
+    expect(schema.itemListElement).toEqual([]);
+  });
+
+  it("preserves order exactly (no re-sorting)", () => {
+    const crumbs = buildPostBreadcrumbs(fixturePost);
+    const itemListElement = breadcrumbListJsonLd(crumbs).itemListElement as ListItem[];
+
+    expect(itemListElement.map((e) => e.name)).toEqual([
+      "Trang chủ",
+      "Bài viết",
+      "Chuột gaming",
+      fixturePost.title,
+    ]);
   });
 });
