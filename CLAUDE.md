@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00094 (components/JsonLd.tsx + lib/product-schema.ts — Product JSON-LD on product detail pages; F0009)
+> Last updated: US00095 (lib/article-schema.ts — Article JSON-LD on blog post detail pages; F0009)
 
 ### Top-level layout
 
@@ -50,7 +50,7 @@ aff-store/
 │   │   ├── page.tsx     # Blog listing — SSG, ShellLayout + PostFilters left panel + PostListingGrid; filter options derived at build time (US00064, US00065)
 │   │   ├── page.module.css # Page heading + grid skeleton styles (US00064)
 │   │   └── [slug]/      # Dynamic blog-post segment
-│   │       ├── page.tsx                    # Blog post detail — SSG per slug, generateStaticParams + notFound(), optional two-column shell (TOC left + article right), hero + h1 + date/byline + AffiliateDisclosure + PostBody (US00066, US00068)
+│   │       ├── page.tsx                    # Blog post detail — SSG per slug, generateStaticParams + notFound(), optional two-column shell (TOC left + article right), hero + h1 + date/byline + AffiliateDisclosure + PostBody (US00066, US00068); renders <JsonLd data={buildArticleSchema(post)} /> Article JSON-LD (US00095)
 │   │       ├── not-found.tsx               # Vietnamese 404 for unknown post slugs (US00066)
 │   │       └── post-detail.module.css      # Page-scoped layout — .container/.postCentered (no TOC) + .shellWithToc/.tocPanel/.post (with TOC); hero, header, meta; body typography owned by PostBody.module.css (US00066, US00068)
 │   ├── san-pham/        # /san-pham/ routes
@@ -156,6 +156,8 @@ aff-store/
 │   ├── seo.ts           # Shared SEO helper: getSiteUrl(), absoluteUrl(), buildCanonicalPath(), buildRootMetadata(), truncateMetaDescription(), buildPageMetadata() + DEFAULT_OG_IMAGE/DEFAULT_OG_LOCALE/MAX_META_DESCRIPTION_LENGTH constants — single chokepoint for canonical + OG URL composition, description truncation, and per-page Metadata assembly; consumed by app/layout.tsx root metadata (US00091) and every route's metadata/generateMetadata export (US00092)
 │   ├── product-schema.ts # buildProductSchema(product) → Product JSON-LD object; raw product.price (no formatVnd), absolute image/url via absoluteUrl()+buildCanonicalPath() from lib/seo.ts, PRODUCT_AVAILABILITY_IN_STOCK constant (US00094)
 │   ├── product-schema.test.ts # Vitest — asserts schema shape, offers.price is a raw number, multi-image scalar image, Vietnamese diacritics round-trip (US00094)
+│   ├── article-schema.ts # buildArticleSchema(post) → Article JSON-LD object; absolute image/mainEntityOfPage via absoluteUrl()+buildCanonicalPath() from lib/seo.ts, coverImage falls back to DEFAULT_OG_IMAGE when empty, author/publisher both resolve to SITE_NAME Organization (US00095)
+│   ├── article-schema.test.ts # Vitest — asserts schema shape, cover-image fallback, already-absolute cover passthrough, verbatim headline, raw datePublished (US00095)
 │   └── mdx-slug.ts      # createHeadingSlugger() (wraps github-slugger, fresh per-document) + rehypeHeadingSlugs rehype plugin — heading-slug chokepoint shared by PostBody (US00062) and TOC builder (US00068)
 ├── static/              # Static assets served at /static/*
 │   └── images/{products,blog}/
@@ -200,7 +202,7 @@ aff-store/
 - **Breadcrumb trails live in one place: `lib/breadcrumbs.ts`.** Every page that renders `<Breadcrumb>` calls one of the typed builders (`buildProductBreadcrumbs`, `buildCategoryBreadcrumbs`, `buildPostBreadcrumbs`). The same `BreadcrumbItem[]` array also feeds the `BreadcrumbList` JSON-LD emitter (F0009 / US00096) so the visible trail and structured data are guaranteed to match. Category labels in breadcrumb crumbs come from `getCategoryMeta()` in `lib/categories.ts` — no ad-hoc lookups. (US00093)
 - **Canonical / OG URLs are composed in one place: `lib/seo.ts`.** The root layout sets `metadataBase` from `env.NEXT_PUBLIC_SITE_URL`; per-page `alternates.canonical` and `openGraph.url` are **relative paths** resolved by Next.js against `metadataBase`. No file outside `lib/seo.ts` may concatenate `process.env.NEXT_PUBLIC_SITE_URL` into a metadata URL string. The string-template pattern `` `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/...` `` is **deprecated and removed** — all 9 routes now call `buildCanonicalPath(...)` / `buildPageMetadata(...)` (US00091 establishes; US00092 migrates every remaining call site — zero hits for `grep -rn "NEXT_PUBLIC_SITE_URL" app/`). Per-page `title` strings must **not** bake in `" | aff-store"` — the root `title.template` adds that suffix automatically; a page should set only its own short title (e.g. `"Về chúng tôi"`, not `"Về chúng tôi | aff-store"`). The homepage (`app/page.tsx`) is the one exception: it overrides `title` to `{ absolute: HOME_TITLE }` after spreading `buildPageMetadata(...)` because its title is identical to the root `title.default` and must not be double-suffixed.
 - **Page metadata is built in one place: `lib/seo.ts`.** Every route's `metadata` / `generateMetadata` returns `buildPageMetadata(...)`. No file outside `lib/seo.ts` may compose canonical URLs from `NEXT_PUBLIC_SITE_URL`, truncate `<meta description>` (`truncateMetaDescription`, ≤`MAX_META_DESCRIPTION_LENGTH` chars, word/sentence-boundary safe), or hand-assemble `openGraph` / `twitter` objects. `buildPageMetadata` fills `og:image`/`twitter:image` with `ogImage` (product `images[0]` / post `coverImage`) or falls back to `DEFAULT_OG_IMAGE`; `ogType` defaults to `"website"`, pass `"article"` for product/post detail pages.
-- **JSON-LD scripts go through one place: `<JsonLd>` (`components/JsonLd.tsx`).** Schema bodies are built by pure helpers in `lib/*-schema.ts` (no JSX) — e.g. `lib/product-schema.ts`'s `buildProductSchema()`. No file outside `<JsonLd>` may emit `<script type="application/ld+json">` directly. Absolute URLs inside a schema body always go through `absoluteUrl()` / `buildCanonicalPath()` from `lib/seo.ts` (US00094).
+- **JSON-LD scripts go through one place: `<JsonLd>` (`components/JsonLd.tsx`).** Schema bodies are built by pure helpers in `lib/*-schema.ts` (no JSX) — e.g. `lib/product-schema.ts`'s `buildProductSchema()`, `lib/article-schema.ts`'s `buildArticleSchema()`. No file outside `<JsonLd>` may emit `<script type="application/ld+json">` directly. Absolute URLs inside a schema body always go through `absoluteUrl()` / `buildCanonicalPath()` from `lib/seo.ts` (US00094, US00095). `absoluteUrl()` passes through URLs that are already `http(s)://` unchanged (US00095).
 
 ### Route map (planned — see "Routes" section below for SEO/render strategy)
 

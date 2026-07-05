@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00094 (components/JsonLd.tsx + lib/product-schema.ts — Product JSON-LD on product detail pages; F0009)
+> Last updated: US00095 (lib/article-schema.ts — Article JSON-LD on blog post detail pages; F0009)
 
 ### Top-level layout
 
@@ -173,6 +173,7 @@ aff-store/
 │   ├── site.ts          # SITE_NAME + CONTACT_EMAIL constants — shared site name and primary contact email used by Header, Footer, policy pages, and the About page (US00066, US00102)
 │   ├── seo.ts           # Shared SEO helper: getSiteUrl(), absoluteUrl(), buildCanonicalPath(), buildRootMetadata(), truncateMetaDescription(), buildPageMetadata() — single chokepoint for canonical + OG URL composition, description truncation, and per-page Metadata assembly (US00091, US00092)
 │   ├── product-schema.ts # buildProductSchema(product) → Product JSON-LD object; raw price (no formatVnd), absolute image/url via lib/seo.ts (US00094)
+│   ├── article-schema.ts # buildArticleSchema(post) → Article JSON-LD object; absolute image/mainEntityOfPage via lib/seo.ts, coverImage falls back to default OG image (US00095)
 │   ├── products.ts      # getAllProducts(), getProductBySlug(), getRelatedProducts() — calls assertAffiliateUrl() + assertCategoryRegistered() + images.length ≥ 1 at build time
 │   ├── filters.ts       # PRICE_BUCKETS, SORT_OPTIONS, getFilterOptions, parseFilterParams, applyFilters, compareDefault (US00044)
 │   ├── posts.ts         # getAllPosts(), getPostBySlug(), getRelatedPosts() — reads content/posts/*.mdx (US00067)
@@ -216,7 +217,7 @@ aff-store/
 - **Heading slugs** come from `lib/mdx-slug.ts` (`createHeadingSlugger` wrapping `github-slugger`). No other file may call `github-slugger` or hand-roll heading slugs.
 - **Canonical / OG URLs are composed in one place: `lib/seo.ts`.** The root layout sets `metadataBase`; per-page `alternates.canonical` / `openGraph.url` are relative paths resolved against it. The `` `${process.env.NEXT_PUBLIC_SITE_URL}/...` `` string-template pattern is deprecated and removed — all 9 routes call `buildPageMetadata(...)`. Per-page `title` strings must not bake in `" | aff-store"` — the root `title.template` adds that suffix automatically (the homepage is the one exception, using a `title.absolute` override).
 - **Page metadata is built in one place: `lib/seo.ts`.** Every route's `metadata` / `generateMetadata` returns `buildPageMetadata(...)`. No file outside `lib/seo.ts` may compose canonical URLs, truncate `<meta description>`, or hand-assemble `openGraph` / `twitter` objects. OG image falls back to `DEFAULT_OG_IMAGE` when a page doesn't pass `ogImage`.
-- **JSON-LD scripts go through one place: `<JsonLd>` (`components/JsonLd.tsx`).** Schema bodies are built by pure helpers in `lib/*-schema.ts` (no JSX), e.g. `lib/product-schema.ts`. No file outside `<JsonLd>` may emit `<script type="application/ld+json">` directly.
+- **JSON-LD scripts go through one place: `<JsonLd>` (`components/JsonLd.tsx`).** Schema bodies are built by pure helpers in `lib/*-schema.ts` (no JSX), e.g. `lib/product-schema.ts`, `lib/article-schema.ts`. No file outside `<JsonLd>` may emit `<script type="application/ld+json">` directly.
 
 ### Route map
 
