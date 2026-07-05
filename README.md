@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00095 (lib/article-schema.ts — Article JSON-LD on blog post detail pages; F0009)
+> Last updated: US00097 (app/sitemap.ts — auto-generated sitemap covering homepage, listings, every product/post/category, policy pages, about; F0009)
 
 ### Top-level layout
 
@@ -92,9 +92,10 @@ aff-store/
 │   │       ├── page.tsx                    # Product detail page — SSG per slug, generateStaticParams + notFound() (US00046); renders <JsonLd data={buildProductSchema(product)} /> Product JSON-LD (US00094)
 │   │       ├── not-found.tsx               # Vietnamese 404 for unknown product slugs (US00046)
 │   │       └── product-detail.module.css   # Page-scoped layout — 2-col grid ≥1024px, specs <dl>, CTA pill (US00046)
-│   └── ve-chung-toi/    # /ve-chung-toi/ route
-│       ├── page.tsx                # About page — Static Server Component; 3 editorial sections + <AffiliateDisclosure /> + Liên hệ section sourcing CONTACT_EMAIL from lib/site.ts (US00101, US00102)
-│       └── ve-chung-toi.module.css # Page-scoped prose layout — reading-width container, F0005 accent (US00101, US00102)
+│   ├── ve-chung-toi/    # /ve-chung-toi/ route
+│   │   ├── page.tsx                # About page — Static Server Component; 3 editorial sections + <AffiliateDisclosure /> + Liên hệ section sourcing CONTACT_EMAIL from lib/site.ts (US00101, US00102)
+│   │   └── ve-chung-toi.module.css # Page-scoped prose layout — reading-width container, F0005 accent (US00101, US00102)
+│   └── sitemap.ts       # /sitemap.xml — Server module; emits MetadataRoute.Sitemap from getAllProducts() + getAllPosts() + getAllCategorySlugs(); built at SSG time (US00097)
 ├── components/          # Reusable React components (PascalCase.tsx; co-locate styles as <Name>.module.css)
 │   ├── Breadcrumb.tsx           # Server Component — semantic <nav aria-label="Breadcrumb">; ancestor <Link>s + aria-current="page" last item; consumes BreadcrumbItem[] from lib/breadcrumbs.ts (US00093)
 │   ├── Breadcrumb.module.css    # Scoped styles for Breadcrumb — token-driven, decorative ::after separator, focus-visible, mobile ellipsis (US00093)
@@ -232,7 +233,7 @@ aff-store/
 | `/bai-viet`            | `app/bai-viet/page.tsx` ✅         |
 | `/bai-viet/[slug]`     | `app/bai-viet/[slug]/page.tsx` ✅  |
 | `/ve-chung-toi`        | `app/ve-chung-toi/page.tsx` ✅     |
-| `/sitemap.xml`         | `app/sitemap.ts`                   |
+| `/sitemap.xml`         | `app/sitemap.ts` ✅                |
 | `/robots.txt`          | `app/robots.ts`                    |
 
 ✅ = implemented · others to be created by upcoming stories.
