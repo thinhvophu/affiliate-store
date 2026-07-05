@@ -12,7 +12,7 @@ import { extractToc } from "@/lib/toc";
 import { formatPostDate, readingTimeVi } from "@/lib/format";
 import { SITE_NAME } from "@/lib/site";
 import { buildPageMetadata } from "@/lib/seo";
-import { buildPostBreadcrumbs } from "@/lib/breadcrumbs";
+import { buildPostBreadcrumbs, breadcrumbListJsonLd } from "@/lib/breadcrumbs";
 import { buildArticleSchema } from "@/lib/article-schema";
 import styles from "./post-detail.module.css";
 
@@ -58,6 +58,7 @@ export default async function PostDetailPage({ params }: PageProps) {
         </aside>
       )}
       <article className={hasToc ? styles.post : styles.postCentered}>
+        <JsonLd data={breadcrumbListJsonLd(crumbs)} />
         <Breadcrumb items={crumbs} />
         <header className={styles.postHeader}>
           {post.coverImage && (

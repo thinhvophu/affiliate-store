@@ -8,7 +8,7 @@ import { RelatedProducts } from "@/components/RelatedProducts";
 import { getAllProducts, getRelatedProducts } from "@/lib/products";
 import { formatVnd } from "@/lib/format";
 import { buildPageMetadata } from "@/lib/seo";
-import { buildProductBreadcrumbs } from "@/lib/breadcrumbs";
+import { buildProductBreadcrumbs, breadcrumbListJsonLd } from "@/lib/breadcrumbs";
 import { buildProductSchema } from "@/lib/product-schema";
 import styles from "./product-detail.module.css";
 
@@ -66,6 +66,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
   return (
     <div className={styles.container}>
       <JsonLd data={productSchema} />
+      <JsonLd data={breadcrumbListJsonLd(crumbs)} />
       <Breadcrumb items={crumbs} />
       <article className={styles.detail}>
         <div className={styles.galleryColumn}>
