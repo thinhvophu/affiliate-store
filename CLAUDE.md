@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00096 (lib/breadcrumbs.ts — breadcrumbListJsonLd() shaper + BreadcrumbList JSON-LD on product, category, and blog post detail pages; F0009)
+> Last updated: US00097 (app/sitemap.ts — auto-generated sitemap covering homepage, listings, every product/post/category, policy pages, about; F0009)
 
 ### Top-level layout
 
@@ -60,9 +60,10 @@ aff-store/
 │   │       ├── page.tsx                    # Product detail page — SSG per slug, generateStaticParams + notFound() (US00046); renders <JsonLd data={buildProductSchema(product)} /> Product JSON-LD (US00094) + visible <Breadcrumb> + <JsonLd data={breadcrumbListJsonLd(crumbs)} /> BreadcrumbList JSON-LD (US00093 + US00096)
 │   │       ├── not-found.tsx               # Vietnamese 404 for unknown product slugs (US00046)
 │   │       └── product-detail.module.css   # Page-scoped layout — 2-col grid ≥1024px, specs <dl>, CTA pill (US00046)
-│   └── ve-chung-toi/    # /ve-chung-toi/ route
-│       ├── page.tsx                # About page — Static Server Component; metadata export; single <h1>; 3 editorial Vietnamese sections (mission, who we are, how we pick products); renders <AffiliateDisclosure /> + Liên hệ section sourcing CONTACT_EMAIL from lib/site.ts (US00101, US00102)
-│       └── ve-chung-toi.module.css # Page-scoped prose layout — reading-width container, F0005 policy-page accent (US00101, US00102)
+│   ├── ve-chung-toi/    # /ve-chung-toi/ route
+│   │   ├── page.tsx                # About page — Static Server Component; metadata export; single <h1>; 3 editorial Vietnamese sections (mission, who we are, how we pick products); renders <AffiliateDisclosure /> + Liên hệ section sourcing CONTACT_EMAIL from lib/site.ts (US00101, US00102)
+│   │   └── ve-chung-toi.module.css # Page-scoped prose layout — reading-width container, F0005 policy-page accent (US00101, US00102)
+│   └── sitemap.ts       # /sitemap.xml — Server module (no JSX); default-exports sitemap(): MetadataRoute.Sitemap sourced from getAllProducts() + getAllPosts() + getAllCategorySlugs() via lib/seo.ts's absoluteUrl()/buildCanonicalPath(); build-time-only, no request-time APIs (US00097)
 ├── components/          # Reusable React components (PascalCase.tsx; co-locate styles as <Name>.module.css)
 │   ├── Breadcrumb.tsx           # Server Component — semantic <nav aria-label="Breadcrumb">; ancestor <Link>s + aria-current="page" last item; consumes BreadcrumbItem[] from lib/breadcrumbs.ts (US00093)
 │   ├── Breadcrumb.module.css    # Scoped styles for Breadcrumb — token-driven, decorative ::after separator, focus-visible, mobile ellipsis (US00093)
@@ -217,7 +218,7 @@ aff-store/
 | `/bai-viet`            | `app/bai-viet/page.tsx` ✅         |
 | `/bai-viet/[slug]`     | `app/bai-viet/[slug]/page.tsx` ✅  |
 | `/ve-chung-toi`        | `app/ve-chung-toi/page.tsx` ✅     |
-| `/sitemap.xml`         | `app/sitemap.ts`                   |
+| `/sitemap.xml`         | `app/sitemap.ts` ✅                |
 | `/robots.txt`          | `app/robots.ts`                    |
 
 ✅ = implemented · others to be created by upcoming stories.
