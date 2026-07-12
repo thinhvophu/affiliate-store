@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00098 (app/robots.ts — file-convention /robots.txt with allow-all rules + absolute Sitemap pointer via lib/env.ts; F0009)
+> Last updated: US00121 (scripts/ — new top-level ingestion CLI dev tooling: candidate model, validation engine, arg parser, reporter, writer; F0012)
 
 ### Top-level layout
 
@@ -172,6 +172,15 @@ aff-store/
 │   ├── BACKLOG.md
 │   ├── specs/           # User-story specs (USxxxxx.md, Fxxxx.md)
 │   └── plans/           # Approved implementation plans
+├── scripts/             # Dev tooling — NOT part of the rendered site; runs via `tsx` (F0012)
+│   ├── ingest-products.ts  # Ingestion CLI entry: parse args → preflight category → load candidates (stub source; scrape/file adapters land in US00124/US00125) → validate → write fixtures unless --dry-run → print summary (US00121)
+│   └── ingest/
+│       ├── candidate.ts    # Candidate / AcceptedCandidate / Rejection — shared source-agnostic candidate model (US00121)
+│       ├── validate.ts     # validateCandidate() — imports assertAffiliateUrl + assertCategoryRegistered, never re-implements them (US00121)
+│       ├── args.ts         # parseIngestArgs() — hand-rolled `--key=value` / `--flag` CLI parser (US00121)
+│       ├── report.ts       # IngestSummary type + buildSummary()/printSummary() — added/skipped-duplicate/rejected groups + footer (US00121)
+│       ├── writer.ts       # writeFixture() — serializes an AcceptedCandidate to content/products/<slug>.json matching Product exactly (US00121)
+│       └── README.md       # Operator doc: flags, dry-run, exit codes (US00121)
 ├── .github/workflows/   # CI + scheduled rebuild
 ├── next.config.ts
 ├── tsconfig.json        # Path alias: @/* → ./*
@@ -205,6 +214,7 @@ aff-store/
 - **Canonical / OG URLs are composed in one place: `lib/seo.ts`.** The root layout sets `metadataBase` from `env.NEXT_PUBLIC_SITE_URL`; per-page `alternates.canonical` and `openGraph.url` are **relative paths** resolved by Next.js against `metadataBase`. No file outside `lib/seo.ts` may concatenate `process.env.NEXT_PUBLIC_SITE_URL` into a metadata URL string. The string-template pattern `` `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/...` `` is **deprecated and removed** — all 9 routes now call `buildCanonicalPath(...)` / `buildPageMetadata(...)` (US00091 establishes; US00092 migrates every remaining call site — zero hits for `grep -rn "NEXT_PUBLIC_SITE_URL" app/`). Per-page `title` strings must **not** bake in `" | aff-store"` — the root `title.template` adds that suffix automatically; a page should set only its own short title (e.g. `"Về chúng tôi"`, not `"Về chúng tôi | aff-store"`). The homepage (`app/page.tsx`) is the one exception: it overrides `title` to `{ absolute: HOME_TITLE }` after spreading `buildPageMetadata(...)` because its title is identical to the root `title.default` and must not be double-suffixed.
 - **Page metadata is built in one place: `lib/seo.ts`.** Every route's `metadata` / `generateMetadata` returns `buildPageMetadata(...)`. No file outside `lib/seo.ts` may compose canonical URLs from `NEXT_PUBLIC_SITE_URL`, truncate `<meta description>` (`truncateMetaDescription`, ≤`MAX_META_DESCRIPTION_LENGTH` chars, word/sentence-boundary safe), or hand-assemble `openGraph` / `twitter` objects. `buildPageMetadata` fills `og:image`/`twitter:image` with `ogImage` (product `images[0]` / post `coverImage`) or falls back to `DEFAULT_OG_IMAGE`; `ogType` defaults to `"website"`, pass `"article"` for product/post detail pages.
 - **JSON-LD scripts go through one place: `<JsonLd>` (`components/JsonLd.tsx`).** Schema bodies are built by pure helpers in `lib/*-schema.ts` (no JSX) — e.g. `lib/product-schema.ts`'s `buildProductSchema()`, `lib/article-schema.ts`'s `buildArticleSchema()`. No file outside `<JsonLd>` may emit `<script type="application/ld+json">` directly. Absolute URLs inside a schema body always go through `absoluteUrl()` / `buildCanonicalPath()` from `lib/seo.ts` (US00094, US00095). `absoluteUrl()` passes through URLs that are already `http(s)://` unchanged (US00095).
+- **Dev tooling lives in `scripts/`, never in `app/`/`components/`/`lib/`.** Runs via `tsx` (not compiled by `next build`), imports the same build-time chokepoints (`assertAffiliateUrl`, `assertCategoryRegistered`) through the `@/*` alias, and never re-implements URL/category validation. The ingestion CLI (`scripts/ingest-products.ts`, F0012) writes `content/products/*.json` fixtures matching the `Product` interface exactly, so its output always satisfies `lib/products.ts`'s build-time checks (US00121).
 
 ### Route map (planned — see "Routes" section below for SEO/render strategy)
 
