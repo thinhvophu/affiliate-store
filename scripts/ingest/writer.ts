@@ -1,10 +1,15 @@
 /**
- * Fixture writer — F0012 (US00121).
+ * Fixture writer — F0012 (US00121, US00122).
  *
  * Serializes an accepted candidate to `content/products/<slug>.json`,
  * matching the `Product` interface (types/product.ts) exactly so the output
  * satisfies `lib/products.ts`'s build-time validation. Guarded by
  * `--dry-run` at the call site — never invoked when dry-run is set.
+ *
+ * Refuses to overwrite an existing fixture (decision D8) — defense-in-depth
+ * backstop for the dedupe/collision logic in `dedupe.ts`; the caller should
+ * never reach this with a taken slug, but a bug there must never silently
+ * clobber an existing product file.
  */
 
 import fs from "node:fs";
@@ -31,5 +36,8 @@ export function writeFixture(accepted: AcceptedCandidate): void {
 
   fs.mkdirSync(PRODUCTS_DIR, { recursive: true });
   const filePath = path.join(PRODUCTS_DIR, `${accepted.slug}.json`);
+  if (fs.existsSync(filePath)) {
+    throw new Error(`[ingest] refusing to overwrite existing fixture: ${filePath}`);
+  }
   fs.writeFileSync(filePath, `${JSON.stringify(product, null, 2)}\n`, "utf-8");
 }

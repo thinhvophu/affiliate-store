@@ -1,9 +1,12 @@
 /**
- * Summary reporter — F0012 (US00121). Decision D9.
+ * Summary reporter — F0012 (US00121, US00122). Decisions D7/D9.
  *
- * Prints three labelled groups (added / skipped-duplicate / rejected) plus a
- * footer line, so a human can review the run before committing generated
- * fixtures.
+ * Prints labelled groups (added / disambiguated-needs-review / skipped-
+ * duplicate / rejected) plus a footer line, so a human can review the run
+ * before committing generated fixtures. "Disambiguated" is a subset of
+ * "added" — those items were written under a `-2`/`-3`… slug after a
+ * collision (D7) and are called out separately so they don't blend into an
+ * otherwise-clean run.
  */
 
 import type { AcceptedCandidate, Rejection } from "./candidate";
@@ -36,6 +39,12 @@ export function printSummary(summary: IngestSummary): void {
   console.log(`\nAdded (${summary.added.length}):`);
   for (const c of summary.added) {
     console.log(`  + ${c.slug} — ${c.name}`);
+  }
+
+  const needsReview = summary.added.filter((c) => c.needsReview);
+  console.log(`\nDisambiguated - needs review (${needsReview.length}):`);
+  for (const c of needsReview) {
+    console.log(`  ? ${c.slug} — ${c.name} (slug collision, verify this isn't a duplicate)`);
   }
 
   console.log(`\nSkipped - duplicate (${summary.skippedDuplicate.length}):`);

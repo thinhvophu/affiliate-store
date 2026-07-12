@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00121 (scripts/ — new top-level ingestion CLI dev tooling: candidate model, validation engine, arg parser, reporter, writer; F0012)
+> Last updated: US00122 (scripts/ingest/ — slug generator + dedupe/idempotency wired into the ingestion CLI; F0012)
 
 ### Top-level layout
 
@@ -191,8 +191,8 @@ aff-store/
 │   ├── specs/           # User-story specs (USxxxxx.md, Fxxxx.md)
 │   └── plans/           # Approved implementation plans
 ├── scripts/             # Dev tooling — NOT part of the rendered site; runs via `tsx` (F0012)
-│   ├── ingest-products.ts  # Ingestion CLI entry (US00121)
-│   └── ingest/           # Candidate model, validation engine, arg parser, reporter, writer (US00121)
+│   ├── ingest-products.ts  # Ingestion CLI entry (US00121, US00122)
+│   └── ingest/           # Candidate model, validation engine, slug generator, dedupe/idempotency, arg parser, reporter, writer (US00121, US00122)
 ├── .github/workflows/   # CI + scheduled rebuild
 ├── next.config.ts
 ├── tsconfig.json        # Path alias: @/* → ./*
@@ -224,6 +224,7 @@ aff-store/
 - **Page metadata is built in one place: `lib/seo.ts`.** Every route's `metadata` / `generateMetadata` returns `buildPageMetadata(...)`. No file outside `lib/seo.ts` may compose canonical URLs, truncate `<meta description>`, or hand-assemble `openGraph` / `twitter` objects. OG image falls back to `DEFAULT_OG_IMAGE` when a page doesn't pass `ogImage`.
 - **JSON-LD scripts go through one place: `<JsonLd>` (`components/JsonLd.tsx`).** Schema bodies are built by pure helpers in `lib/*-schema.ts` (no JSX), e.g. `lib/product-schema.ts`, `lib/article-schema.ts`. No file outside `<JsonLd>` may emit `<script type="application/ld+json">` directly.
 - **Dev tooling lives in `scripts/`, never in `app/`/`components/`/`lib/`.** Runs via `tsx`, imports the same build-time chokepoints (`assertAffiliateUrl`, `assertCategoryRegistered`) through the `@/*` alias, and never re-implements URL/category validation. The ingestion CLI (`scripts/ingest-products.ts`, F0012) writes `content/products/*.json` fixtures matching the `Product` interface exactly (US00121).
+- **Product-ingest slugs come from `scripts/ingest/slug.ts`; heading slugs stay in `lib/mdx-slug.ts` — do not cross-use.** Ingestion dedupe (`scripts/ingest/dedupe.ts`) keys on `affiliateUrl` first, slug second; a slug collision between two distinct products is disambiguated and flagged for review, never silently overwritten (US00122).
 
 ### Route map
 
