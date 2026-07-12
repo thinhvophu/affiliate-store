@@ -233,3 +233,23 @@ Feature-level backlog derived from `docs/spec.md`. User stories (`US####`) will 
 **Priority:** P0
 **Dependencies:** F0001
 **Spec refs:** §3.3, §3.4, §9
+
+---
+
+## F0012 — Automated Content Ingestion Pipeline
+
+**Goal:** Scriptable, re-runnable pipeline to grow the product catalog and close blog-content gaps without hand-authoring every fixture.
+
+**Scope:**
+
+- CLI script (`scripts/ingest-products.ts`) sourcing candidates via the `shopee-affiliate` scrape tool (commodity categories) or a curated manual file (higher-consideration categories)
+- Validates every candidate against existing invariants before writing: affiliate host allow-list (`lib/affiliate.ts`), registered category (`lib/categories.ts`), required `Product` fields
+- Downloads product images locally to `public/static/images/products/` (no hotlinking — `next.config.ts` has no `images.remotePatterns`)
+- Dedupe/idempotent re-runs keyed on `affiliateUrl`/slug
+- Companion MDX scaffold mode for categories with a post-count gap (frontmatter + `<ProductCard>` embeds; human writes the body)
+
+**Out of scope:** Automated blog-post prose generation, automated price/stock refresh on existing products, automatic category creation, git commit/PR/deploy steps, curation judgment for hand-picked categories.
+
+**Priority:** P2
+**Dependencies:** F0001, F0004, F0006
+**Spec refs:** docs/specs/F0012.md
