@@ -1,10 +1,10 @@
 /**
- * Ingestion CLI entry point — F0012 (US00121).
+ * Ingestion CLI entry point — F0012 (US00121, US00122).
  *
- * Skeleton pipeline: parse args → preflight category → load candidates
- * (temporary in-memory stub; replaced by the scrape/file adapters in
- * US00124/US00125) → validate each → write fixtures (unless --dry-run) →
- * print summary.
+ * Pipeline: parse args → preflight category → load candidates (temporary
+ * in-memory stub; replaced by the scrape/file adapters in US00124/US00125)
+ * → validate + slugify + dedupe/classify each → write fixtures (unless
+ * --dry-run) → print summary.
  *
  * Run via `npm run ingest:products -- --category=<slug> --source=<name>
  * [--dry-run]`.
@@ -13,24 +13,11 @@
 import { assertCategoryRegistered } from "@/lib/categories";
 import { parseIngestArgs, type IngestArgs } from "./ingest/args";
 import type { AcceptedCandidate, Candidate, Rejection } from "./ingest/candidate";
+import { buildCatalogIndex, classify, registerAccepted } from "./ingest/dedupe";
 import { buildSummary, printSummary } from "./ingest/report";
+import { slugifyProductName } from "./ingest/slug";
 import { validateCandidate } from "./ingest/validate";
 import { writeFixture } from "./ingest/writer";
-
-/**
- * Naive placeholder slugifier (US00121 only). No diacritics-stripping
- * guarantees, no dedupe — the canonical slugifier lands in US00122. Used
- * here only to name candidates in chokepoint error messages and summaries.
- */
-function naiveSlug(name: string): string {
-  return name
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/đ/gi, "d")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
 
 /**
  * Temporary in-memory stub source (replaces nothing yet — US00124/US00125
@@ -84,24 +71,46 @@ async function main(): Promise<void> {
   }
 
   const candidates = await loadCandidates(args);
+  const catalogIndex = buildCatalogIndex();
 
   const added: AcceptedCandidate[] = [];
   const rejected: Rejection[] = [];
-  const skippedDuplicate: Rejection[] = []; // dedupe lands in US00122
+  const skippedDuplicate: Rejection[] = [];
 
   for (const candidate of candidates) {
-    const provisionalSlug = naiveSlug(candidate.name);
-    const rejection = validateCandidate(candidate, provisionalSlug);
+    const baseSlug = slugifyProductName(candidate.name);
+    if (baseSlug === "") {
+      rejected.push({
+        ref: candidate.sourceRef,
+        name: candidate.name || candidate.sourceRef,
+        reason: `name "${candidate.name}" does not produce a valid slug`,
+      });
+      continue;
+    }
+
+    const rejection = validateCandidate(candidate, baseSlug);
     if (rejection) {
       rejected.push(rejection);
       continue;
     }
 
+    const result = classify(candidate.affiliateUrl, baseSlug, catalogIndex);
+    if (result.kind === "duplicate") {
+      skippedDuplicate.push({
+        ref: candidate.sourceRef,
+        name: candidate.name,
+        reason: `affiliateUrl already ingested as "${result.slug}"`,
+      });
+      continue;
+    }
+
     const accepted: AcceptedCandidate = {
       ...candidate,
-      slug: provisionalSlug,
+      slug: result.slug,
       images: candidate.imageUrls, // real staging lands in US00123
+      needsReview: result.kind === "collision",
     };
+    registerAccepted(catalogIndex, candidate.affiliateUrl, result.slug);
 
     if (!args.dryRun) {
       writeFixture(accepted);

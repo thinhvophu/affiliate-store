@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00121 (scripts/ — new top-level ingestion CLI dev tooling: candidate model, validation engine, arg parser, reporter, writer; F0012)
+> Last updated: US00122 (scripts/ingest/ — slug generator + dedupe/idempotency wired into the ingestion CLI; F0012)
 
 ### Top-level layout
 
@@ -173,14 +173,16 @@ aff-store/
 │   ├── specs/           # User-story specs (USxxxxx.md, Fxxxx.md)
 │   └── plans/           # Approved implementation plans
 ├── scripts/             # Dev tooling — NOT part of the rendered site; runs via `tsx` (F0012)
-│   ├── ingest-products.ts  # Ingestion CLI entry: parse args → preflight category → load candidates (stub source; scrape/file adapters land in US00124/US00125) → validate → write fixtures unless --dry-run → print summary (US00121)
+│   ├── ingest-products.ts  # Ingestion CLI entry: parse args → preflight category → load candidates (stub source; scrape/file adapters land in US00124/US00125) → validate → slugify + dedupe/classify → write fixtures unless --dry-run → print summary (US00121, US00122)
 │   └── ingest/
-│       ├── candidate.ts    # Candidate / AcceptedCandidate / Rejection — shared source-agnostic candidate model (US00121)
+│       ├── candidate.ts    # Candidate / AcceptedCandidate (slug + images + needsReview) / Rejection — shared source-agnostic candidate model (US00121, US00122)
 │       ├── validate.ts     # validateCandidate() — imports assertAffiliateUrl + assertCategoryRegistered, never re-implements them (US00121)
+│       ├── slug.ts         # slugifyProductName() (Vietnamese-aware, transliterating) + disambiguate() — product-ingest slugifier, distinct from lib/mdx-slug.ts (US00122)
+│       ├── dedupe.ts        # buildCatalogIndex() (from getAllProducts()) + classify() + registerAccepted() — affiliateUrl-first/slug-second idempotency & collision detection (US00122)
 │       ├── args.ts         # parseIngestArgs() — hand-rolled `--key=value` / `--flag` CLI parser (US00121)
-│       ├── report.ts       # IngestSummary type + buildSummary()/printSummary() — added/skipped-duplicate/rejected groups + footer (US00121)
-│       ├── writer.ts       # writeFixture() — serializes an AcceptedCandidate to content/products/<slug>.json matching Product exactly (US00121)
-│       └── README.md       # Operator doc: flags, dry-run, exit codes (US00121)
+│       ├── report.ts       # IngestSummary type + buildSummary()/printSummary() — added/disambiguated-needs-review/skipped-duplicate/rejected groups + footer (US00121, US00122)
+│       ├── writer.ts       # writeFixture() — serializes an AcceptedCandidate to content/products/<slug>.json matching Product exactly; refuses to overwrite an existing fixture (US00121, US00122)
+│       └── README.md       # Operator doc: flags, dry-run, exit codes, slug/dedupe rules (US00121, US00122)
 ├── .github/workflows/   # CI + scheduled rebuild
 ├── next.config.ts
 ├── tsconfig.json        # Path alias: @/* → ./*
@@ -215,6 +217,7 @@ aff-store/
 - **Page metadata is built in one place: `lib/seo.ts`.** Every route's `metadata` / `generateMetadata` returns `buildPageMetadata(...)`. No file outside `lib/seo.ts` may compose canonical URLs from `NEXT_PUBLIC_SITE_URL`, truncate `<meta description>` (`truncateMetaDescription`, ≤`MAX_META_DESCRIPTION_LENGTH` chars, word/sentence-boundary safe), or hand-assemble `openGraph` / `twitter` objects. `buildPageMetadata` fills `og:image`/`twitter:image` with `ogImage` (product `images[0]` / post `coverImage`) or falls back to `DEFAULT_OG_IMAGE`; `ogType` defaults to `"website"`, pass `"article"` for product/post detail pages.
 - **JSON-LD scripts go through one place: `<JsonLd>` (`components/JsonLd.tsx`).** Schema bodies are built by pure helpers in `lib/*-schema.ts` (no JSX) — e.g. `lib/product-schema.ts`'s `buildProductSchema()`, `lib/article-schema.ts`'s `buildArticleSchema()`. No file outside `<JsonLd>` may emit `<script type="application/ld+json">` directly. Absolute URLs inside a schema body always go through `absoluteUrl()` / `buildCanonicalPath()` from `lib/seo.ts` (US00094, US00095). `absoluteUrl()` passes through URLs that are already `http(s)://` unchanged (US00095).
 - **Dev tooling lives in `scripts/`, never in `app/`/`components/`/`lib/`.** Runs via `tsx` (not compiled by `next build`), imports the same build-time chokepoints (`assertAffiliateUrl`, `assertCategoryRegistered`) through the `@/*` alias, and never re-implements URL/category validation. The ingestion CLI (`scripts/ingest-products.ts`, F0012) writes `content/products/*.json` fixtures matching the `Product` interface exactly, so its output always satisfies `lib/products.ts`'s build-time checks (US00121).
+- **Product-ingest slugs come from `scripts/ingest/slug.ts`; heading slugs stay in `lib/mdx-slug.ts` — do not cross-use.** `slugifyProductName()` transliterates Vietnamese diacritics (`chuột`→`chuot`) to match existing fixture style; `github-slugger` (used for MDX heading IDs) strips them instead (`chuột`→`chut`) and would diverge. Ingestion dedupe (`scripts/ingest/dedupe.ts`) keys on `affiliateUrl` first, slug second, seeded from `getAllProducts()` and updated within the run — a slug collision between two distinct products is disambiguated (`-2`, `-3`, …) and flagged `needsReview: true`, never silently overwritten; the writer's refuse-if-exists check is the backstop (US00122).
 
 ### Route map (planned — see "Routes" section below for SEO/render strategy)
 

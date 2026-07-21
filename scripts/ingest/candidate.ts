@@ -21,6 +21,8 @@ export interface Candidate {
 export interface AcceptedCandidate extends Candidate {
   slug: string; // derived in US00122
   images: string[]; // local /static/... paths after US00123 staging
+  /** Slug was disambiguated (`-2`, `-3`, …) after a collision — flag for human review (D7). */
+  needsReview: boolean;
 }
 
 export interface Rejection {
