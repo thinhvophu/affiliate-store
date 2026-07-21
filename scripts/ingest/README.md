@@ -16,9 +16,9 @@ npm run ingest:products -- --category=<slug> --source=<name> [--dry-run] [--<sou
 - `--source` (required) — which adapter to load candidates from. Only a
   temporary in-memory stub source exists as of US00121; the real `scrape`
   (US00124) and `file` (US00125) adapters land in follow-up stories.
-- `--dry-run` — runs the full pipeline (parse → validate) and prints the
-  summary, but writes no `content/products/*.json` file and downloads no
-  image.
+- `--dry-run` — runs the full pipeline (parse → validate → slug → dedupe)
+  and prints the summary, but writes no `content/products/*.json` file and
+  **stages no image** — image staging is skipped entirely under `--dry-run`.
 - Any other `--key=value` flag is passed through untouched for source
   adapters to read (e.g. a future `--path=data/batch.json`).
 
@@ -68,6 +68,40 @@ accepted earlier in the same run:
 - The fixture writer (`scripts/ingest/writer.ts`) additionally refuses to
   write if `content/products/<slug>.json` already exists on disk, as a
   defense-in-depth backstop independent of the dedupe logic above.
+
+## Image staging (US00123)
+
+Every **accepted** candidate's `imageUrls` (remote) are downloaded to
+`public/static/images/products/<slug>-<n>.<ext>` (1-based `n`, source
+order) **before** the fixture is written (`scripts/ingest/images.ts`,
+`stageImages`). The written fixture's `images` array holds only these local
+`/static/images/products/...` paths — never a remote URL. This is
+deliberate: `next.config.ts` has **no** `images.remotePatterns` entry for
+any product-image CDN, so a hotlinked URL would 404 at render time instead
+of degrading gracefully. Do not add `images.remotePatterns` as a shortcut —
+fix staging instead.
+
+- **Extension** is derived from the URL path first (`.jpg/.jpeg/.png/.webp/.avif`);
+  falls back to the response's `Content-Type` header when the URL has none.
+  A response whose `Content-Type` doesn't map to a known image type (e.g. a
+  CDN 404 served as `text/html` with a `200` status) is rejected even if the
+  URL looked like a valid image — this guards against writing an HTML error
+  page as a fake `.jpg`.
+- **Failure = candidate rejection, not a fatal run.** A 404, timeout (15s
+  per image), or bad content type rejects that candidate — it lands in the
+  `Rejected` summary group with a named reason — and the run continues for
+  the rest. No partial fixture is ever written for a candidate whose images
+  failed to stage; any in-flight `.part` temp file is deleted.
+- **Idempotent / retry-safe.** If the target local file
+  (`<slug>-<n>.<ext>`) already exists on disk (e.g. from a previous partial
+  run), staging skips the download entirely and reuses it — re-running an
+  interrupted ingest completes without re-fetching already-staged images.
+- The writer (`scripts/ingest/writer.ts`) has a defense-in-depth guard: it
+  refuses to write a fixture whose `images` array contains an `http(s)://`
+  entry, so a bug upstream can never publish a hotlinked fixture.
+- Shopee (or another source CDN) may reject non-browser requests; if
+  downloads fail broadly, the fix is adding a `User-Agent`/`Referer` header
+  to the fetch in `images.ts`, not relaxing the local-staging invariant.
 
 ## Two-step scrape flow
 

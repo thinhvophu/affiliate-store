@@ -1,5 +1,5 @@
 /**
- * Fixture writer — F0012 (US00121, US00122).
+ * Fixture writer — F0012 (US00121, US00122, US00123).
  *
  * Serializes an accepted candidate to `content/products/<slug>.json`,
  * matching the `Product` interface (types/product.ts) exactly so the output
@@ -10,6 +10,11 @@
  * backstop for the dedupe/collision logic in `dedupe.ts`; the caller should
  * never reach this with a taken slug, but a bug there must never silently
  * clobber an existing product file.
+ *
+ * Refuses to write a remote (`http`/`https`) image URL (US00123 decision
+ * D3) — defense-in-depth backstop for `images.ts`'s staging step; the
+ * caller should never reach this with an un-staged image, but a bug there
+ * must never publish a hotlinked fixture.
  */
 
 import fs from "node:fs";
@@ -20,6 +25,13 @@ import type { AcceptedCandidate } from "./candidate";
 const PRODUCTS_DIR = path.join(process.cwd(), "content", "products");
 
 export function writeFixture(accepted: AcceptedCandidate): void {
+  const remoteImage = accepted.images.find((src) => /^https?:\/\//.test(src));
+  if (remoteImage !== undefined) {
+    throw new Error(
+      `[ingest] refusing to write fixture "${accepted.slug}" with a remote image URL (staging must run first): ${remoteImage}`,
+    );
+  }
+
   const product: Product = {
     slug: accepted.slug,
     name: accepted.name,
