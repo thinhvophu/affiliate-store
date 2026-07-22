@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: US00122 (scripts/ingest/ — slug generator + dedupe/idempotency wired into the ingestion CLI; F0012)
+> Last updated: US00123 (scripts/ingest/images.ts — local image staging wired into the ingestion CLI; F0012)
 
 ### Top-level layout
 
@@ -173,16 +173,18 @@ aff-store/
 │   ├── specs/           # User-story specs (USxxxxx.md, Fxxxx.md)
 │   └── plans/           # Approved implementation plans
 ├── scripts/             # Dev tooling — NOT part of the rendered site; runs via `tsx` (F0012)
-│   ├── ingest-products.ts  # Ingestion CLI entry: parse args → preflight category → load candidates (stub source; scrape/file adapters land in US00124/US00125) → validate → slugify + dedupe/classify → write fixtures unless --dry-run → print summary (US00121, US00122)
+│   ├── ingest-products.ts  # Ingestion CLI entry: parse args → preflight category → load candidates (stub source; scrape/file adapters land in US00124/US00125) → validate → slugify + dedupe/classify → stage images locally unless --dry-run (staging failure rejects the candidate) → write fixtures unless --dry-run → print summary (US00121, US00122, US00123)
 │   └── ingest/
 │       ├── candidate.ts    # Candidate / AcceptedCandidate (slug + images + needsReview) / Rejection — shared source-agnostic candidate model (US00121, US00122)
 │       ├── validate.ts     # validateCandidate() — imports assertAffiliateUrl + assertCategoryRegistered, never re-implements them (US00121)
 │       ├── slug.ts         # slugifyProductName() (Vietnamese-aware, transliterating) + disambiguate() — product-ingest slugifier, distinct from lib/mdx-slug.ts (US00122)
 │       ├── dedupe.ts        # buildCatalogIndex() (from getAllProducts()) + classify() + registerAccepted() — affiliateUrl-first/slug-second idempotency & collision detection (US00122)
+│       ├── images.ts       # stageImages() — downloads a candidate's remote imageUrls to public/static/images/products/<slug>-<n>.<ext>; atomic per candidate (all-or-nothing, no partial fixture), idempotent (already-staged files skipped), rejects on 404/timeout/bad content-type; no next.config.ts remotePatterns needed (US00123)
+│       ├── images.test.ts  # Vitest with a mocked fetch — success, 404, timeout, already-staged skip (no fetch call), bad content-type rejection, multi-image ordering (US00123)
 │       ├── args.ts         # parseIngestArgs() — hand-rolled `--key=value` / `--flag` CLI parser (US00121)
 │       ├── report.ts       # IngestSummary type + buildSummary()/printSummary() — added/disambiguated-needs-review/skipped-duplicate/rejected groups + footer (US00121, US00122)
-│       ├── writer.ts       # writeFixture() — serializes an AcceptedCandidate to content/products/<slug>.json matching Product exactly; refuses to overwrite an existing fixture (US00121, US00122)
-│       └── README.md       # Operator doc: flags, dry-run, exit codes, slug/dedupe rules (US00121, US00122)
+│       ├── writer.ts       # writeFixture() — serializes an AcceptedCandidate to content/products/<slug>.json matching Product exactly; refuses to overwrite an existing fixture; refuses to write a remote (http/https) image URL (US00121, US00122, US00123)
+│       └── README.md       # Operator doc: flags, dry-run, exit codes, slug/dedupe rules, image-staging rules (US00121, US00122, US00123)
 ├── .github/workflows/   # CI + scheduled rebuild
 ├── next.config.ts
 ├── tsconfig.json        # Path alias: @/* → ./*
@@ -218,6 +220,7 @@ aff-store/
 - **JSON-LD scripts go through one place: `<JsonLd>` (`components/JsonLd.tsx`).** Schema bodies are built by pure helpers in `lib/*-schema.ts` (no JSX) — e.g. `lib/product-schema.ts`'s `buildProductSchema()`, `lib/article-schema.ts`'s `buildArticleSchema()`. No file outside `<JsonLd>` may emit `<script type="application/ld+json">` directly. Absolute URLs inside a schema body always go through `absoluteUrl()` / `buildCanonicalPath()` from `lib/seo.ts` (US00094, US00095). `absoluteUrl()` passes through URLs that are already `http(s)://` unchanged (US00095).
 - **Dev tooling lives in `scripts/`, never in `app/`/`components/`/`lib/`.** Runs via `tsx` (not compiled by `next build`), imports the same build-time chokepoints (`assertAffiliateUrl`, `assertCategoryRegistered`) through the `@/*` alias, and never re-implements URL/category validation. The ingestion CLI (`scripts/ingest-products.ts`, F0012) writes `content/products/*.json` fixtures matching the `Product` interface exactly, so its output always satisfies `lib/products.ts`'s build-time checks (US00121).
 - **Product-ingest slugs come from `scripts/ingest/slug.ts`; heading slugs stay in `lib/mdx-slug.ts` — do not cross-use.** `slugifyProductName()` transliterates Vietnamese diacritics (`chuột`→`chuot`) to match existing fixture style; `github-slugger` (used for MDX heading IDs) strips them instead (`chuột`→`chut`) and would diverge. Ingestion dedupe (`scripts/ingest/dedupe.ts`) keys on `affiliateUrl` first, slug second, seeded from `getAllProducts()` and updated within the run — a slug collision between two distinct products is disambiguated (`-2`, `-3`, …) and flagged `needsReview: true`, never silently overwritten; the writer's refuse-if-exists check is the backstop (US00122).
+- **Ingested product images are staged locally — never hotlinked, ever.** `scripts/ingest/images.ts`'s `stageImages()` downloads every accepted candidate's remote `imageUrls` to `public/static/images/products/<slug>-<n>.<ext>` (1-based `n`, source order) before `writeFixture` runs; the written fixture's `images` array holds only local `/static/images/products/...` paths. Extension is derived from the URL path first, falling back to the response `Content-Type` header — a response whose `Content-Type` isn't a known image type (e.g. an HTML error page served with `200`) is rejected even if the URL looked like an image. Staging is atomic per candidate (any image failure — 404, 15s timeout, bad content-type — rejects the whole candidate with no partial fixture and no orphan `.part` temp file) and idempotent (an already-staged file is skipped, not re-downloaded, so a retried run completes). `scripts/ingest/writer.ts` has a defense-in-depth guard that refuses to write a fixture with any `http(s)://` entry in `images`. `next.config.ts` deliberately has **no** `images.remotePatterns` entry for any product-image CDN — local staging is the reason this is safe (US00123).
 
 ### Route map (planned — see "Routes" section below for SEO/render strategy)
 
