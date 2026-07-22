@@ -11,3 +11,6 @@ next-env.d.ts.tmp
 
 # Local tooling
 .playwright-mcp/
+
+# Shopee affiliate scrape tool session/credentials — never committed
+data/auth/
