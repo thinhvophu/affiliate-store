@@ -13,9 +13,9 @@ npm run ingest:products -- --category=<slug> --source=<name> [--dry-run] [--<sou
 - `--category` (required) — must already be registered in `lib/categories.ts`.
   Checked **before** any source runs; an unregistered category exits
   non-zero immediately.
-- `--source` (required) — which adapter to load candidates from. Only a
-  temporary in-memory stub source exists as of US00121; the real `scrape`
-  (US00124) and `file` (US00125) adapters land in follow-up stories.
+- `--source` (required) — which adapter to load candidates from. `scrape`
+  (US00124, see below) reads `data/deals/<date>.json`; any other value falls
+  back to a temporary in-memory stub until US00125's `file` adapter lands.
 - `--dry-run` — runs the full pipeline (parse → validate → slug → dedupe)
   and prints the summary, but writes no `content/products/*.json` file and
   **stages no image** — image staging is skipped entirely under `--dry-run`.
@@ -103,6 +103,52 @@ fix staging instead.
   downloads fail broadly, the fix is adding a `User-Agent`/`Referer` header
   to the fetch in `images.ts`, not relaxing the local-staging invariant.
 
-## Two-step scrape flow
+## Two-step scrape flow (US00124)
 
-Fleshed out by US00124.
+A Node/`tsx` process cannot invoke the shopee-affiliate scrape tool directly
+— it's an agent-side tool, not something reachable from a standalone script.
+So the flow is two steps, run in this order:
+
+1. **Scrape** (run the shopee-affiliate scrape tool in-session, one or more
+   keywords). It writes `data/deals/<date>.json` itself — a `DailyDealsSnapshot`
+   grouping `RawDeal[]` per keyword (`{ date, generatedAt, totalKeywords,
+   results: [{ keyword, timestamp, totalFound, deals }] }`).
+2. **Ingest**, pointing at that file:
+   ```bash
+   npm run ingest:products -- --category=<slug> --source=scrape \
+     --query="<keyword>" --count=<n> [--date=<YYYY-MM-DD>] [--dry-run]
+   ```
+
+### Scrape-source flags
+
+- `--query` (required for `--source=scrape`) — must exactly match a
+  `results[].keyword` in the deals file (trimmed comparison). Scopes the run
+  to one keyword's deals when the file holds more than one.
+- `--count` — caps the number of deals read from the matched keyword group
+  (in the file's given order). Requesting more than exist is **not an
+  error**: the run ingests whatever passed validation and the summary
+  footer reports the shortfall (`requested N, ingested M`).
+- `--date` — selects which `data/deals/<date>.json` to read. Defaults to
+  **today**. A missing file is a fatal error naming the expected path — it
+  means step 1 wasn't run yet (or was run on a different day).
+
+### Mapping and validation
+
+Each `RawDeal` maps to the shared `Candidate` shape 1:1
+(`scripts/ingest/sources/scrape.ts`'s `mapDealToCandidate`, schema in
+`scripts/ingest/sources/deal-schema.ts`) — no scrape-specific validation.
+It then goes through the exact same `validateCandidate` → slug → dedupe →
+image-staging → writer pipeline as any other source.
+
+**Known gap (as of US00124):** the scrape tool's `RawDeal` has no `brand`
+field, and `details.specifications` is always `{}`. Both map straight
+through with no fabricated placeholder, so `validateCandidate` currently
+rejects nearly every real scraped deal for "missing required field: brand"
+(or `specs`) — expected until the scraper is updated to populate them. Once
+it is, no change is needed here: both fields are read directly off the deal
+record.
+
+**Affiliate host note:** the scrape tool's affiliate links use the
+`s.shopee.vn` short-link host (Shopee Affiliate dashboard's batch-link
+converter), which was added to `lib/affiliate.ts`'s allow-list in US00124
+alongside `shopee.vn` / `shopee.ee` / `shope.ee`.
