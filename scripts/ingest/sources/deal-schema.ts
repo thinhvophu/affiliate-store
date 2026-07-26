@@ -3,15 +3,18 @@
  *
  * Locked against a real `data/deals/<date>.json` produced by the
  * shopee-affiliate scrape tool, run separately beforehand (confirmed
- * 2026-07-22). All schema assumptions live in this one file — a future
- * scraper change is a one-file fix, isolated from `scrape.ts`'s
- * query/count/dedupe logic.
+ * 2026-07-22, re-confirmed 2026-07-26 after the scraper added brand). All
+ * schema assumptions live in this one file — a future scraper change is a
+ * one-file fix, isolated from `scrape.ts`'s query/count/dedupe logic.
  *
- * `brand` is optional and, as of the confirmed run, never present; the
- * scraper is expected to add it later (out of scope here). `specifications`
- * is always `{}` today for the same reason. Both flow straight through
- * `mapDealToCandidate` — no guessing, no placeholder values (D8) — so
- * `validateCandidate` rejects until the scraper is updated upstream.
+ * `brand` lives at `details.brand` (confirmed 2026-07-26) — the top-level
+ * `brand` field is always `""` on every real deal and is not used. Prefer
+ * `details.brand`, falling back to the top-level field only in case a
+ * future scraper version moves it back (`resolveBrand()` in `scrape.ts` is
+ * the one place that decides). `specifications` is still always `{}` as of
+ * this run; it flows straight through `mapDealToCandidate` with no
+ * fabricated placeholder (D8) — `validateCandidate` rejects until the
+ * scraper populates it too.
  */
 
 export interface RawDealDetails {
@@ -22,12 +25,15 @@ export interface RawDealDetails {
   shopName: string;
   shopRating: number | null;
   topReviews: { rating: number; text: string }[];
+  /** The real brand value lives here, not on the top-level `RawDeal.brand` (confirmed 2026-07-26). */
+  brand?: string;
 }
 
 export interface RawDeal {
   itemId: number;
   shopId: number;
   name: string;
+  /** Always `""` on every real deal as of 2026-07-26 — see `RawDealDetails.brand`. */
   brand?: string;
   priceVnd: number;
   originalPriceVnd: number;
