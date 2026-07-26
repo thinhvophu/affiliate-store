@@ -12,7 +12,7 @@
           "itemId": 1,
           "shopId": 1,
           "name": "Chuột Gaming Logitech G102 Demo",
-          "brand": "Logitech",
+          "brand": "",
           "priceVnd": 199000,
           "originalPriceVnd": 250000,
           "discountPercent": 20,
@@ -33,14 +33,15 @@
             "variants": [],
             "shopName": "Logitech Official Store",
             "shopRating": 4.9,
-            "topReviews": []
+            "topReviews": [],
+            "brand": "Logitech"
           }
         },
         {
           "itemId": 2,
           "shopId": 2,
           "name": "Chuột Gaming Host Lạ Demo",
-          "brand": "UnknownBrand",
+          "brand": "",
           "priceVnd": 99000,
           "originalPriceVnd": 99000,
           "discountPercent": 0,
@@ -61,7 +62,8 @@
             "variants": [],
             "shopName": "",
             "shopRating": null,
-            "topReviews": []
+            "topReviews": [],
+            "brand": "UnknownBrand"
           }
         },
         {
@@ -102,7 +104,7 @@
           "itemId": 4,
           "shopId": 4,
           "name": "Bàn Phím Cơ Demo",
-          "brand": "AULA",
+          "brand": "",
           "priceVnd": 399000,
           "originalPriceVnd": 399000,
           "discountPercent": 0,
@@ -123,7 +125,8 @@
             "variants": [],
             "shopName": "",
             "shopRating": null,
-            "topReviews": []
+            "topReviews": [],
+            "brand": "AULA"
           }
         }
       ]

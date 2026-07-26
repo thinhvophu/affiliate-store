@@ -59,14 +59,19 @@ function collectImageUrls(deal: RawDeal): string[] {
   );
 }
 
+/** `details.brand` is where the scraper actually puts it (confirmed 2026-07-26); the top-level field is always `""`. */
+function resolveBrand(deal: RawDeal): string {
+  return deal.details?.brand || deal.brand || "";
+}
+
 function mapDealToCandidate(deal: RawDeal, category: string, index: number): Candidate {
   return {
     name: deal.name,
-    brand: deal.brand ?? "", // not present in the scraper's current output (D8) — rejected by validateCandidate until fixed upstream
+    brand: resolveBrand(deal),
     price: deal.priceVnd,
     affiliateUrl: deal.affiliateUrl ?? "",
     description: deal.details?.description ?? "",
-    specs: deal.details?.specifications ?? {}, // always {} today (D8) — same rejection path
+    specs: deal.details?.specifications ?? {}, // always {} today (D8) — rejected by validateCandidate until the scraper populates it
     imageUrls: collectImageUrls(deal),
     category,
     sourceRef: `scrape#${index}`,
