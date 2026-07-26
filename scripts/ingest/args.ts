@@ -6,10 +6,18 @@
  * overkill for a dev tool and adds supply-chain surface.
  */
 
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
 export interface IngestArgs {
   category: string;
   source: string;
   dryRun: boolean;
+  /** `--source=scrape` (US00124): search keyword to filter deals by. */
+  query?: string;
+  /** `--source=scrape` (US00124): cap on accepted candidates. */
+  count?: number;
+  /** `--source=scrape` (US00124): which `data/deals/<date>.json` to read; defaults to today. */
+  date?: string;
   /** Source-specific `--key=value` flags passed through untouched (e.g. `--path`). */
   rest: Record<string, string>;
 }
@@ -18,6 +26,9 @@ export function parseIngestArgs(argv: string[]): IngestArgs {
   let category: string | undefined;
   let source: string | undefined;
   let dryRun = false;
+  let query: string | undefined;
+  let count: number | undefined;
+  let date: string | undefined;
   const rest: Record<string, string> = {};
 
   for (const token of argv) {
@@ -42,6 +53,19 @@ export function parseIngestArgs(argv: string[]): IngestArgs {
       category = value;
     } else if (key === "source") {
       source = value;
+    } else if (key === "query") {
+      query = value;
+    } else if (key === "count") {
+      const n = Number(value);
+      if (!Number.isInteger(n) || n <= 0) {
+        throw new Error(`Invalid value for "--count": "${value}" (expected a positive integer).`);
+      }
+      count = n;
+    } else if (key === "date") {
+      if (!DATE_RE.test(value)) {
+        throw new Error(`Invalid value for "--date": "${value}" (expected "YYYY-MM-DD").`);
+      }
+      date = value;
     } else {
       rest[key] = value;
     }
@@ -54,5 +78,5 @@ export function parseIngestArgs(argv: string[]): IngestArgs {
     throw new Error('Missing required flag: "--source=<name>".');
   }
 
-  return { category, source, dryRun, rest };
+  return { category, source, dryRun, query, count, date, rest };
 }

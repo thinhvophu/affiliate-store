@@ -1,0 +1,132 @@
+{
+  "date": "2026-07-22",
+  "generatedAt": "2026-07-22T00:00:00.000Z",
+  "totalKeywords": 2,
+  "results": [
+    {
+      "keyword": "chuột gaming",
+      "timestamp": "2026-07-22T00:00:00.000Z",
+      "totalFound": 3,
+      "deals": [
+        {
+          "itemId": 1,
+          "shopId": 1,
+          "name": "Chuột Gaming Logitech G102 Demo",
+          "brand": "Logitech",
+          "priceVnd": 199000,
+          "originalPriceVnd": 250000,
+          "discountPercent": 20,
+          "rating": 4.8,
+          "soldCount": 1200,
+          "stock": 10,
+          "shopLocation": "Thành phố Hồ Chí Minh",
+          "isOfficialShop": true,
+          "isFreeShipping": true,
+          "imageUrl": "https://down-vn.img.susercontent.com/file/demo-1",
+          "productUrl": "https://shopee.vn/demo-1",
+          "affiliateUrl": "https://s.shopee.vn/demo-aff-1",
+          "score": 150,
+          "details": {
+            "description": "Chuột gaming nhẹ, cảm biến quang học.",
+            "specifications": { "DPI": "200-8000", "Kết nối": "Có dây" },
+            "imageGallery": [],
+            "variants": [],
+            "shopName": "Logitech Official Store",
+            "shopRating": 4.9,
+            "topReviews": []
+          }
+        },
+        {
+          "itemId": 2,
+          "shopId": 2,
+          "name": "Chuột Gaming Host Lạ Demo",
+          "brand": "UnknownBrand",
+          "priceVnd": 99000,
+          "originalPriceVnd": 99000,
+          "discountPercent": 0,
+          "rating": 4.0,
+          "soldCount": 10,
+          "stock": 5,
+          "shopLocation": "Hà Nội",
+          "isOfficialShop": false,
+          "isFreeShipping": false,
+          "imageUrl": "https://down-vn.img.susercontent.com/file/demo-2",
+          "productUrl": "https://shopee.vn/demo-2",
+          "affiliateUrl": "https://malicious-host.example.com/aff-2",
+          "score": 90,
+          "details": {
+            "description": "Chuột demo để kiểm thử host không hợp lệ.",
+            "specifications": { "Loại": "Không dây" },
+            "imageGallery": [],
+            "variants": [],
+            "shopName": "",
+            "shopRating": null,
+            "topReviews": []
+          }
+        },
+        {
+          "itemId": 3,
+          "shopId": 3,
+          "name": "Chuột Gaming Thiếu Brand Demo",
+          "priceVnd": 129000,
+          "originalPriceVnd": 129000,
+          "discountPercent": 0,
+          "rating": 4.2,
+          "soldCount": 50,
+          "stock": 5,
+          "shopLocation": "Đà Nẵng",
+          "isOfficialShop": false,
+          "isFreeShipping": false,
+          "imageUrl": "https://down-vn.img.susercontent.com/file/demo-3",
+          "productUrl": "https://shopee.vn/demo-3",
+          "affiliateUrl": "https://s.shopee.vn/demo-aff-3",
+          "score": 80,
+          "details": {
+            "description": "",
+            "specifications": {},
+            "imageGallery": [],
+            "variants": [],
+            "shopName": "",
+            "shopRating": null,
+            "topReviews": []
+          }
+        }
+      ]
+    },
+    {
+      "keyword": "bàn phím cơ",
+      "timestamp": "2026-07-22T00:00:00.000Z",
+      "totalFound": 1,
+      "deals": [
+        {
+          "itemId": 4,
+          "shopId": 4,
+          "name": "Bàn Phím Cơ Demo",
+          "brand": "AULA",
+          "priceVnd": 399000,
+          "originalPriceVnd": 399000,
+          "discountPercent": 0,
+          "rating": 4.5,
+          "soldCount": 30,
+          "stock": 5,
+          "shopLocation": "Hà Nội",
+          "isOfficialShop": false,
+          "isFreeShipping": false,
+          "imageUrl": "https://down-vn.img.susercontent.com/file/demo-4",
+          "productUrl": "https://shopee.vn/demo-4",
+          "affiliateUrl": "https://s.shopee.vn/demo-aff-4",
+          "score": 70,
+          "details": {
+            "description": "Bàn phím cơ demo.",
+            "specifications": { "Switch": "Blue" },
+            "imageGallery": [],
+            "variants": [],
+            "shopName": "",
+            "shopRating": null,
+            "topReviews": []
+          }
+        }
+      ]
+    }
+  ]
+}

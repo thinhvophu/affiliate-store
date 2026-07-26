@@ -1,11 +1,12 @@
 /**
- * Ingestion CLI entry point — F0012 (US00121, US00122, US00123).
+ * Ingestion CLI entry point — F0012 (US00121, US00122, US00123, US00124).
  *
- * Pipeline: parse args → preflight category → load candidates (temporary
- * in-memory stub; replaced by the scrape/file adapters in US00124/US00125)
- * → validate + slugify + dedupe/classify each → stage images locally (unless
- * --dry-run; a staging failure rejects the candidate) → write fixtures
- * (unless --dry-run) → print summary.
+ * Pipeline: parse args → preflight category → load candidates
+ * (`--source=scrape` → `loadScrapeCandidates`; any other source → an
+ * in-memory stub until US00125's `file` adapter lands) → validate + slugify
+ * + dedupe/classify each → stage images locally (unless --dry-run; a
+ * staging failure rejects the candidate) → write fixtures (unless
+ * --dry-run) → print summary.
  *
  * Run via `npm run ingest:products -- --category=<slug> --source=<name>
  * [--dry-run]`.
@@ -17,17 +18,18 @@ import type { AcceptedCandidate, Candidate, Rejection } from "./ingest/candidate
 import { buildCatalogIndex, classify, registerAccepted } from "./ingest/dedupe";
 import { stageImages } from "./ingest/images";
 import { buildSummary, printSummary } from "./ingest/report";
+import { loadScrapeCandidates } from "./ingest/sources/scrape";
 import { slugifyProductName } from "./ingest/slug";
 import { validateCandidate } from "./ingest/validate";
 import { writeFixture } from "./ingest/writer";
 
 /**
- * Temporary in-memory stub source (replaces nothing yet — US00124/US00125
- * slot their real adapters in behind this same `loadCandidates` seam). One
- * valid and one intentionally invalid candidate so the full accept/reject
- * path is exercisable end-to-end before real sources exist.
+ * Temporary in-memory stub source for any `--source` other than `scrape`
+ * (US00125's `file` adapter slots in behind this same seam). One valid and
+ * one intentionally invalid candidate so the full accept/reject path is
+ * exercisable end-to-end before that source exists.
  */
-async function loadCandidates(args: IngestArgs): Promise<Candidate[]> {
+async function loadStubCandidates(args: IngestArgs): Promise<Candidate[]> {
   return Promise.resolve([
     {
       name: "Chuột Gaming Mẫu Demo",
@@ -52,6 +54,13 @@ async function loadCandidates(args: IngestArgs): Promise<Candidate[]> {
       sourceRef: `${args.source}#2`,
     },
   ]);
+}
+
+function loadCandidates(args: IngestArgs): Promise<Candidate[]> {
+  if (args.source === "scrape") {
+    return loadScrapeCandidates(args);
+  }
+  return loadStubCandidates(args);
 }
 
 async function main(): Promise<void> {
@@ -130,7 +139,11 @@ async function main(): Promise<void> {
     added.push(accepted);
   }
 
-  printSummary(buildSummary(candidates.length, added, skippedDuplicate, rejected));
+  // `--count` (when set, e.g. --source=scrape) is the operator's actual ask;
+  // candidates.length may already be short of it if fewer deals matched than
+  // requested (US00124 Scenario 3) — report the true shortfall, not just
+  // how many candidates happened to be loaded.
+  printSummary(buildSummary(args.count ?? candidates.length, added, skippedDuplicate, rejected));
 }
 
 main().catch((err) => {

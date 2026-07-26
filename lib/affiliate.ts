@@ -14,9 +14,12 @@
  *
  * Allow-list is intentionally exact-host (no subdomain wildcards). A new
  * Shopee surface (e.g. `affiliate.shopee.vn`) is a single-line edit below.
+ * `s.shopee.vn` (added US00124) is the short-link host produced by the
+ * Shopee Affiliate dashboard's batch-link converter — a real first-party
+ * Shopee surface, not a wildcard.
  */
 
-export const SHOPEE_AFFILIATE_HOSTS = ["shopee.vn", "shopee.ee", "shope.ee"] as const;
+export const SHOPEE_AFFILIATE_HOSTS = ["shopee.vn", "shopee.ee", "shope.ee", "s.shopee.vn"] as const;
 
 export type ShopeeAffiliateHost = (typeof SHOPEE_AFFILIATE_HOSTS)[number];
 

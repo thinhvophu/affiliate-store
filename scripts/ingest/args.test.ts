@@ -36,4 +36,41 @@ describe("parseIngestArgs", () => {
       parseIngestArgs(["--category=chuot-gaming", "--source=file", "positional"]),
     ).toThrow(/positional/);
   });
+
+  it("parses --query as a string", () => {
+    const args = parseIngestArgs([
+      "--category=chuot-gaming",
+      "--source=scrape",
+      "--query=chuột gaming",
+    ]);
+    expect(args.query).toBe("chuột gaming");
+  });
+
+  it("parses --count as a positive integer", () => {
+    const args = parseIngestArgs(["--category=chuot-gaming", "--source=scrape", "--count=8"]);
+    expect(args.count).toBe(8);
+  });
+
+  it("throws on a non-integer --count", () => {
+    expect(() =>
+      parseIngestArgs(["--category=chuot-gaming", "--source=scrape", "--count=abc"]),
+    ).toThrow(/--count/);
+  });
+
+  it("throws on a zero or negative --count", () => {
+    expect(() =>
+      parseIngestArgs(["--category=chuot-gaming", "--source=scrape", "--count=0"]),
+    ).toThrow(/--count/);
+  });
+
+  it("parses a valid --date", () => {
+    const args = parseIngestArgs(["--category=chuot-gaming", "--source=scrape", "--date=2026-07-22"]);
+    expect(args.date).toBe("2026-07-22");
+  });
+
+  it("throws on a malformed --date", () => {
+    expect(() =>
+      parseIngestArgs(["--category=chuot-gaming", "--source=scrape", "--date=22-07-2026"]),
+    ).toThrow(/--date/);
+  });
 });
