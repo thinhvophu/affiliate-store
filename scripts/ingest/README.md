@@ -14,8 +14,9 @@ npm run ingest:products -- --category=<slug> --source=<name> [--dry-run] [--<sou
   Checked **before** any source runs; an unregistered category exits
   non-zero immediately.
 - `--source` (required) — which adapter to load candidates from. `scrape`
-  (US00124, see below) reads `data/deals/<date>.json`; any other value falls
-  back to a temporary in-memory stub until US00125's `file` adapter lands.
+  (US00124, see below) reads `data/deals/<date>.json`; `file` (US00125, see
+  below) reads a curated JSON file at `--path`; any other value falls back
+  to a temporary in-memory stub.
 - `--dry-run` — runs the full pipeline (parse → validate → slug → dedupe)
   and prints the summary, but writes no `content/products/*.json` file and
   **stages no image** — image staging is skipped entirely under `--dry-run`.
@@ -152,3 +153,66 @@ record.
 `s.shopee.vn` short-link host (Shopee Affiliate dashboard's batch-link
 converter), which was added to `lib/affiliate.ts`'s allow-list in US00124
 alongside `shopee.vn` / `shopee.ee` / `shope.ee`.
+
+## Curated file source (US00125)
+
+For higher-consideration categories (e.g. monitors, keyboards) where an
+operator hand-picks specific products rather than trusting a scrape, use
+`--source=file`:
+
+```bash
+npm run ingest:products -- --category=<slug> --source=file \
+  --path=<path-to-curated-file.json> [--dry-run]
+```
+
+- `--path` (required for `--source=file`) — path to a JSON file, resolved
+  against `process.cwd()`. Missing → fatal, naming the flag.
+
+### Input format
+
+A JSON array of entries. Only `name` + `url` are required; everything else
+is optional (and, if omitted, causes that entry to be **rejected** by the
+normal validation pipeline — not a fatal error, see below).
+
+```jsonc
+// curated-monitors.json — an operator hand-picks these
+[
+  {
+    "name": "Màn hình Gaming Dell G2724D 27\" 165Hz",
+    "url": "https://shope.ee/AbCdEf123",
+    "brand": "Dell",
+    "price": 6490000,
+    "description": "Màn hình gaming Dell 27\" QHD IPS 165Hz, 1ms, G-Sync Compatible.",
+    "specs": { "Kích thước": "27 inch", "Độ phân giải": "2560x1440", "Tần số quét": "165Hz", "Tấm nền": "IPS" },
+    "images": ["https://cf.shopee.vn/file/abc123"],
+    "notes": "flagship pick for man-hinh-gaming"
+  }
+]
+```
+
+- `url` maps straight to `affiliateUrl`, untouched — no parsing/rewriting,
+  same rule as everywhere else in this pipeline.
+- `notes` is for the curator's own reference only; it is read but never
+  written to the fixture (not a `Product` field).
+- `category` is **not** read from the file — it comes from `--category`,
+  same as the scrape source.
+
+### Fatal vs. rejection
+
+This is the one distinction operators need to internalize:
+
+- **Structurally malformed** (the file isn't a JSON array, or *any* entry is
+  missing `name` or `url` entirely) → **fatal**. The run exits non-zero,
+  names every offending entry index, and writes **nothing** — not even the
+  well-formed entries in the same file. Fix the file and re-run.
+- **Well-formed but content-incomplete** (has `name` + `url`, but e.g. no
+  `price`) → **not** fatal. That entry lands in the `Rejected` summary group
+  with a named reason (identical to how the scrape source's incomplete
+  deals are rejected); every other entry in the file still ingests, and the
+  run exits `0`.
+
+### Duplicates within one file
+
+If the same `url` appears twice in one curated file, the second occurrence
+is caught by the normal dedupe pass (`scripts/ingest/dedupe.ts`) and skipped
+as a duplicate — same as re-running the CLI twice with overlapping input.

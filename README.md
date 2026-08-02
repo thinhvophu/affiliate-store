@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00124 (scripts/ingest/sources/scrape.ts — scrape-sourced product ingestion via data/deals/<date>.json; new top-level data/ dir; s.shopee.vn added to lib/affiliate.ts allow-list; F0012)
+> Last updated: US00125 (scripts/ingest/sources/file.ts — curated-file product ingestion via `--source=file --path=<file>`; F0012)
 
 ### Top-level layout
 
@@ -191,8 +191,8 @@ aff-store/
 │   ├── specs/           # User-story specs (USxxxxx.md, Fxxxx.md)
 │   └── plans/           # Approved implementation plans
 ├── scripts/             # Dev tooling — NOT part of the rendered site; runs via `tsx` (F0012)
-│   ├── ingest-products.ts  # Ingestion CLI entry (US00121, US00122, US00123, US00124)
-│   └── ingest/           # Candidate model, validation engine, slug generator, dedupe/idempotency, image staging (local, no hotlinking), arg parser, reporter, writer, scrape source adapter (US00121, US00122, US00123, US00124)
+│   ├── ingest-products.ts  # Ingestion CLI entry (US00121, US00122, US00123, US00124, US00125)
+│   └── ingest/           # Candidate model, validation engine, slug generator, dedupe/idempotency, image staging (local, no hotlinking), arg parser, reporter, writer, scrape + curated-file source adapters (US00121, US00122, US00123, US00124, US00125)
 ├── data/
 │   └── deals/           # Raw shopee-affiliate scrape dumps — input to `ingest:products --source=scrape`; committed as an audit trail (US00124)
 ├── .github/workflows/   # CI + scheduled rebuild
@@ -229,6 +229,7 @@ aff-store/
 - **Product-ingest slugs come from `scripts/ingest/slug.ts`; heading slugs stay in `lib/mdx-slug.ts` — do not cross-use.** Ingestion dedupe (`scripts/ingest/dedupe.ts`) keys on `affiliateUrl` first, slug second; a slug collision between two distinct products is disambiguated and flagged for review, never silently overwritten (US00122).
 - **Ingested product images are staged locally, never hotlinked.** `scripts/ingest/images.ts` downloads every accepted candidate's remote `imageUrls` to `public/static/images/products/<slug>-<n>.<ext>` before the fixture is written; the fixture's `images` array holds only local `/static/images/products/...` paths. Staging is atomic per candidate (a download failure rejects the candidate, no partial fixture) and idempotent (an already-staged file is skipped, not re-downloaded). `next.config.ts` deliberately has no `images.remotePatterns` entry — that's the point (US00123).
 - **The scrape source (`--source=scrape`) never calls the shopee-affiliate scrape tool from Node — it only reads the tool's own output file.** `scripts/ingest/sources/scrape.ts` reads `data/deals/<date>.json` (produced separately, out-of-band), filters by `--query`, caps at `--count` (a shortfall is reported, not an error), and maps each raw deal to a `Candidate` with no scrape-specific validation. `data/deals/` is a new top-level, committed directory (audit trail). `lib/affiliate.ts`'s allow-list includes `s.shopee.vn` (added in US00124) — the real short-link host the Shopee Affiliate dashboard produces (US00124).
+- **The file source (`--source=file --path=<file>`) reads a human-curated JSON array of hand-picked entries.** `scripts/ingest/sources/file.ts` only hard-requires `name` + `url` per entry (D2) — a structurally malformed entry (missing either) is **fatal, named, and blocks the whole file** before anything ingests; a well-formed entry missing optional content (e.g. no `price`) is a normal per-candidate rejection, not fatal. `url` passes straight through to `affiliateUrl` untouched, same as scrape. Goes through the identical validate → slug → dedupe → stage → write pipeline (US00125).
 
 ### Route map
 
