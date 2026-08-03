@@ -216,3 +216,41 @@ This is the one distinction operators need to internalize:
 If the same `url` appears twice in one curated file, the second occurrence
 is caught by the normal dedupe pass (`scripts/ingest/dedupe.ts`) and skipped
 as a duplicate — same as re-running the CLI twice with overlapping input.
+
+## Blog-post scaffold (US00126)
+
+For a category with fewer than 2 posts, generate an MDX stub instead of
+hand-copying the frontmatter shape from an existing post:
+
+```bash
+npm run scaffold:post -- --category=<slug> [--products=<slug-a[,slug-b]>] [--title=<title>] [--slug=<slug>]
+```
+
+- `--category` (required) — must already be registered in `lib/categories.ts`;
+  checked before any product lookup.
+- `--products` (optional) — 1–2 comma-separated **already-ingested** product
+  slugs (must exist in `content/products/*.json`). Each is resolved via
+  `getProductBySlug` before anything is written — an unknown slug exits
+  non-zero naming it, before any file is created.
+  - **Omitted:** `scripts/scaffold/select-products.ts`'s `selectProductsForCategory()`
+    auto-picks up to 2 products from `--category` — `featured: true` products
+    first, each group sorted by `publishedAt` desc then `slug` asc for a
+    stable, reproducible pick. A category with zero products exits non-zero
+    naming it (ingest some first, or pass `--products` explicitly). Use
+    `--products` when you want a specific pairing for the post's angle
+    (e.g. "budget picks" vs. "165Hz picks") rather than whatever auto-pick
+    would choose.
+- `--title` / `--slug` (optional) — used only to derive the output filename
+  (`content/posts/<slug>.mdx`); the frontmatter `title` itself is always a
+  `"TODO: …"` placeholder for a human to fill in. Without either flag the
+  slug is derived from `--category` + the first product's slug.
+- Refuses to overwrite an existing `content/posts/<slug>.mdx`.
+
+Output: complete frontmatter (`title`/`summary` placeholders, `category`,
+`publishedAt` = today, `tags: []`, `coverImage` = the first named product's
+`images[0]`) plus one `<ProductCard slug="…" />` per named product — no
+prose body. The stub passes `next build` as-is (empty prose is valid MDX);
+a human then writes the actual article and fills in `title`/`summary`/`tags`
+before publishing. Running two scaffolds that name different products
+yields different `coverImage` values, so one product's photo doesn't end up
+reused across every post in a category.
