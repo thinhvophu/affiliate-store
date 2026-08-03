@@ -24,6 +24,7 @@ import { selectProductsForCategory } from "./scaffold/select-products";
 import { renderPostStub } from "./scaffold/template";
 
 const POSTS_DIR = path.join(process.cwd(), "content", "posts");
+const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 interface ScaffoldArgs {
   category: string;
@@ -115,8 +116,11 @@ function main(): void {
 
   const postSlug =
     args.slug ?? slugifyProductName(args.title ?? `${args.category}-${products[0].slug}`);
-  if (postSlug === "") {
-    throw new Error("scaffold: computed post slug is empty — pass an explicit --slug.");
+  if (postSlug === "" || !SLUG_REGEX.test(postSlug)) {
+    throw new Error(
+      `scaffold: invalid post slug "${postSlug}" — must be lowercase kebab-case ASCII ` +
+        `(e.g. "man-hinh-gaming-top-5"). Pass a valid --slug explicitly.`,
+    );
   }
 
   const dest = path.join(POSTS_DIR, `${postSlug}.mdx`);
