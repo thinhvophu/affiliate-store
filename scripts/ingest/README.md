@@ -223,15 +223,23 @@ For a category with fewer than 2 posts, generate an MDX stub instead of
 hand-copying the frontmatter shape from an existing post:
 
 ```bash
-npm run scaffold:post -- --category=<slug> --products=<slug-a[,slug-b]> [--title=<title>] [--slug=<slug>]
+npm run scaffold:post -- --category=<slug> [--products=<slug-a[,slug-b]>] [--title=<title>] [--slug=<slug>]
 ```
 
 - `--category` (required) — must already be registered in `lib/categories.ts`;
   checked before any product lookup.
-- `--products` (required) — 1–2 comma-separated **already-ingested** product
+- `--products` (optional) — 1–2 comma-separated **already-ingested** product
   slugs (must exist in `content/products/*.json`). Each is resolved via
   `getProductBySlug` before anything is written — an unknown slug exits
   non-zero naming it, before any file is created.
+  - **Omitted:** `scripts/scaffold/select-products.ts`'s `selectProductsForCategory()`
+    auto-picks up to 2 products from `--category` — `featured: true` products
+    first, each group sorted by `publishedAt` desc then `slug` asc for a
+    stable, reproducible pick. A category with zero products exits non-zero
+    naming it (ingest some first, or pass `--products` explicitly). Use
+    `--products` when you want a specific pairing for the post's angle
+    (e.g. "budget picks" vs. "165Hz picks") rather than whatever auto-pick
+    would choose.
 - `--title` / `--slug` (optional) — used only to derive the output filename
   (`content/posts/<slug>.mdx`); the frontmatter `title` itself is always a
   `"TODO: …"` placeholder for a human to fill in. Without either flag the

@@ -6,22 +6,28 @@
  * hand-copy the frontmatter shape from an existing post each time. Article
  * prose is left for a human — see docs/specs/F0012.md § US00126 Scenario 1.
  *
- * Run via `npm run scaffold:post -- --category=<slug> --products=<a,b>
+ * `--products` is optional: when omitted, 1–2 products are auto-picked from
+ * `--category` (featured first) via `selectProductsForCategory` — see
+ * scripts/scaffold/select-products.ts.
+ *
+ * Run via `npm run scaffold:post -- --category=<slug> [--products=<a,b>]
  * [--title=<title>] [--slug=<slug>]`.
  */
 
 import fs from "node:fs";
 import path from "node:path";
 import { assertCategoryRegistered } from "@/lib/categories";
-import { getProductBySlug } from "@/lib/products";
+import { getAllProducts, getProductBySlug } from "@/lib/products";
+import type { Product } from "@/types";
 import { slugifyProductName } from "./ingest/slug";
+import { selectProductsForCategory } from "./scaffold/select-products";
 import { renderPostStub } from "./scaffold/template";
 
 const POSTS_DIR = path.join(process.cwd(), "content", "posts");
 
 interface ScaffoldArgs {
   category: string;
-  productSlugs: string[];
+  productSlugs?: string[];
   title?: string;
   slug?: string;
 }
@@ -64,13 +70,15 @@ function parseScaffoldArgs(argv: string[]): ScaffoldArgs {
   if (!category) {
     throw new Error('Missing required flag: "--category=<slug>".');
   }
-  if (!productSlugs || productSlugs.length === 0) {
-    throw new Error('Missing required flag: "--products=<slug-a,slug-b>".');
-  }
-  if (productSlugs.length > 2) {
-    throw new Error(
-      `"--products" accepts at most 2 product slugs, got ${productSlugs.length}.`,
-    );
+  if (productSlugs) {
+    if (productSlugs.length === 0) {
+      throw new Error('"--products" must not be empty (omit the flag to auto-pick instead).');
+    }
+    if (productSlugs.length > 2) {
+      throw new Error(
+        `"--products" accepts at most 2 product slugs, got ${productSlugs.length}.`,
+      );
+    }
   }
 
   return { category, productSlugs, title, slug };
@@ -81,15 +89,29 @@ function main(): void {
 
   assertCategoryRegistered(args.category, "<scaffold>");
 
-  const products = args.productSlugs.map((productSlug) => {
-    const product = getProductBySlug(productSlug);
-    if (!product) {
+  let products: Product[];
+  if (args.productSlugs) {
+    products = args.productSlugs.map((productSlug) => {
+      const product = getProductBySlug(productSlug);
+      if (!product) {
+        throw new Error(
+          `scaffold: unknown product slug "${productSlug}" — ingest it first (npm run ingest:products).`,
+        );
+      }
+      return product;
+    });
+  } else {
+    products = selectProductsForCategory(getAllProducts(), args.category);
+    if (products.length === 0) {
       throw new Error(
-        `scaffold: unknown product slug "${productSlug}" — ingest it first (npm run ingest:products).`,
+        `scaffold: no products found in category "${args.category}" to auto-pick from — ` +
+          `ingest some first, or pass --products=<slug-a,slug-b> explicitly.`,
       );
     }
-    return product;
-  });
+    console.log(
+      `[scaffold] auto-picked products: ${products.map((p) => p.slug).join(", ")}`,
+    );
+  }
 
   const postSlug =
     args.slug ?? slugifyProductName(args.title ?? `${args.category}-${products[0].slug}`);
