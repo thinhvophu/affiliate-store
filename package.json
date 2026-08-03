@@ -13,7 +13,8 @@
     "format:fix": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "ingest:products": "tsx scripts/ingest-products.ts"
+    "ingest:products": "tsx scripts/ingest-products.ts",
+    "scaffold:post": "tsx scripts/scaffold-post.ts"
   },
   "engines": {
     "node": ">=22.11.0"

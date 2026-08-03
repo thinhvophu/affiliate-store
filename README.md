@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00125 (scripts/ingest/sources/file.ts — curated-file product ingestion via `--source=file --path=<file>`; F0012)
+> Last updated: US00126 (scripts/scaffold-post.ts + scripts/scaffold/template.ts — `npm run scaffold:post` MDX post-stub scaffold for content-gap categories; F0012)
 
 ### Top-level layout
 
@@ -192,6 +192,8 @@ aff-store/
 │   └── plans/           # Approved implementation plans
 ├── scripts/             # Dev tooling — NOT part of the rendered site; runs via `tsx` (F0012)
 │   ├── ingest-products.ts  # Ingestion CLI entry (US00121, US00122, US00123, US00124, US00125)
+│   ├── scaffold-post.ts    # `scaffold:post` CLI entry — MDX post-stub scaffold for content-gap categories (US00126)
+│   ├── scaffold/          # renderPostStub() template builder + tests (US00126)
 │   └── ingest/           # Candidate model, validation engine, slug generator, dedupe/idempotency, image staging (local, no hotlinking), arg parser, reporter, writer, scrape + curated-file source adapters (US00121, US00122, US00123, US00124, US00125)
 ├── data/
 │   └── deals/           # Raw shopee-affiliate scrape dumps — input to `ingest:products --source=scrape`; committed as an audit trail (US00124)
@@ -226,6 +228,7 @@ aff-store/
 - **Page metadata is built in one place: `lib/seo.ts`.** Every route's `metadata` / `generateMetadata` returns `buildPageMetadata(...)`. No file outside `lib/seo.ts` may compose canonical URLs, truncate `<meta description>`, or hand-assemble `openGraph` / `twitter` objects. OG image falls back to `DEFAULT_OG_IMAGE` when a page doesn't pass `ogImage`.
 - **JSON-LD scripts go through one place: `<JsonLd>` (`components/JsonLd.tsx`).** Schema bodies are built by pure helpers in `lib/*-schema.ts` (no JSX), e.g. `lib/product-schema.ts`, `lib/article-schema.ts`. No file outside `<JsonLd>` may emit `<script type="application/ld+json">` directly.
 - **Dev tooling lives in `scripts/`, never in `app/`/`components/`/`lib/`.** Runs via `tsx`, imports the same build-time chokepoints (`assertAffiliateUrl`, `assertCategoryRegistered`) through the `@/*` alias, and never re-implements URL/category validation. The ingestion CLI (`scripts/ingest-products.ts`, F0012) writes `content/products/*.json` fixtures matching the `Product` interface exactly (US00121).
+- **`scripts/scaffold-post.ts` (`npm run scaffold:post`, F0012/US00126) generates an MDX stub for a content-gap category** — frontmatter (title/summary `"TODO: …"` placeholders, category, publishedAt=today, `tags: []`, coverImage sourced from the first of 1–2 named product slugs) plus one `<ProductCard slug>` per product. It exits non-zero naming any unknown product slug before writing a file, refuses to overwrite an existing post, and reuses `assertCategoryRegistered` + `slugifyProductName` rather than re-implementing them. A human still writes the article prose before publishing.
 - **Product-ingest slugs come from `scripts/ingest/slug.ts`; heading slugs stay in `lib/mdx-slug.ts` — do not cross-use.** Ingestion dedupe (`scripts/ingest/dedupe.ts`) keys on `affiliateUrl` first, slug second; a slug collision between two distinct products is disambiguated and flagged for review, never silently overwritten (US00122).
 - **Ingested product images are staged locally, never hotlinked.** `scripts/ingest/images.ts` downloads every accepted candidate's remote `imageUrls` to `public/static/images/products/<slug>-<n>.<ext>` before the fixture is written; the fixture's `images` array holds only local `/static/images/products/...` paths. Staging is atomic per candidate (a download failure rejects the candidate, no partial fixture) and idempotent (an already-staged file is skipped, not re-downloaded). `next.config.ts` deliberately has no `images.remotePatterns` entry — that's the point (US00123).
 - **The scrape source (`--source=scrape`) never calls the shopee-affiliate scrape tool from Node — it only reads the tool's own output file.** `scripts/ingest/sources/scrape.ts` reads `data/deals/<date>.json` (produced separately, out-of-band), filters by `--query`, caps at `--count` (a shortfall is reported, not an error), and maps each raw deal to a `Candidate` with no scrape-specific validation. `data/deals/` is a new top-level, committed directory (audit trail). `lib/affiliate.ts`'s allow-list includes `s.shopee.vn` (added in US00124) — the real short-link host the Shopee Affiliate dashboard produces (US00124).
