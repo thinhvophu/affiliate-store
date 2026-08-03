@@ -12,6 +12,9 @@ every step below.
 1. Scrape / curate  →  2. Ingest  →  3. Scaffold a post  →  4. Write prose  →  5. Publish
 ```
 
+Steps 3–5 together are also automated end-to-end by the `/write-post` slash
+command (`.claude/commands/write-post.md`) — see "3–5 combined" below.
+
 ### 1. Get candidate products
 
 Two sources, per category:
@@ -60,8 +63,10 @@ post needs a specific pairing. Full flag reference: `scripts/ingest/README.md`.
 Open the scaffolded `.mdx` file and fill in what the scaffold deliberately
 leaves as a stub: the real `title`, `summary`, `tags`, and the article prose
 around the `<ProductCard>` embeds (replace the
-`{/* TODO: viết phần mở bài và nội dung đánh giá */}` marker). This step is
-manual by design — see "Out of scope" in `docs/specs/F0012.md`.
+`{/* TODO: viết phần mở bài và nội dung đánh giá */}` marker). Article
+generation itself is out of scope for the CLI — see "Out of scope" in
+`docs/specs/F0012.md` — a human (or an agent, via `/write-post` below) has
+to write it.
 
 ### 5. Publish
 
@@ -74,6 +79,26 @@ git push origin main   # no feature branch/PR for routine content — see CLAUDE
 
 Vercel auto-deploys on push to `main`.
 
+### 3–5 combined: `/write-post`
+
+For an already-ingested category, the `/write-post` slash command
+(`.claude/commands/write-post.md`) runs steps 3–5 end-to-end in one go:
+
+```
+/write-post <category-slug> [product-slug-a,product-slug-b] [--slug=<output-slug>]
+```
+
+It runs `scaffold:post` (step 3), reads the picked products'
+`content/products/*.json` plus a `WebSearch` per brand/model for
+supplementary detail, replaces the `"TODO: …"` placeholders with real
+Vietnamese title/summary/tags/prose around the scaffolded `<ProductCard>`
+embeds (step 4), then runs `typecheck`/`lint`/`test`/`build`, a browser
+check, and commits + pushes straight to `main` (step 5) — same direct-to-
+`main` convention as `/scrape-ingest`, no feature branch/PR. It refuses to
+proceed for a category with zero products (points back to step 1/2
+instead) and never fabricates specs beyond the product JSON or search
+results.
+
 ## Directory map
 
 | Path | Purpose |
@@ -82,6 +107,8 @@ Vercel auto-deploys on push to `main`.
 | `scripts/ingest/` | Candidate model, validation, slug generator, dedupe, image staging, arg parser, reporter, writer, scrape + curated-file source adapters. Detailed docs live in `scripts/ingest/README.md`. |
 | `scripts/scaffold-post.ts` | Blog-post scaffold CLI entry point (step 3). |
 | `scripts/scaffold/` | `renderPostStub()` template builder + `selectProductsForCategory()` auto-pick helper, both pure and unit-tested. |
+| `.claude/commands/scrape-ingest.md` | `/scrape-ingest` slash command — steps 1+2+5 (scrape → ingest → publish), no prose step. |
+| `.claude/commands/write-post.md` | `/write-post` slash command — steps 3+4+5 (scaffold → research + write → publish) for an already-ingested category. |
 
 ## Exit codes (both CLIs)
 
