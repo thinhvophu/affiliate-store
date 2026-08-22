@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00126 (scripts/scaffold-post.ts + scripts/scaffold/ — `npm run scaffold:post` MDX post-stub scaffold with `--products`-optional auto-pick, plus scripts/README.md full-pipeline doc; F0012)
+> Last updated: US00131 (scripts/rename-product.ts — `npm run rename:product` slug-rename CLI; lib/products.test.ts catalog-quality guard; data/curated/ curated-file fallback input; catalog grown 10→15 products; F0013)
 
 ### Top-level layout
 
@@ -195,9 +195,11 @@ aff-store/
 │   ├── README.md          # Full-pipeline overview: scrape/curate → ingest → scaffold:post → write prose → publish (US00126)
 │   ├── scaffold-post.ts    # `scaffold:post` CLI entry — MDX post-stub scaffold for content-gap categories, `--products` optional (auto-pick fallback) (US00126)
 │   ├── scaffold/          # renderPostStub() template builder + selectProductsForCategory() auto-pick helper, both + tests (US00126)
+│   ├── rename-product.ts + .test.ts  # `npm run rename:product -- --from=<slug> --to=<slug>` — renames a product's slug across fixture, images[], staged files, and post embeds atomically (F0013/US00131)
 │   └── ingest/           # Candidate model, validation engine, slug generator, dedupe/idempotency, image staging (local, no hotlinking), arg parser, reporter, writer, scrape + curated-file source adapters (US00121, US00122, US00123, US00124, US00125)
 ├── data/
-│   └── deals/           # Raw shopee-affiliate scrape dumps — input to `ingest:products --source=scrape`; committed as an audit trail (US00124)
+│   ├── deals/           # Raw shopee-affiliate scrape dumps — input to `ingest:products --source=scrape`; committed as an audit trail (US00124)
+│   └── curated/         # Hand-curated candidate arrays — input to `ingest:products --source=file`, the fallback when the scrape source yields too few ingestable candidates (F0013/US00131)
 ├── .github/workflows/   # CI + scheduled rebuild
 ├── next.config.ts
 ├── tsconfig.json        # Path alias: @/* → ./*
@@ -234,6 +236,8 @@ aff-store/
 - **Ingested product images are staged locally, never hotlinked.** `scripts/ingest/images.ts` downloads every accepted candidate's remote `imageUrls` to `public/static/images/products/<slug>-<n>.<ext>` before the fixture is written; the fixture's `images` array holds only local `/static/images/products/...` paths. Staging is atomic per candidate (a download failure rejects the candidate, no partial fixture) and idempotent (an already-staged file is skipped, not re-downloaded). `next.config.ts` deliberately has no `images.remotePatterns` entry — that's the point (US00123).
 - **The scrape source (`--source=scrape`) never calls the shopee-affiliate scrape tool from Node — it only reads the tool's own output file.** `scripts/ingest/sources/scrape.ts` reads `data/deals/<date>.json` (produced separately, out-of-band), filters by `--query`, caps at `--count` (a shortfall is reported, not an error), and maps each raw deal to a `Candidate` with no scrape-specific validation. `data/deals/` is a new top-level, committed directory (audit trail). `lib/affiliate.ts`'s allow-list includes `s.shopee.vn` (added in US00124) — the real short-link host the Shopee Affiliate dashboard produces (US00124).
 - **The file source (`--source=file --path=<file>`) reads a human-curated JSON array of hand-picked entries.** `scripts/ingest/sources/file.ts` only hard-requires `name` + `url` per entry (D2) — a structurally malformed entry (missing either) is **fatal, named, and blocks the whole file** before anything ingests; a well-formed entry missing optional content (e.g. no `price`) is a normal per-candidate rejection, not fatal. `url` passes straight through to `affiliateUrl` untouched, same as scrape. Goes through the identical validate → slug → dedupe → stage → write pipeline (US00125).
+- **Product slug format is `<brand>-<model>-<qualifier>`, lowercase kebab-case ASCII, ≤60 chars — no category prefix** (F0013/US00131). Any rename must go through `npm run rename:product -- --from=<old> --to=<new>` (`scripts/rename-product.ts`), which moves all five touch-points (fixture, `slug`, `images[]`, staged files, post embeds) atomically — never rename a fixture file by hand.
+- **The catalog-quality guard lives in `lib/products.test.ts`** (F0013/US00131, Vitest) — asserts product count/per-category floor, name/slug length + boilerplate patterns, description boilerplate phrases, image paths, and affiliate host allow-list. Run `npm test` before merging any content change.
 
 ### Route map
 

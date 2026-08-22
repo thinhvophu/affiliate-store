@@ -9,11 +9,11 @@ every step below.
 ## The full flow
 
 ```
-1. Scrape / curate  →  2. Ingest  →  3. Scaffold a post  →  4. Write prose  →  5. Publish
+1. Scrape / curate  →  2. Ingest  →  3. Rename (editorial)  →  4. Scaffold a post  →  5. Write prose  →  6. Publish
 ```
 
-Steps 3–5 together are also automated end-to-end by the `/write-post` slash
-command (`.claude/commands/write-post.md`) — see "3–5 combined" below.
+Steps 4–6 together are also automated end-to-end by the `/write-post` slash
+command (`.claude/commands/write-post.md`) — see "4–6 combined" below.
 
 ### 1. Get candidate products
 
@@ -43,7 +43,30 @@ required `Product` fields), stages images locally to
 writes `content/products/<slug>.json`. Always dry-run first to preview.
 Full flag/behavior reference: `scripts/ingest/README.md`.
 
-### 3. Scaffold a blog post
+### 3. Rename (editorial pass)
+
+Raw ingested slugs (auto-slugified from the scraped/curated product name) run
+long and carry marketing boilerplate. Before scaffolding a post against a
+newly-ingested product, clean up its slug — and everything that references
+it — in one shot:
+
+```bash
+npm run rename:product -- --from=<old-slug> --to=<new-slug>
+```
+
+Format: `<brand>-<model>-<qualifier>`, lowercase kebab-case ASCII, ≤60 chars
+(e.g. `logitech-g305-lightspeed-wireless`) — no category prefix, since the
+category already lives in the URL path. The CLI moves all five touch-points
+atomically: the fixture filename, its `slug` field, its `images[]` paths,
+the staged image files on disk, and every `coverImage` /
+`<ProductCard slug>` reference in `content/posts/*.mdx`. It validates
+`--to` (free, ≤60 chars, kebab-case) and plans the full rename before
+touching disk, so a bad rename fails with no partial write. Pair this step
+with hand-editing `name`/`description`/`featured` in the fixture — `npm
+test` (`lib/products.test.ts`) is the guard that catches boilerplate left
+behind. Full details: `CLAUDE.md` → "Product slug format" convention.
+
+### 4. Scaffold a blog post
 
 Once a category has products, close its post gap:
 
@@ -58,7 +81,7 @@ one `<ProductCard slug="…" />` per product. Omit `--products` to auto-pick
 1–2 products from the category (featured first); pass it explicitly when a
 post needs a specific pairing. Full flag reference: `scripts/ingest/README.md`.
 
-### 4. Write the article
+### 5. Write the article
 
 Open the scaffolded `.mdx` file and fill in what the scaffold deliberately
 leaves as a stub: the real `title`, `summary`, `tags`, and the article prose
@@ -68,32 +91,32 @@ generation itself is out of scope for the CLI — see "Out of scope" in
 `docs/specs/F0012.md` — a human (or an agent, via `/write-post` below) has
 to write it.
 
-### 5. Publish
+### 6. Publish
 
 ```bash
 npm run build   # must exit 0 before committing anything
-git add content/products/ public/static/images/products/ content/posts/ data/deals/
+git add content/products/ public/static/images/products/ content/posts/ data/deals/ data/curated/
 git commit -m "..."
 git push origin main   # no feature branch/PR for routine content — see CLAUDE.md "Publishing flow"
 ```
 
 Vercel auto-deploys on push to `main`.
 
-### 3–5 combined: `/write-post`
+### 4–6 combined: `/write-post`
 
 For an already-ingested category, the `/write-post` slash command
-(`.claude/commands/write-post.md`) runs steps 3–5 end-to-end in one go:
+(`.claude/commands/write-post.md`) runs steps 4–6 end-to-end in one go:
 
 ```
 /write-post <category-slug> [product-slug-a,product-slug-b] [--slug=<output-slug>]
 ```
 
-It runs `scaffold:post` (step 3), reads the picked products'
+It runs `scaffold:post` (step 4), reads the picked products'
 `content/products/*.json` plus a `WebSearch` per brand/model for
 supplementary detail, replaces the `"TODO: …"` placeholders with real
 Vietnamese title/summary/tags/prose around the scaffolded `<ProductCard>`
-embeds (step 4), then runs `typecheck`/`lint`/`test`/`build`, a browser
-check, and commits + pushes straight to `main` (step 5) — same direct-to-
+embeds (step 5), then runs `typecheck`/`lint`/`test`/`build`, a browser
+check, and commits + pushes straight to `main` (step 6) — same direct-to-
 `main` convention as `/scrape-ingest`, no feature branch/PR. It refuses to
 proceed for a category with zero products (points back to step 1/2
 instead) and never fabricates specs beyond the product JSON or search
@@ -105,10 +128,11 @@ results.
 | --- | --- |
 | `scripts/ingest-products.ts` | Ingestion CLI entry point (step 2). |
 | `scripts/ingest/` | Candidate model, validation, slug generator, dedupe, image staging, arg parser, reporter, writer, scrape + curated-file source adapters. Detailed docs live in `scripts/ingest/README.md`. |
-| `scripts/scaffold-post.ts` | Blog-post scaffold CLI entry point (step 3). |
+| `scripts/rename-product.ts` + `.test.ts` | Slug-rename CLI entry point (step 3) — see "Rename (editorial pass)" above. |
+| `scripts/scaffold-post.ts` | Blog-post scaffold CLI entry point (step 4). |
 | `scripts/scaffold/` | `renderPostStub()` template builder + `selectProductsForCategory()` auto-pick helper, both pure and unit-tested. |
-| `.claude/commands/scrape-ingest.md` | `/scrape-ingest` slash command — steps 1+2+5 (scrape → ingest → publish), no prose step. |
-| `.claude/commands/write-post.md` | `/write-post` slash command — steps 3+4+5 (scaffold → research + write → publish) for an already-ingested category. |
+| `.claude/commands/scrape-ingest.md` | `/scrape-ingest` slash command — steps 1+2+6 (scrape → ingest → publish), no prose step. |
+| `.claude/commands/write-post.md` | `/write-post` slash command — steps 4+5+6 (scaffold → research + write → publish) for an already-ingested category. |
 
 ## Exit codes (both CLIs)
 

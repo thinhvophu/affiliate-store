@@ -1,0 +1,23 @@
+{
+  "slug": "logitech-g502-hero-rgb",
+  "name": "Chuột gaming Logitech G502 Hero RGB",
+  "category": "chuot-gaming",
+  "brand": "Logitech",
+  "price": 1098000,
+  "affiliateUrl": "https://s.shopee.vn/2g9qnHZdbW",
+  "images": [
+    "/static/images/products/logitech-g502-hero-rgb-1.jpg"
+  ],
+  "description": "Logitech G502 Hero là mẫu chuột gaming có dây kinh điển, dùng cảm biến HERO cho độ phân giải lên đến 16.000 DPI. Máy có 11 nút bấm có thể tùy chỉnh chức năng và tốc độ báo cáo USB 1000Hz cho phản hồi gần như tức thời. Đèn LIGHTSYNC RGB cùng thiết kế công thái học giúp G502 vừa đẹp mắt vừa thoải mái khi cầm nắm trong thời gian dài.",
+  "specs": {
+    "Cảm biến": "HERO, 100 - 16.000 DPI",
+    "Số nút": "11 nút",
+    "Tốc độ báo cáo USB": "1000 Hz (1ms)",
+    "Bộ nhớ tích hợp": "Tối đa 5 cấu hình",
+    "Đèn nền": "LIGHTSYNC RGB",
+    "Kích thước": "132 x 75 x 40 mm",
+    "Trọng lượng": "121 g"
+  },
+  "publishedAt": "2026-07-26",
+  "featured": false
+}

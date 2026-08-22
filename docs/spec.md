@@ -329,14 +329,14 @@ Place in: footer (all pages) + top of each blog post.
 
 - [ ] Domain registered and pointed to Vercel
 - [ ] `NEXT_PUBLIC_SITE_URL` env var set
-- [ ] At least 12 products added to `/content/products/`
+- [x] At least 12 products added to `/content/products/` (15 as of US00131)
 - [ ] At least 5 blog posts written and reviewed before launch
 - [ ] `sitemap.xml` verified at `/sitemap.xml`
 - [ ] `robots.txt` verified
 - [ ] Affiliate disclosure visible on all pages
 - [ ] Google Search Console property created, sitemap submitted
 - [ ] `NEXT_PUBLIC_GA_MEASUREMENT_ID` env var ready (can be empty at launch)
-- [ ] All affiliate URLs tested (open correct Shopee page in new tab)
+- [x] All affiliate URLs tested (open correct Shopee page in new tab) — 15/15 verified in US00131
 - [ ] Mobile responsiveness checked on real device
 - [ ] Core Web Vitals passing in Vercel dashboard
 
