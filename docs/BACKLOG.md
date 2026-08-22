@@ -137,6 +137,8 @@ Feature-level backlog derived from `docs/spec.md`. User stories (`US####`) will 
 
 ## F0007 — Analytics & Click Tracking
 
+> ⚠️ **Never specced, never built.** This feature received no `docs/specs/F0007.md` and no user stories; the 2026-08-12 readiness audit confirmed zero `gtag` / `affiliate_click` hits in application code — only the `F0003` `data-*` seam on `<AffiliateLink>` exists. **Its entire scope is delivered by F0014 (US00141 + US00142).** Treat F0007 as implemented when those ship; it gets no separate spec file. Scope below is retained for traceability.
+
 **Goal:** Measure traffic and identify top-converting products without code changes at launch.
 
 **Scope:**
@@ -253,3 +255,44 @@ Feature-level backlog derived from `docs/spec.md`. User stories (`US####`) will 
 **Priority:** P2
 **Dependencies:** F0001, F0004, F0006
 **Spec refs:** docs/specs/F0012.md
+
+---
+
+## F0013 — Launch Content Remediation
+
+**Goal:** Bring the shipped content data up to launch quality — the 2026-08-12 readiness audit found the codebase ready and the data not.
+
+**Scope:**
+
+- Replace the 1×1 / 332-byte placeholder cover images referenced by 5 of 8 posts (`logitech-g102-lightsync.jpg`, `keychron-k2-v2.jpg` — orphans from the mock-product cleanup) and delete the orphan files; no two posts share a cover
+- Build-time assertion in `lib/posts.ts` that a post's `coverImage` resolves to a real, non-degenerate file — same fail-loudly pattern as `assertAffiliateUrl` / `assertCategoryRegistered`
+- Verify `NEXT_PUBLIC_SITE_URL` end-to-end (Vercel Production value + deployed canonical / OG / JSON-LD / sitemap output); `.env.local`, CI and the built sitemap currently all say `https://example.com`
+- Rewrite the 5 thin posts (100–118 words today) to ≥800 words, each carrying ≥1 `<ProductCard>` embed — 4 of 8 posts have no affiliate embed at all
+- Clear the §9 catalog minimum (10 products today, 12 required) and clean the scraped fixtures: editorial `name` (raw Shopee titles today), ≤60-char `slug` (95–98 today), original `description` (verbatim Shopee copy today)
+- Resolve the 2 zero-product categories (`man-hinh-gaming`, `ghe-gaming`) still emitted into `sitemap.xml` and linked from the homepage
+
+**Out of scope:** Analytics/CI/formatting/Search Console (F0014); AdSense integration; automated prose generation; ongoing editorial cadence; redirects for changed product URLs (site not yet indexed under the production domain).
+
+**Priority:** P0 (launch blocker)
+**Dependencies:** F0004, F0006, F0009, F0012
+**Spec refs:** docs/specs/F0013.md · §7.1, §7.3, §9
+
+---
+
+## F0014 — Launch Technical Readiness
+
+**Goal:** Close the measurement and verification gaps around an otherwise launch-ready application — the technical counterpart to F0013.
+
+**Scope:**
+
+- GA4 integration mounted in the root layout, rendered only when `NEXT_PUBLIC_GA_MEASUREMENT_ID` is set, never in development, without flipping any route off SSG — **delivers F0007's GA4 scope**
+- Delegated `affiliate_click` GA4 event fired from the existing `F0003 ↔ F0007` `data-*` contract on `<AffiliateLink>`, no per-call-site changes — **delivers F0007's click-tracking scope**
+- `test` job added to `.github/workflows/ci.yml` — 121 tests exist but CI runs only typecheck/lint/build, so every guard can regress on a green PR
+- Google Search Console property + ownership verification + sitemap submission (DNS TXT preferred; meta-tag path goes through `lib/env.ts` → `buildRootMetadata()`)
+- Repository-wide Prettier baseline (126 files currently unformatted) as an isolated commit + `.git-blame-ignore-revs` entry, plus a `format` CI job
+
+**Out of scope:** Google AdSense (spec §2 P1, still unowned); custom analytics backend, A/B testing, cookie-consent UI; content/catalog fixes (F0013); any change to the SSG-only constraint; redesigning the Prettier ruleset.
+
+**Priority:** P1 (US00144 is P0 — on the §9 launch-day checklist)
+**Dependencies:** F0001, F0003, F0009, F0011 · supersedes F0007
+**Spec refs:** docs/specs/F0014.md · §3.4, §6.1, §6.2, §6.3, §9
