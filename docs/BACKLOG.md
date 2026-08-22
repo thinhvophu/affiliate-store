@@ -264,12 +264,13 @@ Feature-level backlog derived from `docs/spec.md`. User stories (`US####`) will 
 
 **Scope:**
 
-- Replace the 1×1 / 332-byte placeholder cover images referenced by 5 of 8 posts (`logitech-g102-lightsync.jpg`, `keychron-k2-v2.jpg` — orphans from the mock-product cleanup) and delete the orphan files; no two posts share a cover
-- Build-time assertion in `lib/posts.ts` that a post's `coverImage` resolves to a real, non-degenerate file — same fail-loudly pattern as `assertAffiliateUrl` / `assertCategoryRegistered`
-- Verify `NEXT_PUBLIC_SITE_URL` end-to-end (Vercel Production value + deployed canonical / OG / JSON-LD / sitemap output); `.env.local`, CI and the built sitemap currently all say `https://example.com`
-- Rewrite the 5 thin posts (100–118 words today) to ≥800 words, each carrying ≥1 `<ProductCard>` embed — 4 of 8 posts have no affiliate embed at all
-- Clear the §9 catalog minimum (10 products today, 12 required) and clean the scraped fixtures: editorial `name` (raw Shopee titles today), ≤60-char `slug` (95–98 today), original `description` (verbatim Shopee copy today)
-- Resolve the 2 zero-product categories (`man-hinh-gaming`, `ghe-gaming`) still emitted into `sitemap.xml` and linked from the homepage
+Stories are numbered in implementation order — each depends on the one before it:
+
+- **US00131** — verify `NEXT_PUBLIC_SITE_URL` end-to-end (Vercel Production value + deployed canonical / OG / JSON-LD / sitemap output); `.env.local`, CI and the built sitemap currently all say `https://example.com`
+- **US00132** — clear the §9 catalog minimum (10 products today, 12 required) and clean the scraped fixtures: editorial `name` (raw Shopee titles today), ≤60-char `slug` (95–98 today), original `description` (verbatim Shopee copy today). First, because slug changes rename the staged product images the later stories point at
+- **US00133** — resolve the 2 zero-product categories (`man-hinh-gaming`, `ghe-gaming`) still emitted into `sitemap.xml` and linked from the homepage
+- **US00134** — replace the 1×1 / 332-byte placeholder cover images referenced by 5 of 8 posts (`logitech-g102-lightsync.jpg`, `keychron-k2-v2.jpg` — orphans from the mock-product cleanup) and delete the orphan files; no two posts share a cover; plus a build-time assertion in `lib/posts.ts` that a post's `coverImage` resolves to a real, non-degenerate file — same fail-loudly pattern as `assertAffiliateUrl` / `assertCategoryRegistered`
+- **US00135** — rewrite the 5 thin posts (100–118 words today) to ≥800 words, each carrying ≥1 `<ProductCard>` embed — 4 of 8 posts have no affiliate embed at all
 
 **Out of scope:** Analytics/CI/formatting/Search Console (F0014); AdSense integration; automated prose generation; ongoing editorial cadence; redirects for changed product URLs (site not yet indexed under the production domain).
 
