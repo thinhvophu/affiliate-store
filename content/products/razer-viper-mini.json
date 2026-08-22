@@ -1,0 +1,23 @@
+{
+  "slug": "razer-viper-mini",
+  "name": "Chuột gaming Razer Viper Mini siêu nhẹ",
+  "category": "chuot-gaming",
+  "brand": "Razer",
+  "price": 299200,
+  "affiliateUrl": "https://s.shopee.vn/5ArMtaRnum",
+  "images": [
+    "/static/images/products/razer-viper-mini-1.jpg"
+  ],
+  "description": "Razer Viper Mini là chuột gaming siêu nhẹ chỉ 61g, dùng cảm biến quang học độ phân giải tối đa 8.500 DPI cho thao tác nhanh và chính xác. Thiết kế đối xứng cùng 6 nút bấm lập trình được và switch quang học Razer bền tới 50 triệu lần nhấp giúp chuột phù hợp với nhịp độ chơi nhanh. Đèn Razer Chroma RGB 16,8 triệu màu và dây Speedflex siêu nhẹ hoàn thiện trải nghiệm tổng thể.",
+  "specs": {
+    "Trọng lượng": "61 g",
+    "Cảm biến": "Quang học, tối đa 8.500 DPI",
+    "Số nút": "6 nút lập trình được",
+    "Công nghệ nút": "Razer Optical Mouse Switches",
+    "Độ bền nút bấm": "50 triệu lần nhấp",
+    "Đèn nền": "Razer Chroma RGB",
+    "Kích thước": "118.3 x 53.5 x 38.3 mm"
+  },
+  "publishedAt": "2026-08-02",
+  "featured": false
+}

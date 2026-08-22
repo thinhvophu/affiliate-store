@@ -1,12 +1,12 @@
 {
-  "slug": "ban-phim-gia-co-xunfox-k82-k820-94-phim",
+  "slug": "xunfox-k82-k820-94-phim",
   "name": "Bàn phím giả cơ XUNFOX K82/K820 94 phím",
   "category": "ban-phim-gaming",
   "brand": "XUNFOX",
   "price": 439000,
   "affiliateUrl": "https://s.shopee.vn/7VFneQbSlM",
   "images": [
-    "/static/images/products/ban-phim-gia-co-xunfox-k82-k820-94-phim-1.png"
+    "/static/images/products/xunfox-k82-k820-94-phim-1.png"
   ],
   "description": "Bàn phím giả cơ XUNFOX K82/K820 sở hữu 94 phím với đèn LED Rainbow đổi màu, phù hợp cho cả chơi game lẫn làm việc văn phòng. Máy có núm vặn âm lượng tiện dụng, kết nối USB 3.0 ổn định và hỗ trợ chế độ chống trượt phím (Anti-ghosting) khi bấm nhiều phím cùng lúc. Độ bền phím lên đến 10 triệu lượt bấm giúp sản phẩm dùng bền theo thời gian.",
   "specs": {
@@ -18,5 +18,5 @@
     "Núm điều khiển": "Núm vặn âm lượng"
   },
   "publishedAt": "2026-08-22",
-  "featured": false
+  "featured": true
 }
