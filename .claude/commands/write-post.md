@@ -49,6 +49,7 @@ Match the structure/tone of existing posts in `content/posts/*.mdx` (see any fil
 
 Leave `category`, `publishedAt`, and `coverImage` as the scaffold set them.
 
+Content should be optimized for SEO. A post length must be at least 800 words.
 ## 6. Verify
 
 ```bash
