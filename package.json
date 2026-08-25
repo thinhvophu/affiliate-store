@@ -15,7 +15,8 @@
     "test:watch": "vitest",
     "ingest:products": "tsx scripts/ingest-products.ts",
     "scaffold:post": "tsx scripts/scaffold-post.ts",
-    "rename:product": "tsx scripts/rename-product.ts"
+    "rename:product": "tsx scripts/rename-product.ts",
+    "sync:content-queue": "tsx scripts/sync-content-queue.ts"
   },
   "engines": {
     "node": ">=22.11.0"
