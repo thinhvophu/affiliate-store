@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getAllProducts } from "@/lib/products";
-import { getAllCategorySlugs, getCategoryMeta } from "@/lib/categories";
+import { getAllCategorySlugs, getCategoryMeta, assertCategoriesStocked } from "@/lib/categories";
 import { buildPageMetadata } from "@/lib/seo";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { JsonLd } from "@/components/JsonLd";
@@ -14,6 +14,7 @@ import styles from "./category-page.module.css";
 type Params = { category: string };
 
 export function generateStaticParams(): Params[] {
+  assertCategoriesStocked(getAllProducts());
   return getAllCategorySlugs().map((category) => ({ category }));
 }
 
