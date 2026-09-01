@@ -64,7 +64,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00131 (scripts/rename-product.ts — `npm run rename:product` slug-rename CLI; lib/products.test.ts catalog-quality guard; data/curated/ curated-file fallback input; catalog grown 10→15 products; F0013)
+> Last updated: US00132 (lib/categories.ts — DEFERRED_CATEGORIES + MIN_PRODUCTS_PER_CATEGORY + assertCategoriesStocked build-time guard; `man-hinh-gaming`/`ghe-gaming` deferred out of the active registry; lib/categories.test.ts; F0013)
 
 ### Top-level layout
 
@@ -168,7 +168,8 @@ aff-store/
 │   ├── affiliate.ts     # Shopee affiliate-URL allow-list + assertAffiliateUrl helper (US00034)
 │   ├── breakpoints.ts   # BREAKPOINT_TABLET_PX / BREAKPOINT_DESKTOP_PX / MOBILE_MEDIA_QUERY — JS mirror of globals.css tokens (US00025)
 │   ├── breadcrumbs.ts   # BreadcrumbItem type + buildProductBreadcrumbs / buildCategoryBreadcrumbs / buildPostBreadcrumbs — single source of trail data shared with US00096 BreadcrumbList JSON-LD; category labels via getCategoryMeta() (US00093)
-│   ├── categories.ts    # CATEGORIES map + getCategoryMeta + assertCategoryRegistered (US00045)
+│   ├── categories.ts    # CATEGORIES map + DEFERRED_CATEGORIES + getCategoryMeta + assertCategoryRegistered + MIN_PRODUCTS_PER_CATEGORY + assertCategoriesStocked (US00045, US00132)
+│   ├── categories.test.ts # Vitest — assertCategoriesStocked / DEFERRED_CATEGORIES coverage (US00132)
 │   ├── disclosures.ts   # AFFILIATE_DISCLOSURE_VI constant — shared with F0005 page + F0006 posts (US00022)
 │   ├── format.ts        # formatVnd() + formatPostDate() + readingTimeVi() — single chokepoints for VN price, date & read-time rendering (US00041, US00061, US00069)
 │   ├── nav-items.ts     # NAV_ITEMS constant — the four primary nav routes (typed)
@@ -222,7 +223,7 @@ aff-store/
 - **Prices** are formatted in one place: `lib/format.ts`. Every product surface renders prices via `formatVnd(amount)`. No file outside `lib/format.ts` may use `Intl.NumberFormat`, `toLocaleString`, or hand-rolled `"₫"` concatenation on a price value.
 - **Dates** are formatted in one place: `lib/format.ts`. Every blog surface renders post dates via `formatPostDate(iso)`. No file outside `lib/format.ts` may call `toLocaleDateString`, `Intl.DateTimeFormat`, or hand-roll a `tháng …` string on a post date.
 - **Contact email lives in one place: `lib/site.ts` (`CONTACT_EMAIL`).** No file outside `lib/site.ts` may inline `ttln1201@gmail.com` — Footer, policy pages, and the About page all import the constant.
-- **Categories are registered.** Every distinct `product.category` must have an entry in `lib/categories.ts` (slug + Vietnamese display name + 100–200 word intro + ≤160 char meta description). The product loader calls `assertCategoryRegistered()` at build time and fails with the offending slug if a category is missing.
+- **Categories are registered.** Every distinct `product.category` must have an entry in `lib/categories.ts` (slug + Vietnamese display name + 100–200 word intro + ≤160 char meta description). The product loader calls `assertCategoryRegistered()` at build time and fails with the offending slug if a category is missing. A registered category must have ≥`MIN_PRODUCTS_PER_CATEGORY` (3) products or `next build` fails (`assertCategoriesStocked()`, called from `generateStaticParams()` in `app/danh-muc/[category]/page.tsx`); an under-stocked category lives in `DEFERRED_CATEGORIES` instead, with its copy preserved for a one-line re-add once stocked.
 - **Catalog filter state** lives in the URL (`?category=`, `?brand=`, `?price=`, `?sort=`) only — no local state, no Context, no `localStorage`. Round-trips through `lib/filters.ts`; unknown values silently ignored.
 - **Blog MDX bodies render through `<PostBody>`** via `@mdx-js/mdx` `evaluate()`. The element/component map lives in `components/mdx/mdx-components.tsx`; the root `mdx-components.tsx` re-exports it. New MDX components register in the shared map only.
 - **MDX inline product cards:** Authors type `<ProductCard slug="…" />` in `.mdx` posts. The map key `ProductCard` resolves to `MdxProductCard` (the slug adapter in `components/MdxProductCard.tsx`), not the prop-based `components/ProductCard`. The adapter calls `getProductBySlug` at build time and throws a slug-named `Error` on miss so `next build` fails loudly.

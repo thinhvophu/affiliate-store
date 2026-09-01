@@ -13,6 +13,8 @@
  * Slug format: lowercase kebab-case ASCII (e.g. "chuot-gaming").
  */
 
+import type { Product } from "@/types";
+
 export type CategorySlug = string;
 
 export interface CategoryMeta {
@@ -79,6 +81,15 @@ export const CATEGORIES: Record<CategorySlug, CategoryMeta> = {
       "Tai nghe gaming có dây và không dây giá tốt — thông số driver, mic, tương thích đa nền tảng và link Shopee.",
   },
 
+};
+
+/**
+ * Categories with authored copy but no stocked products (US00132).
+ * Not linked, not in the sitemap, not build-time gated — moving an entry
+ * back into `CATEGORIES` is the entire re-registration step once
+ * `MIN_PRODUCTS_PER_CATEGORY` products exist for it.
+ */
+export const DEFERRED_CATEGORIES: Record<CategorySlug, CategoryMeta> = {
   "man-hinh-gaming": {
     slug: "man-hinh-gaming",
     name: "Màn hình gaming",
@@ -110,7 +121,6 @@ export const CATEGORIES: Record<CategorySlug, CategoryMeta> = {
     metaDescription:
       "Ghế gaming ergonomic giá tốt — so sánh chất liệu, khả năng điều chỉnh và link mua Shopee tiếp thị liên kết.",
   },
-
 };
 
 export function getCategoryMeta(slug: string): CategoryMeta | undefined {
@@ -144,6 +154,42 @@ export function assertCategoryRegistered(category: string, productSlug: string):
     throw new Error(
       `[categories] Product "${productSlug}" references unknown category ` +
         `"${category}". Register it in lib/categories.ts first.`,
+    );
+  }
+}
+
+/** A registered category must have at least this many products or `next build` fails. */
+export const MIN_PRODUCTS_PER_CATEGORY = 3;
+
+/**
+ * Build-time guard. Called from `generateStaticParams` in
+ * `app/danh-muc/[category]/page.tsx` — deliberately NOT from `getAllProducts()`,
+ * since `scripts/ingest/dedupe.ts` calls that loader to seed its index and
+ * would crash the ingest CLI exactly when it's being run to fix an
+ * under-stocked category.
+ *
+ * `registry` defaults to the live `CATEGORIES` map; tests inject a fixture
+ * registry to exercise under-stocked cases the live catalog never has.
+ */
+export function assertCategoriesStocked(
+  products: Product[],
+  registry: Record<CategorySlug, unknown> = CATEGORIES,
+): void {
+  const counts = new Map<CategorySlug, number>();
+  for (const p of products) {
+    counts.set(p.category, (counts.get(p.category) ?? 0) + 1);
+  }
+
+  const understocked = Object.keys(registry)
+    .map((slug) => ({ slug, count: counts.get(slug) ?? 0 }))
+    .filter(({ count }) => count < MIN_PRODUCTS_PER_CATEGORY);
+
+  if (understocked.length > 0) {
+    const detail = understocked.map(({ slug, count }) => `"${slug}" (${count})`).join(", ");
+    throw new Error(
+      `[categories] Registered categor${understocked.length === 1 ? "y is" : "ies are"} under the ` +
+        `${MIN_PRODUCTS_PER_CATEGORY}-product minimum: ${detail}. Ingest more products or move ` +
+        `the entry into DEFERRED_CATEGORIES in lib/categories.ts.`,
     );
   }
 }
