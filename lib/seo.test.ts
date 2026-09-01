@@ -169,4 +169,39 @@ describe("buildPageMetadata", () => {
     expect(openGraph.description).toBe(expected);
     expect(twitter.description).toBe(expected);
   });
+
+  it("declares the real 1200x630 dimensions for the default OG image (US00133)", () => {
+    const metadata = buildPageMetadata({
+      title: "Tiêu đề",
+      description: "Mô tả",
+      path: "/x/",
+    });
+    const openGraph = metadata.openGraph as { images: Array<{ width?: number; height?: number }> };
+    expect(openGraph.images[0].width).toBe(1200);
+    expect(openGraph.images[0].height).toBe(630);
+  });
+
+  it("declares the real dimensions of a square product image, not 1200x630 (US00133)", () => {
+    const metadata = buildPageMetadata({
+      title: "Tiêu đề",
+      description: "Mô tả",
+      path: "/x/",
+      ogImage: "/static/images/products/aula-f75-mach-xuoi-hotswap-1.png",
+    });
+    const openGraph = metadata.openGraph as { images: Array<{ width?: number; height?: number }> };
+    expect(openGraph.images[0].width).toBe(1024);
+    expect(openGraph.images[0].height).toBe(1024);
+  });
+
+  it("omits width/height entirely when the image cannot be resolved (US00133)", () => {
+    const metadata = buildPageMetadata({
+      title: "Tiêu đề",
+      description: "Mô tả",
+      path: "/x/",
+      ogImage: "/static/images/products/does-not-exist.jpg",
+    });
+    const openGraph = metadata.openGraph as { images: Array<Record<string, unknown>> };
+    expect("width" in openGraph.images[0]).toBe(false);
+    expect("height" in openGraph.images[0]).toBe(false);
+  });
 });

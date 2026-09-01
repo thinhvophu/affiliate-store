@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { env } from "@/lib/env";
 import { SITE_NAME } from "@/lib/site";
+import { readImageSize } from "@/lib/image-meta";
 
 export function getSiteUrl(): string {
   return env.NEXT_PUBLIC_SITE_URL.replace(/\/+$/, "");
@@ -99,6 +100,7 @@ export function buildPageMetadata(input: PageMetadataInput): Metadata {
   const { title, description, path, ogImage, ogImageAlt, ogType = "website" } = input;
   const truncatedDescription = truncateMetaDescription(description);
   const image = ogImage ?? DEFAULT_OG_IMAGE;
+  const size = readImageSize(image);
 
   return {
     title,
@@ -112,8 +114,7 @@ export function buildPageMetadata(input: PageMetadataInput): Metadata {
       images: [
         {
           url: image,
-          width: 1200,
-          height: 630,
+          ...(size ? { width: size.width, height: size.height } : {}),
           alt: ogImageAlt ?? title,
         },
       ],
