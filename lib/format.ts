@@ -64,7 +64,16 @@ export function formatPostDate(iso: string): string {
 
 const WORDS_PER_MINUTE = 200;
 
-function countWords(content: string): number {
+/** Depth floor for a published post body, in `countWords()` tokens (US00134). */
+export const MIN_POST_WORDS = 800;
+
+/**
+ * Count body words the same way for read-time estimation and the US00134
+ * depth-floor guard — the project's one word-counting chokepoint. Strips
+ * fenced code, inline JSX/HTML tags, and markdown image/link syntax before
+ * splitting on whitespace.
+ */
+export function countWords(content: string): number {
   const stripped = content
     .replace(/```[\s\S]*?```/g, "")
     .replace(/<[^>]+>/g, "")
