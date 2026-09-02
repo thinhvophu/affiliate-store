@@ -28,13 +28,27 @@ Useful scripts:
 | `npm run build`     | Production build (used by Vercel) |
 | `npm run start`     | Run the production build locally  |
 | `npm run typecheck` | `tsc --noEmit`                    |
+| `npm run verify:canonical -- --base=<url>` | Deployment-only check: asserts a **live** site carries no placeholder domain (F0013/US00135) |
 
 ## Environment variables
 
 | Name                            | Purpose                            | Required |
 | ------------------------------- | ---------------------------------- | -------- |
-| `NEXT_PUBLIC_SITE_URL`          | Canonical/sitemap base URL         | Yes      |
+| `NEXT_PUBLIC_SITE_URL`          | Canonical/sitemap base URL — **`https://example.com` in `.env.example`/CI is a placeholder, never a configured value** (F0013/US00135) | Yes      |
 | `NEXT_PUBLIC_GA_MEASUREMENT_ID` | GA4 ID; empty = analytics disabled | No       |
+
+## Setting the production domain
+
+The real domain (`https://muagear.com`) is set once, on the **Vercel Production** environment — `.env.example`, `.env.local`, and CI's `build` job all intentionally keep the `https://example.com` placeholder (D4: a build-time guard rejecting it would break CI and local dev). Swap-day checklist:
+
+1. Vercel dashboard → this project → Settings → Domains: add the domain, set it as **Production**.
+2. Settings → Environment Variables → set `NEXT_PUBLIC_SITE_URL` for **Production** to `https://muagear.com` (scheme + host, no trailing slash).
+3. Trigger a fresh Production deploy — `NEXT_PUBLIC_*` values are baked in at build time, so an existing deploy will **not** pick up the change.
+4. Run `npm run verify:canonical -- --base=https://muagear.com`. It must exit 0.
+5. Spot-check by eye: `https://muagear.com/sitemap.xml`'s first `<loc>`, and view-source one post page for `<link rel="canonical">` + `og:url` + the Article JSON-LD `mainEntityOfPage`. Confirm the rendered Header/Footer/`<title>` read "MuaGear".
+6. Update `.env.local` (untracked) to `https://muagear.com` so local builds match production.
+
+Full rationale and decision log: [`docs/plans/US00135.md`](./docs/plans/US00135.md).
 
 ## Hosting
 
@@ -64,7 +78,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00134 (lib/format.ts exports countWords() + MIN_POST_WORDS=800; lib/posts.test.ts adds the depth-floor + frontmatter-quality guard; content/posts/*.mdx rewritten to publish-grade depth; F0013)
+> Last updated: US00135 (scripts/verify-canonical.ts deployment canonical-URL verifier + npm run verify:canonical; lib/site.ts's SITE_NAME renamed "aff-store" → "MuaGear"; F0013)
 
 ### Top-level layout
 
@@ -173,7 +187,7 @@ aff-store/
 │   ├── disclosures.ts   # AFFILIATE_DISCLOSURE_VI constant — shared with F0005 page + F0006 posts (US00022)
 │   ├── format.ts        # formatVnd() + formatPostDate() + readingTimeVi() + countWords() (exported) + MIN_POST_WORDS=800 — single chokepoints for VN price, date, read-time & post-depth-floor word counting (US00041, US00061, US00069, US00134)
 │   ├── nav-items.ts     # NAV_ITEMS constant — the four primary nav routes (typed)
-│   ├── site.ts          # SITE_NAME + CONTACT_EMAIL constants — shared site name and primary contact email used by Header, Footer, policy pages, and the About page (US00066, US00102)
+│   ├── site.ts          # SITE_NAME + CONTACT_EMAIL constants — shared site name and primary contact email used by Header, Footer, policy pages, the About page, and lib/categories.ts intro copy (US00066, US00102); SITE_NAME renamed "aff-store" → "MuaGear" for the registered domain (F0013/US00135)
 │   ├── seo.ts           # Shared SEO helper: getSiteUrl(), absoluteUrl(), buildCanonicalPath(), buildRootMetadata(), truncateMetaDescription(), buildPageMetadata() — single chokepoint for canonical + OG URL composition, description truncation, and per-page Metadata assembly (US00091, US00092); buildPageMetadata() resolves real og:image dimensions via lib/image-meta.ts (US00133)
 │   ├── product-schema.ts # buildProductSchema(product) → Product JSON-LD object; raw price (no formatVnd), absolute image/url via lib/seo.ts (US00094)
 │   ├── article-schema.ts # buildArticleSchema(post) → Article JSON-LD object; absolute image/mainEntityOfPage via lib/seo.ts, coverImage falls back to default OG image (US00095)
@@ -198,6 +212,7 @@ aff-store/
 │   ├── scaffold-post.ts    # `scaffold:post` CLI entry — MDX post-stub scaffold for content-gap categories, `--products` optional (auto-pick fallback) (US00126)
 │   ├── scaffold/          # renderPostStub() template builder + selectProductsForCategory() auto-pick helper, both + tests (US00126)
 │   ├── rename-product.ts + .test.ts  # `npm run rename:product -- --from=<slug> --to=<slug>` — renames a product's slug across fixture, images[], staged files, and post embeds atomically (F0013/US00131)
+│   ├── verify-canonical.ts + .test.ts  # `npm run verify:canonical -- --base=<url>` — deployment-only canonical-URL verifier; fetches a **live** site, samples one product/post/category URL from its sitemap, asserts canonical/og:url/JSON-LD stay on `--base` and no `example.com` leaks anywhere (F0013/US00135)
 │   └── ingest/           # Candidate model, validation engine, slug generator, dedupe/idempotency, image staging (local, no hotlinking), arg parser, reporter, writer, scrape + curated-file source adapters (US00121, US00122, US00123, US00124, US00125)
 ├── data/
 │   ├── deals/           # Raw shopee-affiliate scrape dumps — input to `ingest:products --source=scrape`; committed as an audit trail (US00124)
@@ -230,7 +245,7 @@ aff-store/
 - **Blog MDX bodies render through `<PostBody>`** via `@mdx-js/mdx` `evaluate()`. The element/component map lives in `components/mdx/mdx-components.tsx`; the root `mdx-components.tsx` re-exports it. New MDX components register in the shared map only.
 - **MDX inline product cards:** Authors type `<ProductCard slug="…" />` in `.mdx` posts. The map key `ProductCard` resolves to `MdxProductCard` (the slug adapter in `components/MdxProductCard.tsx`), not the prop-based `components/ProductCard`. The adapter calls `getProductBySlug` at build time and throws a slug-named `Error` on miss so `next build` fails loudly.
 - **Heading slugs** come from `lib/mdx-slug.ts` (`createHeadingSlugger` wrapping `github-slugger`). No other file may call `github-slugger` or hand-roll heading slugs.
-- **Canonical / OG URLs are composed in one place: `lib/seo.ts`.** The root layout sets `metadataBase`; per-page `alternates.canonical` / `openGraph.url` are relative paths resolved against it. The `` `${process.env.NEXT_PUBLIC_SITE_URL}/...` `` string-template pattern is deprecated and removed — all 9 routes call `buildPageMetadata(...)`. Per-page `title` strings must not bake in `" | aff-store"` — the root `title.template` adds that suffix automatically (the homepage is the one exception, using a `title.absolute` override).
+- **Canonical / OG URLs are composed in one place: `lib/seo.ts`.** The root layout sets `metadataBase`; per-page `alternates.canonical` / `openGraph.url` are relative paths resolved against it. The `` `${process.env.NEXT_PUBLIC_SITE_URL}/...` `` string-template pattern is deprecated and removed — all 9 routes call `buildPageMetadata(...)`. Per-page `title` strings must not bake in `" | MuaGear"` (the `SITE_NAME` suffix, `lib/site.ts`) — the root `title.template` adds that suffix automatically (the homepage is the one exception, using a `title.absolute` override).
 - **Page metadata is built in one place: `lib/seo.ts`.** Every route's `metadata` / `generateMetadata` returns `buildPageMetadata(...)`. No file outside `lib/seo.ts` may compose canonical URLs, truncate `<meta description>`, or hand-assemble `openGraph` / `twitter` objects. OG image falls back to `DEFAULT_OG_IMAGE` when a page doesn't pass `ogImage`; `og:image:width`/`height` are resolved from the real file via `lib/image-meta.ts` and omitted when it can't be resolved (US00133).
 - **Image dimensions are read in one place: `lib/image-meta.ts`.** No file may call the `image-size` package or parse an image header directly. `readImageSize(path)` never throws; `assertMinShortSide(path, slug, min)` fails `next build` naming the post slug and path when a cover is missing, unreadable, or under 600px on its shorter side — called from `lib/posts.ts`'s `getAllPosts()` (US00133).
 - **JSON-LD scripts go through one place: `<JsonLd>` (`components/JsonLd.tsx`).** Schema bodies are built by pure helpers in `lib/*-schema.ts` (no JSX), e.g. `lib/product-schema.ts`, `lib/article-schema.ts`. No file outside `<JsonLd>` may emit `<script type="application/ld+json">` directly.
@@ -242,6 +257,7 @@ aff-store/
 - **The file source (`--source=file --path=<file>`) reads a human-curated JSON array of hand-picked entries.** `scripts/ingest/sources/file.ts` only hard-requires `name` + `url` per entry (D2) — a structurally malformed entry (missing either) is **fatal, named, and blocks the whole file** before anything ingests; a well-formed entry missing optional content (e.g. no `price`) is a normal per-candidate rejection, not fatal. `url` passes straight through to `affiliateUrl` untouched, same as scrape. Goes through the identical validate → slug → dedupe → stage → write pipeline (US00125).
 - **Product slug format is `<brand>-<model>-<qualifier>`, lowercase kebab-case ASCII, ≤60 chars — no category prefix** (F0013/US00131). Any rename must go through `npm run rename:product -- --from=<old> --to=<new>` (`scripts/rename-product.ts`), which moves all five touch-points (fixture, `slug`, `images[]`, staged files, post embeds) atomically — never rename a fixture file by hand.
 - **The catalog-quality guard lives in `lib/products.test.ts`** (F0013/US00131, Vitest) — asserts product count/per-category floor, name/slug length + boilerplate patterns, description boilerplate phrases, image paths, and affiliate host allow-list. Run `npm test` before merging any content change.
+- **The deployed-domain check is `npm run verify:canonical -- --base=<url>`** (`scripts/verify-canonical.ts`, F0013/US00135) — verifies canonical/`og:url`/JSON-LD URLs and `sitemap.xml`/`robots.txt` against a **live, deployed** site, not the local build. Not part of `next build` or CI — run by hand against Production after every domain change; see "Setting the production domain" below.
 
 ### Route map
 
@@ -285,4 +301,4 @@ If the tab is empty after a deploy, confirm that:
 
 ## License
 
-Private. All product data and content © aff-store.
+Private. All product data and content © MuaGear.

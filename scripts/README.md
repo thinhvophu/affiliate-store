@@ -131,6 +131,7 @@ results.
 | `scripts/rename-product.ts` + `.test.ts` | Slug-rename CLI entry point (step 3) — see "Rename (editorial pass)" above. |
 | `scripts/scaffold-post.ts` | Blog-post scaffold CLI entry point (step 4). |
 | `scripts/scaffold/` | `renderPostStub()` template builder + `selectProductsForCategory()` auto-pick helper, both pure and unit-tested. |
+| `scripts/verify-canonical.ts` | Deployment canonical-URL verifier (`npm run verify:canonical -- --base=<url>`, F0013/US00135) — checks a **live** site, not the local build; run by hand after a domain/env-var change. See `docs/plans/US00135.md` § "Half B" for the swap-day checklist. |
 | `.claude/commands/scrape-ingest.md` | `/scrape-ingest` slash command — steps 1+2+6 (scrape → ingest → publish), no prose step. |
 | `.claude/commands/write-post.md` | `/write-post` slash command — steps 4+5+6 (scaffold → research + write → publish) for an already-ingested category. |
 

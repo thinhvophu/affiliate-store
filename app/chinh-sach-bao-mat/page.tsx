@@ -1,13 +1,12 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { CONTACT_EMAIL } from "@/lib/site";
+import { CONTACT_EMAIL, SITE_NAME } from "@/lib/site";
 import { buildPageMetadata } from "@/lib/seo";
 import styles from "./chinh-sach-bao-mat.module.css";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Chính sách bảo mật",
-  description:
-    "Tìm hiểu cách aff-store thu thập dữ liệu ẩn danh qua Google Analytics, sử dụng cookie, và liên kết đến dịch vụ bên thứ ba như Shopee và Google AdSense.",
+  description: `Tìm hiểu cách ${SITE_NAME} thu thập dữ liệu ẩn danh qua Google Analytics, sử dụng cookie, và liên kết đến dịch vụ bên thứ ba như Shopee và Google AdSense.`,
   path: "/chinh-sach-bao-mat/",
 });
 
@@ -21,7 +20,7 @@ export default function ChinhSachBaoMatPage() {
         </p>
 
         <p className={styles.lead}>
-          Trang web aff-store (&ldquo;chúng tôi&rdquo;) cung cấp thông tin và đánh giá sản
+          Trang web {SITE_NAME} (&ldquo;chúng tôi&rdquo;) cung cấp thông tin và đánh giá sản
           phẩm gaming, công nghệ dưới hình thức tiếp thị liên kết. Chính sách
           bảo mật này mô tả cách chúng tôi xử lý thông tin khi bạn truy cập
           trang web.
@@ -62,7 +61,7 @@ export default function ChinhSachBaoMatPage() {
             2. Cookie và công nghệ theo dõi
           </h2>
           <p>
-            Trang web aff-store <strong>không tự đặt cookie</strong> cho mục
+            Trang web {SITE_NAME} <strong>không tự đặt cookie</strong> cho mục
             đích đăng nhập hay giỏ hàng (trang không có tính năng xác thực hay
             thương mại điện tử).
           </p>

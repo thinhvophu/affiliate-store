@@ -1,14 +1,13 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { AFFILIATE_DISCLOSURE_VI } from "@/lib/disclosures";
-import { CONTACT_EMAIL } from "@/lib/site";
+import { CONTACT_EMAIL, SITE_NAME } from "@/lib/site";
 import { buildPageMetadata } from "@/lib/seo";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Công bố tiếp thị liên kết",
-  description:
-    "aff-store sử dụng liên kết tiếp thị liên kết Shopee. Chúng tôi có thể nhận hoa hồng khi bạn mua hàng, không phát sinh thêm chi phí cho bạn. Tìm hiểu thêm về cam kết minh bạch của chúng tôi.",
+  description: `${SITE_NAME} sử dụng liên kết tiếp thị liên kết Shopee. Chúng tôi có thể nhận hoa hồng khi bạn mua hàng, không phát sinh thêm chi phí cho bạn. Tìm hiểu thêm về cam kết minh bạch của chúng tôi.`,
   path: "/cong-bo-tiep-thi-lien-ket/",
 });
 
@@ -25,7 +24,7 @@ export default function CongBoTiepThiLienKetPage() {
             1. Quan hệ tiếp thị liên kết với Shopee
           </h2>
           <p>
-            aff-store tham gia{" "}
+            {SITE_NAME} tham gia{" "}
             <a
               href="https://affiliate.shopee.vn/"
               target="_blank"
@@ -62,7 +61,7 @@ export default function CongBoTiepThiLienKetPage() {
             cùng chính sách đổi trả như mọi khách hàng khác.
           </p>
           <p>
-            Nói cách khác, sử dụng liên kết từ aff-store là cách bạn ủng hộ
+            Nói cách khác, sử dụng liên kết từ {SITE_NAME} là cách bạn ủng hộ
             trang web này tiếp tục hoạt động mà không phải bỏ thêm một đồng
             nào.
           </p>
@@ -73,7 +72,7 @@ export default function CongBoTiepThiLienKetPage() {
             3. Tính minh bạch và cam kết biên tập
           </h2>
           <p>
-            Chúng tôi cam kết rằng các đề xuất sản phẩm trên aff-store được
+            Chúng tôi cam kết rằng các đề xuất sản phẩm trên {SITE_NAME} được
             lựa chọn dựa trên <strong>giá trị thực tế</strong> — hiệu năng,
             mức giá, và phản hồi từ cộng đồng người dùng — chứ không dựa trên
             mức hoa hồng hay quan hệ trả phí với nhãn hàng. Không có nhà sản

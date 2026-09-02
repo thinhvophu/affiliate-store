@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { AFFILIATE_DISCLOSURE_VI } from "@/lib/disclosures";
-import { CONTACT_EMAIL } from "@/lib/site";
+import { CONTACT_EMAIL, SITE_NAME } from "@/lib/site";
 import styles from "./Footer.module.css";
 
 export function Footer() {
@@ -75,7 +75,7 @@ export function Footer() {
       <div className={styles.meta}>
         <small className={styles.disclosure}>{AFFILIATE_DISCLOSURE_VI}</small>
         <p className={styles.copyright}>
-          © {year} aff-store. Mọi quyền được bảo lưu.
+          © {year} {SITE_NAME}. Mọi quyền được bảo lưu.
         </p>
       </div>
     </footer>
