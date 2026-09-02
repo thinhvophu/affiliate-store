@@ -15,7 +15,7 @@ import styles from "./page.module.css";
 const HOME_TITLE = `${SITE_NAME} — Đồ chơi công nghệ & gaming Việt Nam`;
 
 // Homepage title is an absolute override (matches root layout's title.default)
-// so the root title.template doesn't double-append " | aff-store".
+// so the root title.template doesn't double-append the " | <SITE_NAME>" suffix.
 export const metadata: Metadata = {
   ...buildPageMetadata({
     title: HOME_TITLE,

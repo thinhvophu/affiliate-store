@@ -50,7 +50,7 @@ describe("buildRootMetadata", () => {
 
   it("sets the title template and a non-empty default", () => {
     const title = metadata.title as { template: string; default: string };
-    expect(title.template).toBe("%s | aff-store");
+    expect(title.template).toBe("%s | MuaGear");
     expect(title.default.length).toBeGreaterThan(0);
   });
 

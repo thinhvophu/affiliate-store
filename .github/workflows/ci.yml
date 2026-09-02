@@ -42,6 +42,8 @@ jobs:
     name: build
     runs-on: ubuntu-latest
     env:
+      # Build smoke test only — canonical URLs are not asserted here.
+      # Real value lives in Vercel Production env.
       NEXT_PUBLIC_SITE_URL: https://example.com
     steps:
       - uses: actions/checkout@v4

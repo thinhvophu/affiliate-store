@@ -1,14 +1,13 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
-import { CONTACT_EMAIL } from "@/lib/site";
+import { CONTACT_EMAIL, SITE_NAME } from "@/lib/site";
 import { buildPageMetadata } from "@/lib/seo";
 import styles from "./ve-chung-toi.module.css";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Về chúng tôi",
-  description:
-    "aff-store là trang đánh giá và gợi ý mua sắm thiết bị gaming, công nghệ tại Việt Nam. Tìm hiểu sứ mệnh, đội ngũ và cách chúng tôi chọn sản phẩm để giới thiệu.",
+  description: `${SITE_NAME} là trang đánh giá và gợi ý mua sắm thiết bị gaming, công nghệ tại Việt Nam. Tìm hiểu sứ mệnh, đội ngũ và cách chúng tôi chọn sản phẩm để giới thiệu.`,
   path: "/ve-chung-toi/",
 });
 
@@ -19,17 +18,17 @@ export default function VeChungToiPage() {
         <h1 className={styles.heading}>Về chúng tôi</h1>
 
         <p className={styles.lead}>
-          aff-store là trang đánh giá và đề xuất sản phẩm gaming, công nghệ bằng
+          {SITE_NAME} là trang đánh giá và đề xuất sản phẩm gaming, công nghệ bằng
           tiếng Việt — được vận hành độc lập, tập trung vào nội dung thực tế và
           minh bạch.
         </p>
 
         <section className={styles.section} aria-labelledby="sec-mission">
           <h2 id="sec-mission" className={styles.sectionHeading}>
-            Sứ mệnh của aff-store
+            Sứ mệnh của {SITE_NAME}
           </h2>
           <p>
-            aff-store ra đời với mục tiêu giúp người dùng Việt{" "}
+            {SITE_NAME} ra đời với mục tiêu giúp người dùng Việt{" "}
             <strong>chọn đúng sản phẩm gaming và công nghệ ngay từ lần mua đầu tiên</strong>{" "}
             — tiết kiệm thời gian tra cứu, tránh mua nhầm, và không bị cuốn theo những
             lời quảng cáo phóng đại.
@@ -39,7 +38,7 @@ export default function VeChungToiPage() {
             <strong>viết bằng tiếng Việt, dành cho người Việt</strong>: đặt sản phẩm
             trong bối cảnh giá cả, độ phổ biến và chính sách hậu mãi tại thị trường
             Việt Nam, thay vì dịch máy móc từ các bài review nước ngoài. Mỗi bài viết
-            trên aff-store đều cố gắng trả lời rõ ba câu hỏi:{" "}
+            trên {SITE_NAME} đều cố gắng trả lời rõ ba câu hỏi:{" "}
             <strong>&#8220;Sản phẩm này hợp với ai?&#8221;</strong>,{" "}
             <strong>&#8220;Đáng tiền ở mức giá nào?&#8221;</strong>, và{" "}
             <strong>&#8220;Có lựa chọn nào tốt hơn không?&#8221;</strong>.
@@ -56,7 +55,7 @@ export default function VeChungToiPage() {
             Chúng tôi là ai
           </h2>
           <p>
-            aff-store là một{" "}
+            {SITE_NAME} là một{" "}
             <strong>dự án cá nhân, vận hành độc lập</strong> bởi một nhóm nhỏ những
             người yêu công nghệ và chơi game tại Việt Nam. Chúng tôi không trực thuộc
             Shopee, không thuộc bất kỳ nhãn hàng nào, và cũng không nhận tài trợ để
@@ -81,7 +80,7 @@ export default function VeChungToiPage() {
             Cách chúng tôi chọn sản phẩm
           </h2>
           <p>
-            Một sản phẩm xuất hiện trên aff-store khi nó đáp ứng đồng thời các tiêu
+            Một sản phẩm xuất hiện trên {SITE_NAME} khi nó đáp ứng đồng thời các tiêu
             chí sau:
           </p>
           <ol className={styles.list}>
