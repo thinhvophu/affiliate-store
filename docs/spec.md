@@ -327,12 +327,12 @@ Place in: footer (all pages) + top of each blog post.
 
 ## 9. Launch Checklist
 
-- [ ] Domain registered and pointed to Vercel
-- [ ] `NEXT_PUBLIC_SITE_URL` env var set
+- [x] Domain registered and pointed to Vercel — `muagear.com` / `www.muagear.com` (US00135, 2026-09-02)
+- [x] `NEXT_PUBLIC_SITE_URL` env var set — Production is `https://www.muagear.com` (US00135, 2026-09-02)
 - [x] At least 12 products added to `/content/products/` (15 as of US00131)
 - [ ] At least 5 blog posts written and reviewed before launch
-- [ ] `sitemap.xml` verified at `/sitemap.xml`
-- [ ] `robots.txt` verified
+- [x] `sitemap.xml` verified at `/sitemap.xml` — `npm run verify:canonical` green against the live domain (US00135, 2026-09-02)
+- [x] `robots.txt` verified — `npm run verify:canonical` green against the live domain (US00135, 2026-09-02)
 - [ ] Affiliate disclosure visible on all pages
 - [ ] Google Search Console property created, sitemap submitted
 - [ ] `NEXT_PUBLIC_GA_MEASUREMENT_ID` env var ready (can be empty at launch)
