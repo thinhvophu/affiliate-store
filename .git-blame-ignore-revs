@@ -1,0 +1,6 @@
+# Revisions to ignore in `git blame` — formatting-only, no behavioral change.
+# Enable locally with:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+#
+# US00142 (F0014) — repository-wide Prettier baseline, 2026-09-03 (171 files).
+5b1c9046ff249fbc0b971726682c04294b4a1766

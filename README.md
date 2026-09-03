@@ -78,7 +78,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00135 (scripts/verify-canonical.ts deployment canonical-URL verifier + npm run verify:canonical; lib/site.ts's SITE_NAME renamed "aff-store" → "MuaGear"; F0013)
+> Last updated: US00142 (.git-blame-ignore-revs top-level file + repository-wide Prettier baseline + `format` CI job; F0014); previously US00135 (scripts/verify-canonical.ts deployment canonical-URL verifier + npm run verify:canonical; lib/site.ts's SITE_NAME renamed "aff-store" → "MuaGear"; F0013)
 
 ### Top-level layout
 
@@ -221,6 +221,7 @@ aff-store/
 ├── next.config.ts
 ├── tsconfig.json        # Path alias: @/* → ./*
 ├── package.json         # Node ≥22.11
+├── .git-blame-ignore-revs # SHAs to skip in `git blame` (formatting-only commits) — see § Formatting below (US00142)
 ├── CLAUDE.md            # Project rules for AI agents and humans
 ├── AGENTS.md            # Agent rules (read Next.js docs before coding)
 └── README.md            # This file
@@ -283,6 +284,19 @@ aff-store/
 2. `/task-planner USxxxxx` reads the spec + the **Codebase structure** section above and produces a plan in `docs/plans/USxxxxx.md`.
 3. After approval, `/implement-story USxxxxx` implements it on a feature branch and opens a PR.
 4. If the implementation changes the structure, `/implement-story` updates this section and the matching one in `CLAUDE.md` as part of the same PR.
+
+## Formatting
+
+The repo is formatted with [Prettier](https://prettier.io) (config: `.prettierrc`). CI runs `npm run format` (`prettier --check .`) on every PR and fails naming any offending file.
+
+- `npm run format` — check formatting, exits non-zero listing offending files.
+- `npm run format:fix` — apply formatting (`prettier --write .`).
+
+A repository-wide reformat landed in one isolated commit (US00142). To keep that commit out of `git blame` output, run once per clone:
+
+```
+git config blame.ignoreRevsFile .git-blame-ignore-revs
+```
 
 ## Core Web Vitals (Vercel Speed Insights)
 
