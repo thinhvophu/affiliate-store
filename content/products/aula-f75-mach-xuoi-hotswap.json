@@ -5,9 +5,7 @@
   "brand": "AULA",
   "price": 1175000,
   "affiliateUrl": "https://s.shopee.vn/5LBJ4RjiA9",
-  "images": [
-    "/static/images/products/aula-f75-mach-xuoi-hotswap-1.png"
-  ],
+  "images": ["/static/images/products/aula-f75-mach-xuoi-hotswap-1.png"],
   "description": "Bàn phím cơ không dây AULA F75 mạch xuôi hỗ trợ hotswap linh hoạt, cho phép thay switch mà không cần hàn. Máy có 3 kiểu kết nối USB-C, Bluetooth 5.1 và 2.4GHz, cùng đèn nền RGB sống động và keycap PBT double shot bền màu. PCB dày 1.2mm kết hợp lớp foam giảm tiếng ồn giúp cảm giác gõ chắc và êm hơn.",
   "specs": {
     "Layout": "75%",

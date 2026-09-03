@@ -4,10 +4,7 @@ import { getAllProducts } from "@/lib/products";
 import { getAllPosts } from "@/lib/posts";
 import { buildPageMetadata } from "@/lib/seo";
 import HomeHero from "@/components/HomeHero";
-import {
-  FeaturedProducts,
-  MAX_FEATURED_PRODUCTS,
-} from "@/components/FeaturedProducts";
+import { FeaturedProducts, MAX_FEATURED_PRODUCTS } from "@/components/FeaturedProducts";
 import { CategoryHighlights } from "@/components/CategoryHighlights";
 import { LatestPosts } from "@/components/LatestPosts";
 import styles from "./page.module.css";

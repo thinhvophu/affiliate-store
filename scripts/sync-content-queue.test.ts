@@ -81,7 +81,10 @@ describe("syncContentQueue", () => {
 
     const edited = fs
       .readFileSync(queueFile, "utf-8")
-      .replace("| razer-deathadder-essential | chuot-gaming | pending |", "| razer-deathadder-essential | chuot-gaming | drafted |");
+      .replace(
+        "| razer-deathadder-essential | chuot-gaming | pending |",
+        "| razer-deathadder-essential | chuot-gaming | drafted |",
+      );
     fs.writeFileSync(queueFile, edited, "utf-8");
 
     const result = syncContentQueue({ productsDir, postsDir, queueFile });

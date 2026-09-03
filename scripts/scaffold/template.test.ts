@@ -30,14 +30,10 @@ describe("renderPostStub", () => {
   });
 
   it("embeds one <ProductCard slug> per named product, in order", () => {
-    const { content } = matter(
-      renderPostStub(input({ productSlugs: ["chuot-a", "ban-phim-b"] })),
-    );
+    const { content } = matter(renderPostStub(input({ productSlugs: ["chuot-a", "ban-phim-b"] })));
     expect(content).toContain('<ProductCard slug="chuot-a" />');
     expect(content).toContain('<ProductCard slug="ban-phim-b" />');
-    expect(content.indexOf('slug="chuot-a"')).toBeLessThan(
-      content.indexOf('slug="ban-phim-b"'),
-    );
+    expect(content.indexOf('slug="chuot-a"')).toBeLessThan(content.indexOf('slug="ban-phim-b"'));
   });
 
   it("uses the given coverImage (first named product's image)", () => {

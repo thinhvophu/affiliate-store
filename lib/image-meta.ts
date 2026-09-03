@@ -13,8 +13,7 @@ interface ImageDimensions {
 }
 
 type SizeResult =
-  | ({ ok: true } & ImageDimensions)
-  | { ok: false; reason: "missing" | "unreadable" };
+  ({ ok: true } & ImageDimensions) | { ok: false; reason: "missing" | "unreadable" };
 
 const cache = new Map<string, SizeResult>();
 

@@ -15,15 +15,12 @@ export default function ChinhSachBaoMatPage() {
     <div className={styles.container}>
       <article className={styles.article}>
         <h1 className={styles.heading}>Chính sách bảo mật</h1>
-        <p className={styles.effectiveDate}>
-          Cập nhật lần cuối: 24 tháng 5, 2026
-        </p>
+        <p className={styles.effectiveDate}>Cập nhật lần cuối: 24 tháng 5, 2026</p>
 
         <p className={styles.lead}>
-          Trang web {SITE_NAME} (&ldquo;chúng tôi&rdquo;) cung cấp thông tin và đánh giá sản
-          phẩm gaming, công nghệ dưới hình thức tiếp thị liên kết. Chính sách
-          bảo mật này mô tả cách chúng tôi xử lý thông tin khi bạn truy cập
-          trang web.
+          Trang web {SITE_NAME} (&ldquo;chúng tôi&rdquo;) cung cấp thông tin và đánh giá sản phẩm
+          gaming, công nghệ dưới hình thức tiếp thị liên kết. Chính sách bảo mật này mô tả cách
+          chúng tôi xử lý thông tin khi bạn truy cập trang web.
         </p>
 
         <section className={styles.section} aria-labelledby="sec-data">
@@ -32,27 +29,26 @@ export default function ChinhSachBaoMatPage() {
           </h2>
           <p>
             Chúng tôi <strong>không yêu cầu tạo tài khoản</strong> và{" "}
-            <strong>không thu thập thông tin cá nhân nhận dạng (PII)</strong>{" "}
-            như họ tên, địa chỉ hay số điện thoại của bạn.
+            <strong>không thu thập thông tin cá nhân nhận dạng (PII)</strong> như họ tên, địa chỉ
+            hay số điện thoại của bạn.
           </p>
           <p>
             Nếu mã đo lường Google Analytics được cấu hình (biến môi trường{" "}
-            <code>NEXT_PUBLIC_GA_MEASUREMENT_ID</code>), trang web sẽ thu thập
-            dữ liệu <strong>ẩn danh</strong> về hành vi duyệt web thông qua
-            Google Analytics 4. Dữ liệu này bao gồm:
+            <code>NEXT_PUBLIC_GA_MEASUREMENT_ID</code>), trang web sẽ thu thập dữ liệu{" "}
+            <strong>ẩn danh</strong> về hành vi duyệt web thông qua Google Analytics 4. Dữ liệu này
+            bao gồm:
           </p>
           <ul className={styles.list}>
             <li>Số lượt xem trang và thời lượng phiên truy cập.</li>
             <li>Thiết bị, trình duyệt và quốc gia (không có địa chỉ IP đầy đủ).</li>
             <li>
-              Sự kiện nhấp vào liên kết tiếp thị liên kết (tên sản phẩm, danh
-              mục, URL đích — không gắn với danh tính cá nhân).
+              Sự kiện nhấp vào liên kết tiếp thị liên kết (tên sản phẩm, danh mục, URL đích — không
+              gắn với danh tính cá nhân).
             </li>
           </ul>
           <p>
-            Google Analytics <strong>không được tải trong môi trường phát triển</strong>{" "}
-            và chỉ kích hoạt khi mã đo lường được cấu hình rõ ràng trên môi
-            trường sản xuất.
+            Google Analytics <strong>không được tải trong môi trường phát triển</strong> và chỉ kích
+            hoạt khi mã đo lường được cấu hình rõ ràng trên môi trường sản xuất.
           </p>
         </section>
 
@@ -61,28 +57,26 @@ export default function ChinhSachBaoMatPage() {
             2. Cookie và công nghệ theo dõi
           </h2>
           <p>
-            Trang web {SITE_NAME} <strong>không tự đặt cookie</strong> cho mục
-            đích đăng nhập hay giỏ hàng (trang không có tính năng xác thực hay
-            thương mại điện tử).
+            Trang web {SITE_NAME} <strong>không tự đặt cookie</strong> cho mục đích đăng nhập hay
+            giỏ hàng (trang không có tính năng xác thực hay thương mại điện tử).
           </p>
           <p>
-            Các dịch vụ bên thứ ba được tích hợp (khi được kích hoạt) có thể
-            đặt cookie trên trình duyệt của bạn:
+            Các dịch vụ bên thứ ba được tích hợp (khi được kích hoạt) có thể đặt cookie trên trình
+            duyệt của bạn:
           </p>
           <ul className={styles.list}>
             <li>
-              <strong>Google Analytics:</strong> cookie đo lường hành vi ẩn danh
-              (ví dụ: <code>_ga</code>, <code>_gid</code>).
+              <strong>Google Analytics:</strong> cookie đo lường hành vi ẩn danh (ví dụ:{" "}
+              <code>_ga</code>, <code>_gid</code>).
             </li>
             <li>
-              <strong>Google AdSense:</strong> cookie phục vụ hiển thị quảng cáo
-              phù hợp (nếu AdSense được kích hoạt trên trang).
+              <strong>Google AdSense:</strong> cookie phục vụ hiển thị quảng cáo phù hợp (nếu
+              AdSense được kích hoạt trên trang).
             </li>
           </ul>
           <p>
-            Bạn có thể kiểm soát hoặc xóa cookie thông qua cài đặt trình duyệt.
-            Tắt cookie phân tích sẽ không ảnh hưởng đến khả năng sử dụng trang
-            web.
+            Bạn có thể kiểm soát hoặc xóa cookie thông qua cài đặt trình duyệt. Tắt cookie phân tích
+            sẽ không ảnh hưởng đến khả năng sử dụng trang web.
           </p>
         </section>
 
@@ -90,19 +84,13 @@ export default function ChinhSachBaoMatPage() {
           <h2 id="sec-third-party" className={styles.sectionHeading}>
             3. Dịch vụ bên thứ ba
           </h2>
-          <p>
-            Khi bạn sử dụng trang, thông tin có thể được chia sẻ với các bên
-            sau:
-          </p>
+          <p>Khi bạn sử dụng trang, thông tin có thể được chia sẻ với các bên sau:</p>
           <ul className={styles.list}>
             <li>
-              <strong>Shopee / Chương trình tiếp thị liên kết Shopee:</strong>{" "}
-              Khi bạn nhấp vào liên kết sản phẩm, trình duyệt của bạn chuyển
-              hướng đến{" "}
-              <span aria-label="shope.ee hoặc shopee.vn">
-                shope.ee / shopee.vn
-              </span>
-              . Shopee có thể đặt cookie theo dõi chuyển đổi riêng của họ. Xem{" "}
+              <strong>Shopee / Chương trình tiếp thị liên kết Shopee:</strong> Khi bạn nhấp vào liên
+              kết sản phẩm, trình duyệt của bạn chuyển hướng đến{" "}
+              <span aria-label="shope.ee hoặc shopee.vn">shope.ee / shopee.vn</span>. Shopee có thể
+              đặt cookie theo dõi chuyển đổi riêng của họ. Xem{" "}
               <a
                 href="https://shopee.vn/docs/privacy"
                 target="_blank"
@@ -139,8 +127,8 @@ export default function ChinhSachBaoMatPage() {
             </li>
           </ul>
           <p>
-            Chúng tôi không kiểm soát các thực tiễn bảo mật của bên thứ ba và
-            khuyến khích bạn đọc chính sách của từng dịch vụ.
+            Chúng tôi không kiểm soát các thực tiễn bảo mật của bên thứ ba và khuyến khích bạn đọc
+            chính sách của từng dịch vụ.
           </p>
         </section>
 
@@ -149,13 +137,10 @@ export default function ChinhSachBaoMatPage() {
             4. Liên kết tiếp thị liên kết
           </h2>
           <p>
-            Trang web sử dụng các liên kết tiếp thị liên kết. Khi bạn mua hàng
-            qua các liên kết này, chúng tôi có thể nhận hoa hồng mà không phát
-            sinh thêm chi phí cho bạn. Để biết thêm chi tiết, vui lòng xem{" "}
-            <Link
-              href="/cong-bo-tiep-thi-lien-ket/"
-              className={styles.internalLink}
-            >
+            Trang web sử dụng các liên kết tiếp thị liên kết. Khi bạn mua hàng qua các liên kết này,
+            chúng tôi có thể nhận hoa hồng mà không phát sinh thêm chi phí cho bạn. Để biết thêm chi
+            tiết, vui lòng xem{" "}
+            <Link href="/cong-bo-tiep-thi-lien-ket/" className={styles.internalLink}>
               trang Công bố tiếp thị liên kết
             </Link>{" "}
             của chúng tôi.
@@ -167,10 +152,9 @@ export default function ChinhSachBaoMatPage() {
             5. Quyền của bạn &amp; liên hệ
           </h2>
           <p>
-            Vì chúng tôi không lưu trữ thông tin cá nhân của bạn, hầu hết các
-            yêu cầu truy cập, chỉnh sửa hay xóa dữ liệu liên quan đến dữ liệu
-            phân tích ẩn danh do Google nắm giữ. Bạn có thể chọn không tham gia
-            qua{" "}
+            Vì chúng tôi không lưu trữ thông tin cá nhân của bạn, hầu hết các yêu cầu truy cập,
+            chỉnh sửa hay xóa dữ liệu liên quan đến dữ liệu phân tích ẩn danh do Google nắm giữ. Bạn
+            có thể chọn không tham gia qua{" "}
             <a
               href="https://tools.google.com/dlpage/gaoptout"
               target="_blank"
@@ -183,10 +167,7 @@ export default function ChinhSachBaoMatPage() {
           </p>
           <p>
             Nếu bạn có câu hỏi về chính sách này, vui lòng liên hệ:{" "}
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className={styles.internalLink}
-            >
+            <a href={`mailto:${CONTACT_EMAIL}`} className={styles.internalLink}>
               {CONTACT_EMAIL}
             </a>
           </p>
@@ -197,10 +178,9 @@ export default function ChinhSachBaoMatPage() {
             6. Thay đổi chính sách
           </h2>
           <p>
-            Chúng tôi có thể cập nhật Chính sách bảo mật này theo thời gian để
-            phản ánh thay đổi trong hoạt động hoặc yêu cầu pháp lý. Mọi thay
-            đổi sẽ được đăng trên trang này kèm theo ngày cập nhật mới nhất.
-            Chúng tôi khuyến khích bạn xem lại trang này định kỳ.
+            Chúng tôi có thể cập nhật Chính sách bảo mật này theo thời gian để phản ánh thay đổi
+            trong hoạt động hoặc yêu cầu pháp lý. Mọi thay đổi sẽ được đăng trên trang này kèm theo
+            ngày cập nhật mới nhất. Chúng tôi khuyến khích bạn xem lại trang này định kỳ.
           </p>
         </section>
       </article>

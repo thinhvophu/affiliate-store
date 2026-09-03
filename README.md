@@ -22,20 +22,20 @@ npm run dev          # http://localhost:3000
 
 Useful scripts:
 
-| Command             | Purpose                           |
-| ------------------- | --------------------------------- |
-| `npm run dev`       | Local dev server                  |
-| `npm run build`     | Production build (used by Vercel) |
-| `npm run start`     | Run the production build locally  |
-| `npm run typecheck` | `tsc --noEmit`                    |
+| Command                                    | Purpose                                                                                      |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| `npm run dev`                              | Local dev server                                                                             |
+| `npm run build`                            | Production build (used by Vercel)                                                            |
+| `npm run start`                            | Run the production build locally                                                             |
+| `npm run typecheck`                        | `tsc --noEmit`                                                                               |
 | `npm run verify:canonical -- --base=<url>` | Deployment-only check: asserts a **live** site carries no placeholder domain (F0013/US00135) |
 
 ## Environment variables
 
-| Name                            | Purpose                            | Required |
-| ------------------------------- | ---------------------------------- | -------- |
+| Name                            | Purpose                                                                                                                                | Required |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | -------- |
 | `NEXT_PUBLIC_SITE_URL`          | Canonical/sitemap base URL — **`https://example.com` in `.env.example`/CI is a placeholder, never a configured value** (F0013/US00135) | Yes      |
-| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | GA4 ID; empty = analytics disabled | No       |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | GA4 ID; empty = analytics disabled                                                                                                     | No       |
 
 ## Setting the production domain
 
@@ -54,15 +54,15 @@ Full rationale and decision log: [`docs/plans/US00135.md`](./docs/plans/US00135.
 
 Production runs on **Vercel** with the GitHub integration. Push to `main` auto-deploys.
 
-| Item                  | Value                                                                                |
-| --------------------- | ------------------------------------------------------------------------------------ |
-| Vercel project        | `aff-store` ([dashboard](https://vercel.com/thinhvophu/aff-store))                   |
-| Production URL        | `https://aff-store.vercel.app` (until custom domain is added during launch prep)     |
-| Production branch     | `main`                                                                               |
-| Framework preset      | Next.js (auto-detected)                                                              |
-| Node.js version       | 22.x (matches `package.json` `engines`)                                              |
-| Preview deploys       | Auto-created for every PR; URL posted as a comment by the Vercel bot                 |
-| Speed Insights        | Enabled — see [`docs/plans/US00115.md`](./docs/plans/US00115.md) (when implemented)  |
+| Item              | Value                                                                               |
+| ----------------- | ----------------------------------------------------------------------------------- |
+| Vercel project    | `aff-store` ([dashboard](https://vercel.com/thinhvophu/aff-store))                  |
+| Production URL    | `https://aff-store.vercel.app` (until custom domain is added during launch prep)    |
+| Production branch | `main`                                                                              |
+| Framework preset  | Next.js (auto-detected)                                                             |
+| Node.js version   | 22.x (matches `package.json` `engines`)                                             |
+| Preview deploys   | Auto-created for every PR; URL posted as a comment by the Vercel bot                |
+| Speed Insights    | Enabled — see [`docs/plans/US00115.md`](./docs/plans/US00115.md) (when implemented) |
 
 ### Verifying a deploy
 
@@ -261,19 +261,19 @@ aff-store/
 
 ### Route map
 
-| Path                   | Source file (planned)              |
-| ---------------------- | ---------------------------------- |
-| `/`                    | `app/page.tsx` ✅                  |
-| `/san-pham`            | `app/san-pham/page.tsx` ✅         |
-| `/san-pham/[slug]`     | `app/san-pham/[slug]/page.tsx` ✅  |
-| `/danh-muc/[category]` | `app/danh-muc/[category]/page.tsx` ✅ |
-| `/chinh-sach-bao-mat`  | `app/chinh-sach-bao-mat/page.tsx` ✅ |
+| Path                         | Source file (planned)                       |
+| ---------------------------- | ------------------------------------------- |
+| `/`                          | `app/page.tsx` ✅                           |
+| `/san-pham`                  | `app/san-pham/page.tsx` ✅                  |
+| `/san-pham/[slug]`           | `app/san-pham/[slug]/page.tsx` ✅           |
+| `/danh-muc/[category]`       | `app/danh-muc/[category]/page.tsx` ✅       |
+| `/chinh-sach-bao-mat`        | `app/chinh-sach-bao-mat/page.tsx` ✅        |
 | `/cong-bo-tiep-thi-lien-ket` | `app/cong-bo-tiep-thi-lien-ket/page.tsx` ✅ |
-| `/bai-viet`            | `app/bai-viet/page.tsx` ✅         |
-| `/bai-viet/[slug]`     | `app/bai-viet/[slug]/page.tsx` ✅  |
-| `/ve-chung-toi`        | `app/ve-chung-toi/page.tsx` ✅     |
-| `/sitemap.xml`         | `app/sitemap.ts` ✅                |
-| `/robots.txt`          | `app/robots.ts` ✅                 |
+| `/bai-viet`                  | `app/bai-viet/page.tsx` ✅                  |
+| `/bai-viet/[slug]`           | `app/bai-viet/[slug]/page.tsx` ✅           |
+| `/ve-chung-toi`              | `app/ve-chung-toi/page.tsx` ✅              |
+| `/sitemap.xml`               | `app/sitemap.ts` ✅                         |
+| `/robots.txt`                | `app/robots.ts` ✅                          |
 
 ✅ = implemented · others to be created by upcoming stories.
 

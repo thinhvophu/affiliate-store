@@ -32,11 +32,12 @@ afterEach(() => {
 
 describe("stageImages", () => {
   it("downloads images and returns local paths", async () => {
-    const fetchImpl = vi
-      .fn()
-      .mockResolvedValue(
-        new Response("fake-image-bytes", { status: 200, headers: { "content-type": "image/jpeg" } }),
-      );
+    const fetchImpl = vi.fn().mockResolvedValue(
+      new Response("fake-image-bytes", {
+        status: 200,
+        headers: { "content-type": "image/jpeg" },
+      }),
+    );
 
     const result = await stageImages(candidate(), "chuot-gaming-test", { destDir, fetchImpl });
 
@@ -50,7 +51,8 @@ describe("stageImages", () => {
     const fetchImpl = vi
       .fn()
       .mockImplementation(
-        async () => new Response("bytes", { status: 200, headers: { "content-type": "image/png" } }),
+        async () =>
+          new Response("bytes", { status: 200, headers: { "content-type": "image/png" } }),
       );
 
     const result = await stageImages(

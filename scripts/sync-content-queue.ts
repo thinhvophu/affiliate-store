@@ -102,7 +102,7 @@ function serializeQueueFile(rows: QueueRow[]): string {
     "Tracks which products still need a blog post. Generated + merged by " +
     "`npm run sync:content-queue` — do not hand-edit the `slug`/`category` columns, only " +
     "`status`. Status flow: `pending` -> `drafted` -> `reviewed` -> `published`. A row " +
-    "auto-flips to `published` on the next sync once a `<ProductCard slug=\"…\">` embed for " +
+    'auto-flips to `published` on the next sync once a `<ProductCard slug="…">` embed for ' +
     "it is found anywhere in `content/posts/`.\n\n" +
     "| slug | category | status |\n" +
     "| --- | --- | --- |\n";

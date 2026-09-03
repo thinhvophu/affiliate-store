@@ -2,12 +2,7 @@
 
 import { useMemo } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import {
-  applyFilters,
-  parseFilterParams,
-  getFilterOptions,
-  DEFAULT_SORT_ID,
-} from "@/lib/filters";
+import { applyFilters, parseFilterParams, getFilterOptions, DEFAULT_SORT_ID } from "@/lib/filters";
 import type { Product } from "@/types";
 import { ProductCard } from "@/components/ProductCard";
 import { Pagination } from "@/components/Pagination";

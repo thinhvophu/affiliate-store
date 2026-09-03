@@ -71,7 +71,11 @@ describe("getAllPosts() publish-grade depth (US00134)", () => {
         `${post.slug}: summary is ${post.summary.length} chars`,
       ).toBeLessThanOrEqual(160);
 
-      const firstParagraph = post.content.trim().split(/\n\s*\n/)[0]?.trim() ?? "";
+      const firstParagraph =
+        post.content
+          .trim()
+          .split(/\n\s*\n/)[0]
+          ?.trim() ?? "";
       const probe = post.summary.slice(0, 40);
       expect(
         firstParagraph.startsWith(probe),

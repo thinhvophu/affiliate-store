@@ -3,13 +3,7 @@ import Image from "next/image";
 import { MdxProductCard } from "@/components/MdxProductCard";
 import styles from "./mdx-components.module.css";
 
-function MdxImg({
-  src,
-  alt,
-}: {
-  src?: string;
-  alt?: string;
-}) {
+function MdxImg({ src, alt }: { src?: string; alt?: string }) {
   if (!src) return null;
   return (
     <span className={styles.imgWrapper}>
@@ -27,10 +21,26 @@ function MdxImg({
 export function getMdxComponents(): MDXComponents {
   return {
     img: MdxImg as MDXComponents["img"],
-    h1: ({ children, id }) => <h1 id={id} className={styles.h1}>{children}</h1>,
-    h2: ({ children, id }) => <h2 id={id} className={styles.h2}>{children}</h2>,
-    h3: ({ children, id }) => <h3 id={id} className={styles.h3}>{children}</h3>,
-    h4: ({ children, id }) => <h4 id={id} className={styles.h4}>{children}</h4>,
+    h1: ({ children, id }) => (
+      <h1 id={id} className={styles.h1}>
+        {children}
+      </h1>
+    ),
+    h2: ({ children, id }) => (
+      <h2 id={id} className={styles.h2}>
+        {children}
+      </h2>
+    ),
+    h3: ({ children, id }) => (
+      <h3 id={id} className={styles.h3}>
+        {children}
+      </h3>
+    ),
+    h4: ({ children, id }) => (
+      <h4 id={id} className={styles.h4}>
+        {children}
+      </h4>
+    ),
     table: ({ children }) => (
       <div className={styles.tableWrapper}>
         <table className={styles.table}>{children}</table>

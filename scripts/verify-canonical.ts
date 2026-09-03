@@ -55,9 +55,9 @@ function extractOgUrl(html: string): string | undefined {
 }
 
 function extractJsonLdBlocks(html: string): string[] {
-  return [...html.matchAll(/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)].map(
-    (m) => m[1],
-  );
+  return [
+    ...html.matchAll(/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi),
+  ].map((m) => m[1]);
 }
 
 function collectUrlLikeFields(value: unknown, found: string[] = []): string[] {
@@ -153,7 +153,10 @@ export async function verifyCanonical(
       checkAbsoluteUrl(`${label} canonical`, canonical);
     } else {
       checked.push(`${label} canonical`);
-      findings.push({ artefact: `${label} canonical`, message: "<link rel=\"canonical\"> not found in page" });
+      findings.push({
+        artefact: `${label} canonical`,
+        message: '<link rel="canonical"> not found in page',
+      });
     }
 
     const ogUrl = extractOgUrl(html);
@@ -161,13 +164,19 @@ export async function verifyCanonical(
       checkAbsoluteUrl(`${label} og:url`, ogUrl);
     } else {
       checked.push(`${label} og:url`);
-      findings.push({ artefact: `${label} og:url`, message: '<meta property="og:url"> not found in page' });
+      findings.push({
+        artefact: `${label} og:url`,
+        message: '<meta property="og:url"> not found in page',
+      });
     }
 
     const jsonLdBlocks = extractJsonLdBlocks(html);
     if (jsonLdBlocks.length === 0) {
       checked.push(`${label} JSON-LD`);
-      findings.push({ artefact: `${label} JSON-LD`, message: "no application/ld+json block found" });
+      findings.push({
+        artefact: `${label} JSON-LD`,
+        message: "no application/ld+json block found",
+      });
     }
     for (const block of jsonLdBlocks) {
       let parsed: unknown;

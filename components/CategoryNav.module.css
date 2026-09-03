@@ -23,7 +23,9 @@
   color: var(--color-text-primary, inherit);
   text-decoration: none;
   font-size: 0.9rem;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .link:hover,

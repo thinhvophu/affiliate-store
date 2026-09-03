@@ -74,10 +74,7 @@ describe("loadFileCandidates", () => {
     const candidates = await loadFileCandidates(args({ rest: { path: FIXTURE } }));
 
     expect(candidates).toHaveLength(2);
-    expect(candidates.map((c) => c.sourceRef)).toEqual([
-      `file:${FIXTURE}#0`,
-      `file:${FIXTURE}#1`,
-    ]);
+    expect(candidates.map((c) => c.sourceRef)).toEqual([`file:${FIXTURE}#0`, `file:${FIXTURE}#1`]);
     expect(candidates[0]).toMatchObject({
       name: 'Màn hình Gaming Dell G2724D 27" 165Hz',
       brand: "Dell",

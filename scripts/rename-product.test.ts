@@ -147,7 +147,14 @@ describe("renameProduct", () => {
 
   it("throws and writes nothing when --from does not exist", () => {
     expect(() =>
-      renameProduct({ from: "missing-slug", to: "new-slug", productsDir, imagesDir, postsDir, mv: fsMover }),
+      renameProduct({
+        from: "missing-slug",
+        to: "new-slug",
+        productsDir,
+        imagesDir,
+        postsDir,
+        mv: fsMover,
+      }),
     ).toThrow(/does not exist|not found/i);
   });
 
@@ -156,7 +163,14 @@ describe("renameProduct", () => {
     writeFixture("slug-b");
 
     expect(() =>
-      renameProduct({ from: "slug-a", to: "slug-b", productsDir, imagesDir, postsDir, mv: fsMover }),
+      renameProduct({
+        from: "slug-a",
+        to: "slug-b",
+        productsDir,
+        imagesDir,
+        postsDir,
+        mv: fsMover,
+      }),
     ).toThrow(/already exists|taken/i);
 
     // No partial work: slug-a's fixture must still be intact.
@@ -168,7 +182,14 @@ describe("renameProduct", () => {
     const longTo = "a".repeat(61);
 
     expect(() =>
-      renameProduct({ from: "short-slug", to: longTo, productsDir, imagesDir, postsDir, mv: fsMover }),
+      renameProduct({
+        from: "short-slug",
+        to: longTo,
+        productsDir,
+        imagesDir,
+        postsDir,
+        mv: fsMover,
+      }),
     ).toThrow(/60/);
 
     expect(fs.existsSync(path.join(productsDir, "short-slug.json"))).toBe(true);

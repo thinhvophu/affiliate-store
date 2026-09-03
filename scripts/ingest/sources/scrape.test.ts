@@ -43,7 +43,10 @@ describe("loadScrapeCandidates", () => {
   });
 
   it("throws a clear message on a malformed deals file", async () => {
-    fs.writeFileSync(path.join(dealsDir, "2026-02-02.json"), JSON.stringify({ date: "2026-02-02" }));
+    fs.writeFileSync(
+      path.join(dealsDir, "2026-02-02.json"),
+      JSON.stringify({ date: "2026-02-02" }),
+    );
     await expect(
       loadScrapeCandidates(args({ query: "chuột gaming", date: "2026-02-02" }), { dealsDir }),
     ).rejects.toThrow(/"results" must be an array/);
@@ -58,7 +61,9 @@ describe("loadScrapeCandidates", () => {
   });
 
   it("maps brand/specs directly from the deal record (present → populated, absent → empty)", async () => {
-    const [first, , third] = await loadScrapeCandidates(args({ query: "chuột gaming" }), { dealsDir });
+    const [first, , third] = await loadScrapeCandidates(args({ query: "chuột gaming" }), {
+      dealsDir,
+    });
 
     expect(first.brand).toBe("Logitech");
     expect(first.specs).toEqual({ DPI: "200-8000", "Kết nối": "Có dây" });

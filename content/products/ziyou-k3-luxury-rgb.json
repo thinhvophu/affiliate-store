@@ -5,9 +5,7 @@
   "brand": "ZIYOU",
   "price": 709000,
   "affiliateUrl": "https://s.shopee.vn/7AcxFocjRO",
-  "images": [
-    "/static/images/products/ziyou-k3-luxury-rgb-1.png"
-  ],
+  "images": ["/static/images/products/ziyou-k3-luxury-rgb-1.png"],
   "description": "Bàn phím cơ ZIYOU K3 Luxury dùng switch cơ học Red hoặc Brown cho cảm giác gõ êm và phản hồi nhanh, kết hợp khung nhôm cao cấp chắc chắn. Keycap ABS Double Shot chống mờ chữ giữ độ nét lâu dài, đèn LED RGB 16,8 triệu màu có thể tùy chỉnh theo sở thích. Cáp USB-C tháo rời dài khoảng 1,5m và khả năng tương thích cả Windows lẫn macOS giúp sản phẩm linh hoạt khi sử dụng.",
   "specs": {
     "Kiểu switch": "Cơ học Red/Brown",

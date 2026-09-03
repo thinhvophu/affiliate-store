@@ -87,15 +87,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
             <span className={styles.ctaLabel}>Mua trên Shopee</span>
           </AffiliateLink>
 
-          {product.description && (
-            <p className={styles.description}>{product.description}</p>
-          )}
+          {product.description && <p className={styles.description}>{product.description}</p>}
 
           {specEntries.length > 0 && (
-            <section
-              className={styles.specsSection}
-              aria-labelledby="product-specs-heading"
-            >
+            <section className={styles.specsSection} aria-labelledby="product-specs-heading">
               <h2 id="product-specs-heading" className={styles.sectionHeading}>
                 Thông số kỹ thuật
               </h2>

@@ -55,7 +55,11 @@ describe("buildRootMetadata", () => {
   });
 
   it("sets default openGraph fields", () => {
-    const openGraph = metadata.openGraph as { type: string; locale: string; images: Array<{ url: string }> };
+    const openGraph = metadata.openGraph as {
+      type: string;
+      locale: string;
+      images: Array<{ url: string }>;
+    };
     expect(openGraph.type).toBe("website");
     expect(openGraph.locale).toBe(DEFAULT_OG_LOCALE);
     expect(openGraph.images[0].url).toBe(DEFAULT_OG_IMAGE);

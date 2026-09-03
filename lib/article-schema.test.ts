@@ -20,9 +20,7 @@ describe("buildArticleSchema", () => {
     expect(schema["@context"]).toBe("https://schema.org");
     expect(schema["@type"]).toBe("Article");
     expect(schema.headline).toBe(fixturePost.title);
-    expect(schema.image).toBe(
-      "https://example.com/static/images/blog/tai-nghe-gaming-500k.png",
-    );
+    expect(schema.image).toBe("https://example.com/static/images/blog/tai-nghe-gaming-500k.png");
     expect(schema.datePublished).toBe("2026-05-20");
     expect(schema.author).toEqual({
       "@type": "Organization",
@@ -64,8 +62,7 @@ describe("buildArticleSchema", () => {
   it("headline is the verbatim post title, no truncation", () => {
     const longTitlePost: Post = {
       ...fixturePost,
-      title:
-        "Đây Là Một Tiêu Đề Rất Dài Để Kiểm Tra Rằng Headline Không Bị Cắt Ngắn Trong JSON-LD",
+      title: "Đây Là Một Tiêu Đề Rất Dài Để Kiểm Tra Rằng Headline Không Bị Cắt Ngắn Trong JSON-LD",
     };
     const schema = buildArticleSchema(longTitlePost);
     expect(schema.headline).toBe(longTitlePost.title);

@@ -99,9 +99,7 @@ export function AffiliateLink({
       className={className}
     >
       {children}
-      <span className={styles.srOnly}>
-        {`Mở ${productName} trên Shopee (mở tab mới)`}
-      </span>
+      <span className={styles.srOnly}>{`Mở ${productName} trên Shopee (mở tab mới)`}</span>
     </a>
   );
 }

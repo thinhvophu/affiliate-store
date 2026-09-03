@@ -5,9 +5,7 @@
   "brand": "Logitech",
   "price": 769000,
   "affiliateUrl": "https://s.shopee.vn/8AUyU8gumS",
-  "images": [
-    "/static/images/products/logitech-g305-lightspeed-wireless-1.jpg"
-  ],
+  "images": ["/static/images/products/logitech-g305-lightspeed-wireless-1.jpg"],
   "description": "Logitech G305 Lightspeed là chuột gaming không dây nhẹ chỉ 99g, dùng cảm biến HERO cho độ chính xác cao lên đến 12.000 DPI. Kết nối không dây LIGHTSPEED cho tốc độ phản hồi 1ms, gần như không có độ trễ so với chuột có dây. Máy có 6 nút bấm lập trình được và dùng pin AA cho thời lượng sử dụng lên đến 250 giờ.",
   "specs": {
     "Cảm biến": "HERO, tối đa 12.000 DPI",

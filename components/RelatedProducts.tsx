@@ -22,17 +22,11 @@ export function RelatedProducts({ products }: RelatedProductsProps) {
   if (products.length < 3) return null;
 
   return (
-    <section
-      className={styles.section}
-      aria-labelledby="related-products-heading"
-    >
+    <section className={styles.section} aria-labelledby="related-products-heading">
       <h2 id="related-products-heading" className={styles.heading}>
         Sản phẩm liên quan
       </h2>
-      <div
-        className={styles.grid}
-        style={{ "--related-count": products.length } as CSSProperties}
-      >
+      <div className={styles.grid} style={{ "--related-count": products.length } as CSSProperties}>
         {products.map((p) => (
           <ProductCard key={p.slug} product={p} />
         ))}

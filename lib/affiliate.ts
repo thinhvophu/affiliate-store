@@ -19,7 +19,12 @@
  * Shopee surface, not a wildcard.
  */
 
-export const SHOPEE_AFFILIATE_HOSTS = ["shopee.vn", "shopee.ee", "shope.ee", "s.shopee.vn"] as const;
+export const SHOPEE_AFFILIATE_HOSTS = [
+  "shopee.vn",
+  "shopee.ee",
+  "shope.ee",
+  "s.shopee.vn",
+] as const;
 
 export type ShopeeAffiliateHost = (typeof SHOPEE_AFFILIATE_HOSTS)[number];
 

@@ -10,18 +10,18 @@ export function Header() {
     <>
       <HeaderStickyShadow />
       <header className={styles.header} role="banner" data-site-header>
-      <div className={styles.inner}>
-        <Link href="/" className={styles.brand} aria-label={`${SITE_NAME} — Trang chủ`}>
-          <span className={styles.logoMark} aria-hidden="true">
-            AS
-          </span>
-          <span className={styles.siteName}>{SITE_NAME}</span>
-        </Link>
+        <div className={styles.inner}>
+          <Link href="/" className={styles.brand} aria-label={`${SITE_NAME} — Trang chủ`}>
+            <span className={styles.logoMark} aria-hidden="true">
+              AS
+            </span>
+            <span className={styles.siteName}>{SITE_NAME}</span>
+          </Link>
 
-        <HeaderNav />
-        <HeaderMobileMenu />
-      </div>
-    </header>
+          <HeaderNav />
+          <HeaderMobileMenu />
+        </div>
+      </header>
     </>
   );
 }

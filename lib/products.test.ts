@@ -35,14 +35,18 @@ describe("catalog quality guard (US00131)", () => {
       counts.set(p.category, (counts.get(p.category) ?? 0) + 1);
     }
     const underFloor = [...counts.entries()].filter(([, count]) => count < MIN_PER_CATEGORY);
-    expect(underFloor, `categories below the ${MIN_PER_CATEGORY} floor: ${JSON.stringify(underFloor)}`).toEqual([]);
+    expect(
+      underFloor,
+      `categories below the ${MIN_PER_CATEGORY} floor: ${JSON.stringify(underFloor)}`,
+    ).toEqual([]);
   });
 
   it("every name is ≤70 chars and free of seller boilerplate", () => {
     for (const p of products) {
-      expect(p.name.length, `"${p.slug}": name too long (${p.name.length} chars)`).toBeLessThanOrEqual(
-        MAX_NAME_LENGTH,
-      );
+      expect(
+        p.name.length,
+        `"${p.slug}": name too long (${p.name.length} chars)`,
+      ).toBeLessThanOrEqual(MAX_NAME_LENGTH);
       for (const pattern of BOILERPLATE_PATTERNS) {
         expect(
           pattern.test(p.name),
@@ -54,9 +58,10 @@ describe("catalog quality guard (US00131)", () => {
 
   it("every slug is ≤60 chars and kebab-case ASCII", () => {
     for (const p of products) {
-      expect(p.slug.length, `"${p.slug}": slug too long (${p.slug.length} chars)`).toBeLessThanOrEqual(
-        MAX_SLUG_LENGTH,
-      );
+      expect(
+        p.slug.length,
+        `"${p.slug}": slug too long (${p.slug.length} chars)`,
+      ).toBeLessThanOrEqual(MAX_SLUG_LENGTH);
       expect(SLUG_REGEX.test(p.slug), `"${p.slug}": slug is not kebab-case ASCII`).toBe(true);
     }
   });
@@ -79,11 +84,14 @@ describe("catalog quality guard (US00131)", () => {
           imagePath.startsWith("http"),
           `"${p.slug}": image path "${imagePath}" must be root-relative, not remote`,
         ).toBe(false);
-        expect(imagePath.startsWith("/"), `"${p.slug}": image path "${imagePath}" must start with "/"`).toBe(
+        expect(
+          imagePath.startsWith("/"),
+          `"${p.slug}": image path "${imagePath}" must start with "/"`,
+        ).toBe(true);
+        const onDisk = path.join(process.cwd(), "public", imagePath);
+        expect(fs.existsSync(onDisk), `"${p.slug}": image file missing on disk: ${onDisk}`).toBe(
           true,
         );
-        const onDisk = path.join(process.cwd(), "public", imagePath);
-        expect(fs.existsSync(onDisk), `"${p.slug}": image file missing on disk: ${onDisk}`).toBe(true);
       }
     }
   });
@@ -91,7 +99,10 @@ describe("catalog quality guard (US00131)", () => {
   it("every affiliateUrl host is in the Shopee allow-list", () => {
     for (const p of products) {
       const host = new URL(p.affiliateUrl).hostname.toLowerCase();
-      expect(isAffiliateHost(host), `"${p.slug}": affiliateUrl host "${host}" is not allow-listed`).toBe(true);
+      expect(
+        isAffiliateHost(host),
+        `"${p.slug}": affiliateUrl host "${host}" is not allow-listed`,
+      ).toBe(true);
     }
   });
 });

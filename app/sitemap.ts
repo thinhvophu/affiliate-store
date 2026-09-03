@@ -17,7 +17,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: absoluteUrl(buildCanonicalPath(["bai-viet"])), lastModified: BUILD_TIME },
     { url: absoluteUrl(buildCanonicalPath(["ve-chung-toi"])), lastModified: BUILD_TIME },
     { url: absoluteUrl(buildCanonicalPath(["chinh-sach-bao-mat"])), lastModified: BUILD_TIME },
-    { url: absoluteUrl(buildCanonicalPath(["cong-bo-tiep-thi-lien-ket"])), lastModified: BUILD_TIME },
+    {
+      url: absoluteUrl(buildCanonicalPath(["cong-bo-tiep-thi-lien-ket"])),
+      lastModified: BUILD_TIME,
+    },
   ];
 
   const categoryEntries: MetadataRoute.Sitemap = categorySlugs.map((slug) => ({

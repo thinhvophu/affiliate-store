@@ -16,7 +16,7 @@ export function MdxProductCard({ slug }: { slug: string }) {
   const product = getProductBySlug(slug);
   if (!product) {
     throw new Error(
-      `[mdx ProductCard] <ProductCard slug="${slug}" />: no product JSON matches this slug.`
+      `[mdx ProductCard] <ProductCard slug="${slug}" />: no product JSON matches this slug.`,
     );
   }
   return <ProductCard product={product} />;

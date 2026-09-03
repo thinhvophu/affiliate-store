@@ -94,7 +94,9 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .ctaButton {
-    transition: background-color 150ms ease, transform 150ms ease;
+    transition:
+      background-color 150ms ease,
+      transform 150ms ease;
   }
   .ctaButton:hover {
     background: color-mix(in srgb, var(--color-primary) 88%, black);
