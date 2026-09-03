@@ -66,6 +66,25 @@ with hand-editing `name`/`description`/`featured` in the fixture — `npm
 test` (`lib/products.test.ts`) is the guard that catches boilerplate left
 behind. Full details: `CLAUDE.md` → "Product slug format" convention.
 
+### 3.5. Content queue (which products still need a post)
+
+To work through "one post per product" one at a time, keep a tracked
+checklist:
+
+```bash
+npm run sync:content-queue
+```
+
+Writes/merges `data/content-queue.md` — one row per product slug, with a
+`status` column (`pending` -> `drafted` -> `reviewed` -> `published`). The
+`slug`/`category` columns are always re-derived from `content/products/`
+cross-referenced against every `<ProductCard slug="…">` embed in
+`content/posts/*.mdx`, so they can never drift; only `status` persists by
+hand across runs. Pick a `pending` row, run `/write-post <category> <slug>`
+against it, review the result, then re-run the sync — a row auto-flips to
+`published` once its `<ProductCard>` embed exists, so most of the time you
+don't even need to edit the file yourself.
+
 ### 4. Scaffold a blog post
 
 Once a category has products, close its post gap:
@@ -129,6 +148,7 @@ results.
 | `scripts/ingest-products.ts` | Ingestion CLI entry point (step 2). |
 | `scripts/ingest/` | Candidate model, validation, slug generator, dedupe, image staging, arg parser, reporter, writer, scrape + curated-file source adapters. Detailed docs live in `scripts/ingest/README.md`. |
 | `scripts/rename-product.ts` + `.test.ts` | Slug-rename CLI entry point (step 3) — see "Rename (editorial pass)" above. |
+| `scripts/sync-content-queue.ts` + `.test.ts` | Derives which products still lack a post and merges into `data/content-queue.md` — see "Content queue" below. |
 | `scripts/scaffold-post.ts` | Blog-post scaffold CLI entry point (step 4). |
 | `scripts/scaffold/` | `renderPostStub()` template builder + `selectProductsForCategory()` auto-pick helper, both pure and unit-tested. |
 | `scripts/verify-canonical.ts` | Deployment canonical-URL verifier (`npm run verify:canonical -- --base=<url>`, F0013/US00135) — checks a **live** site, not the local build; run by hand after a domain/env-var change. See `docs/plans/US00135.md` § "Half B" for the swap-day checklist. |
