@@ -3,6 +3,7 @@ import path from "node:path";
 import matter from "gray-matter";
 import type { Post } from "@/types";
 import { assertCategoryRegistered } from "@/lib/categories";
+import { assertMinShortSide } from "@/lib/image-meta";
 
 const POSTS_DIR = path.join(process.cwd(), "content", "posts");
 
@@ -56,6 +57,7 @@ export function getAllPosts(): Post[] {
 
     const slug = path.basename(file, ".mdx");
     assertCategoryRegistered(frontmatter.category as string, slug);
+    assertMinShortSide(frontmatter.coverImage as string, slug);
 
     const existing = slugMap.get(slug);
     if (existing) {

@@ -13,6 +13,9 @@
  * Slug format: lowercase kebab-case ASCII (e.g. "chuot-gaming").
  */
 
+import type { Product } from "@/types";
+import { SITE_NAME } from "@/lib/site";
+
 export type CategorySlug = string;
 
 export interface CategoryMeta {
@@ -35,7 +38,7 @@ export const CATEGORIES: Record<CategorySlug, CategoryMeta> = {
       "Chuột gaming là thiết bị không thể thiếu với bất kỳ game thủ nào, dù bạn chơi FPS " +
       "như Valorant, MOBA như LMHT hay MMO như World of Warcraft. Một chiếc chuột phù hợp giúp " +
       "cải thiện độ chính xác, giảm mỏi tay sau những giờ chơi dài và tăng lợi thế cạnh tranh " +
-      "trong các pha phản xạ tốc độ cao. Tại aff-store, chúng tôi tổng hợp những mẫu chuột gaming " +
+      "trong các pha phản xạ tốc độ cao. Tại " + SITE_NAME + ", chúng tôi tổng hợp những mẫu chuột gaming " +
       "được cộng đồng game thủ Việt Nam đánh giá cao nhất hiện nay, trải dài từ phân khúc phổ thông " +
       "dưới 500.000 đồng cho đến các dòng cao cấp với cảm biến quang học đạt trên 20.000 DPI. " +
       "Mỗi sản phẩm đều được cung cấp đầy đủ thông số kỹ thuật như loại cảm biến, trọng lượng, " +
@@ -54,7 +57,7 @@ export const CATEGORIES: Record<CategorySlug, CategoryMeta> = {
       "Cherry MX, Gateron hay Kailh, mỗi loại đều có ưu điểm riêng về phản hồi lực gõ, âm thanh " +
       "và tuổi thọ phím. Đối với game thủ FPS, switch linear như Red hay Speed Silver thường được " +
       "ưa chuộng vì phản hồi nhanh; với người gõ văn bản nhiều, switch tactile Blue hay Brown lại " +
-      "phù hợp hơn. Tại aff-store, chúng tôi lựa chọn những mẫu bàn phím gaming được đánh giá " +
+      "phù hợp hơn. Tại " + SITE_NAME + ", chúng tôi lựa chọn những mẫu bàn phím gaming được đánh giá " +
       "tốt nhất tại thị trường Việt Nam, bao gồm cả dòng full-size, TKL và mini 60–65%, " +
       "kèm thông tin chi tiết về loại switch, kiểu nối (có dây / không dây), hỗ trợ hot-swap " +
       "và tính năng RGB để bạn chọn được sản phẩm phù hợp nhất.",
@@ -69,7 +72,7 @@ export const CATEGORIES: Record<CategorySlug, CategoryMeta> = {
       "Tai nghe gaming không chỉ để nghe nhạc mà còn là công cụ định vị âm thanh quan trọng " +
       "trong các tựa game bắn súng và sinh tồn. Khả năng phân biệt tiếng bước chân, tiếng súng " +
       "hay âm thanh môi trường xung quanh có thể tạo ra sự khác biệt lớn trong kết quả mỗi ván " +
-      "đấu. Tại aff-store, chúng tôi tổng hợp các mẫu tai nghe gaming từ thương hiệu uy tín như " +
+      "đấu. Tại " + SITE_NAME + ", chúng tôi tổng hợp các mẫu tai nghe gaming từ thương hiệu uy tín như " +
       "HyperX, SteelSeries, Razer và Logitech, bao gồm cả phiên bản có dây lẫn không dây. " +
       "Mỗi sản phẩm được ghi rõ các thông số như kích thước driver, tần số đáp ứng, trọng lượng, " +
       "loại mic (detachable hay built-in) và khả năng tương thích với PC, PlayStation hay Xbox, " +
@@ -79,6 +82,15 @@ export const CATEGORIES: Record<CategorySlug, CategoryMeta> = {
       "Tai nghe gaming có dây và không dây giá tốt — thông số driver, mic, tương thích đa nền tảng và link Shopee.",
   },
 
+};
+
+/**
+ * Categories with authored copy but no stocked products (US00132).
+ * Not linked, not in the sitemap, not build-time gated — moving an entry
+ * back into `CATEGORIES` is the entire re-registration step once
+ * `MIN_PRODUCTS_PER_CATEGORY` products exist for it.
+ */
+export const DEFERRED_CATEGORIES: Record<CategorySlug, CategoryMeta> = {
   "man-hinh-gaming": {
     slug: "man-hinh-gaming",
     name: "Màn hình gaming",
@@ -87,7 +99,7 @@ export const CATEGORIES: Record<CategorySlug, CategoryMeta> = {
       "của game thủ. Tần số quét cao (144Hz, 240Hz, 360Hz) giúp hình ảnh mượt mà hơn, trong khi " +
       "thời gian phản hồi thấp (1ms GtG) giảm thiểu ghosting trong các pha di chuyển tốc độ cao. " +
       "Công nghệ tấm nền IPS cho màu sắc chính xác và góc nhìn rộng, trong khi VA cho độ tương " +
-      "phản cao hơn. Tại aff-store, chúng tôi tổng hợp các mẫu màn hình gaming phổ biến tại " +
+      "phản cao hơn. Tại " + SITE_NAME + ", chúng tôi tổng hợp các mẫu màn hình gaming phổ biến tại " +
       "Việt Nam với đa dạng kích thước từ 24 đến 27 inch, hỗ trợ FreeSync / G-Sync, cổng HDMI " +
       "và DisplayPort. Mỗi sản phẩm đi kèm đầy đủ thông số kỹ thuật và liên kết mua hàng qua " +
       "Shopee tiếp thị liên kết với giá cạnh tranh nhất thị trường.",
@@ -104,13 +116,12 @@ export const CATEGORIES: Record<CategorySlug, CategoryMeta> = {
       "lên cột sống lưng dưới và giúp bạn duy trì sự tập trung lâu hơn. Ghế gaming hiện đại " +
       "thường có thiết kế bucket-seat lấy cảm hứng từ xe đua, với đệm ngồi bọc PU leather hay " +
       "fabric, tựa đầu và gối lưng có thể tháo rời, tay vựa 3D/4D điều chỉnh linh hoạt và " +
-      "cơ chế ngả lưng có khóa góc độ. Tại aff-store, chúng tôi giới thiệu những mẫu ghế gaming " +
+      "cơ chế ngả lưng có khóa góc độ. Tại " + SITE_NAME + ", chúng tôi giới thiệu những mẫu ghế gaming " +
       "được đánh giá cao về độ bền, khả năng hỗ trợ thắt lưng và mức giá hợp lý, kèm link " +
       "mua hàng tiện lợi qua Shopee tiếp thị liên kết.",
     metaDescription:
       "Ghế gaming ergonomic giá tốt — so sánh chất liệu, khả năng điều chỉnh và link mua Shopee tiếp thị liên kết.",
   },
-
 };
 
 export function getCategoryMeta(slug: string): CategoryMeta | undefined {
@@ -144,6 +155,42 @@ export function assertCategoryRegistered(category: string, productSlug: string):
     throw new Error(
       `[categories] Product "${productSlug}" references unknown category ` +
         `"${category}". Register it in lib/categories.ts first.`,
+    );
+  }
+}
+
+/** A registered category must have at least this many products or `next build` fails. */
+export const MIN_PRODUCTS_PER_CATEGORY = 3;
+
+/**
+ * Build-time guard. Called from `generateStaticParams` in
+ * `app/danh-muc/[category]/page.tsx` — deliberately NOT from `getAllProducts()`,
+ * since `scripts/ingest/dedupe.ts` calls that loader to seed its index and
+ * would crash the ingest CLI exactly when it's being run to fix an
+ * under-stocked category.
+ *
+ * `registry` defaults to the live `CATEGORIES` map; tests inject a fixture
+ * registry to exercise under-stocked cases the live catalog never has.
+ */
+export function assertCategoriesStocked(
+  products: Product[],
+  registry: Record<CategorySlug, unknown> = CATEGORIES,
+): void {
+  const counts = new Map<CategorySlug, number>();
+  for (const p of products) {
+    counts.set(p.category, (counts.get(p.category) ?? 0) + 1);
+  }
+
+  const understocked = Object.keys(registry)
+    .map((slug) => ({ slug, count: counts.get(slug) ?? 0 }))
+    .filter(({ count }) => count < MIN_PRODUCTS_PER_CATEGORY);
+
+  if (understocked.length > 0) {
+    const detail = understocked.map(({ slug, count }) => `"${slug}" (${count})`).join(", ");
+    throw new Error(
+      `[categories] Registered categor${understocked.length === 1 ? "y is" : "ies are"} under the ` +
+        `${MIN_PRODUCTS_PER_CATEGORY}-product minimum: ${detail}. Ingest more products or move ` +
+        `the entry into DEFERRED_CATEGORIES in lib/categories.ts.`,
     );
   }
 }

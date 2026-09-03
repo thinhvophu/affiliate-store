@@ -26,7 +26,7 @@ describe("buildArticleSchema", () => {
     expect(schema.datePublished).toBe("2026-05-20");
     expect(schema.author).toEqual({
       "@type": "Organization",
-      name: "aff-store",
+      name: "MuaGear",
       url: "https://example.com",
     });
     expect(schema.publisher).toEqual(schema.author);
@@ -81,6 +81,6 @@ describe("buildArticleSchema", () => {
     expect(schema.author).toEqual(schema.publisher);
     const author = schema.author as Record<string, unknown>;
     expect(author["@type"]).toBe("Organization");
-    expect(author.name).toBe("aff-store");
+    expect(author.name).toBe("MuaGear");
   });
 });

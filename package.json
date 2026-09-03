@@ -1,5 +1,5 @@
 {
-  "name": "aff-store",
+  "name": "muagear",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -16,7 +16,8 @@
     "ingest:products": "tsx scripts/ingest-products.ts",
     "scaffold:post": "tsx scripts/scaffold-post.ts",
     "rename:product": "tsx scripts/rename-product.ts",
-    "sync:content-queue": "tsx scripts/sync-content-queue.ts"
+    "sync:content-queue": "tsx scripts/sync-content-queue.ts",
+    "verify:canonical": "tsx scripts/verify-canonical.ts"
   },
   "engines": {
     "node": ">=22.11.0"
@@ -28,6 +29,7 @@
     "@vercel/speed-insights": "^2.0.0",
     "github-slugger": "^2.0.0",
     "gray-matter": "^4.0.3",
+    "image-size": "^2.0.2",
     "next": "^16.2.4",
     "next-devtools-mcp": "^0.3.10",
     "react": "^19.2.5",

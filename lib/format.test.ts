@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { readingTimeVi } from "./format";
+import { readingTimeVi, countWords, MIN_POST_WORDS } from "./format";
 
 describe("readingTimeVi", () => {
   it("floors to 1 phút đọc for an empty body", () => {
@@ -57,5 +57,28 @@ describe("readingTimeVi", () => {
   it("returns a string matching '<n> phút đọc' pattern", () => {
     const content = Array.from({ length: 300 }, () => "word").join(" ");
     expect(readingTimeVi(content)).toMatch(/^\d+ phút đọc$/);
+  });
+});
+
+describe("countWords (US00134 — the depth-floor chokepoint)", () => {
+  it("counts plain whitespace-separated words", () => {
+    expect(countWords("một hai ba bốn năm")).toBe(5);
+  });
+
+  it("strips fenced code blocks before counting", () => {
+    const content = "câu mở đầu\n```\ncode code code code\n```\ncâu kết";
+    expect(countWords(content)).toBe(5);
+  });
+
+  it("strips inline JSX/HTML tags before counting", () => {
+    expect(countWords('trước <ProductCard slug="abc" /> sau')).toBe(2);
+  });
+
+  it("strips markdown image and link syntax before counting", () => {
+    expect(countWords("xem ![alt text here](/x.jpg) và [liên kết dài](/y)")).toBe(2);
+  });
+
+  it("MIN_POST_WORDS is 800", () => {
+    expect(MIN_POST_WORDS).toBe(800);
   });
 });

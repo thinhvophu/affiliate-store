@@ -28,13 +28,27 @@ Useful scripts:
 | `npm run build`     | Production build (used by Vercel) |
 | `npm run start`     | Run the production build locally  |
 | `npm run typecheck` | `tsc --noEmit`                    |
+| `npm run verify:canonical -- --base=<url>` | Deployment-only check: asserts a **live** site carries no placeholder domain (F0013/US00135) |
 
 ## Environment variables
 
 | Name                            | Purpose                            | Required |
 | ------------------------------- | ---------------------------------- | -------- |
-| `NEXT_PUBLIC_SITE_URL`          | Canonical/sitemap base URL         | Yes      |
+| `NEXT_PUBLIC_SITE_URL`          | Canonical/sitemap base URL — **`https://example.com` in `.env.example`/CI is a placeholder, never a configured value** (F0013/US00135) | Yes      |
 | `NEXT_PUBLIC_GA_MEASUREMENT_ID` | GA4 ID; empty = analytics disabled | No       |
+
+## Setting the production domain
+
+The real domain (`https://muagear.com`) is set once, on the **Vercel Production** environment — `.env.example`, `.env.local`, and CI's `build` job all intentionally keep the `https://example.com` placeholder (D4: a build-time guard rejecting it would break CI and local dev). Swap-day checklist:
+
+1. Vercel dashboard → this project → Settings → Domains: add the domain, set it as **Production**.
+2. Settings → Environment Variables → set `NEXT_PUBLIC_SITE_URL` for **Production** to `https://muagear.com` (scheme + host, no trailing slash).
+3. Trigger a fresh Production deploy — `NEXT_PUBLIC_*` values are baked in at build time, so an existing deploy will **not** pick up the change.
+4. Run `npm run verify:canonical -- --base=https://muagear.com`. It must exit 0.
+5. Spot-check by eye: `https://muagear.com/sitemap.xml`'s first `<loc>`, and view-source one post page for `<link rel="canonical">` + `og:url` + the Article JSON-LD `mainEntityOfPage`. Confirm the rendered Header/Footer/`<title>` read "MuaGear".
+6. Update `.env.local` (untracked) to `https://muagear.com` so local builds match production.
+
+Full rationale and decision log: [`docs/plans/US00135.md`](./docs/plans/US00135.md).
 
 ## Hosting
 
@@ -64,7 +78,7 @@ The previously successful Production deployment continues serving traffic. Fix f
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions. Mirror updates in [`CLAUDE.md`](./CLAUDE.md).
 
-> Last updated: US00131 (scripts/rename-product.ts — `npm run rename:product` slug-rename CLI; lib/products.test.ts catalog-quality guard; data/curated/ curated-file fallback input; catalog grown 10→15 products; F0013)
+> Last updated: US00135 (scripts/verify-canonical.ts deployment canonical-URL verifier + npm run verify:canonical; lib/site.ts's SITE_NAME renamed "aff-store" → "MuaGear"; F0013)
 
 ### Top-level layout
 
@@ -168,19 +182,21 @@ aff-store/
 │   ├── affiliate.ts     # Shopee affiliate-URL allow-list + assertAffiliateUrl helper (US00034)
 │   ├── breakpoints.ts   # BREAKPOINT_TABLET_PX / BREAKPOINT_DESKTOP_PX / MOBILE_MEDIA_QUERY — JS mirror of globals.css tokens (US00025)
 │   ├── breadcrumbs.ts   # BreadcrumbItem type + buildProductBreadcrumbs / buildCategoryBreadcrumbs / buildPostBreadcrumbs — single source of trail data shared with US00096 BreadcrumbList JSON-LD; category labels via getCategoryMeta() (US00093)
-│   ├── categories.ts    # CATEGORIES map + getCategoryMeta + assertCategoryRegistered (US00045)
+│   ├── categories.ts    # CATEGORIES map + DEFERRED_CATEGORIES + getCategoryMeta + assertCategoryRegistered + MIN_PRODUCTS_PER_CATEGORY + assertCategoriesStocked (US00045, US00132)
+│   ├── categories.test.ts # Vitest — assertCategoriesStocked / DEFERRED_CATEGORIES coverage (US00132)
 │   ├── disclosures.ts   # AFFILIATE_DISCLOSURE_VI constant — shared with F0005 page + F0006 posts (US00022)
-│   ├── format.ts        # formatVnd() + formatPostDate() + readingTimeVi() — single chokepoints for VN price, date & read-time rendering (US00041, US00061, US00069)
+│   ├── format.ts        # formatVnd() + formatPostDate() + readingTimeVi() + countWords() (exported) + MIN_POST_WORDS=800 — single chokepoints for VN price, date, read-time & post-depth-floor word counting (US00041, US00061, US00069, US00134)
 │   ├── nav-items.ts     # NAV_ITEMS constant — the four primary nav routes (typed)
-│   ├── site.ts          # SITE_NAME + CONTACT_EMAIL constants — shared site name and primary contact email used by Header, Footer, policy pages, and the About page (US00066, US00102)
-│   ├── seo.ts           # Shared SEO helper: getSiteUrl(), absoluteUrl(), buildCanonicalPath(), buildRootMetadata(), truncateMetaDescription(), buildPageMetadata() — single chokepoint for canonical + OG URL composition, description truncation, and per-page Metadata assembly (US00091, US00092)
+│   ├── site.ts          # SITE_NAME + CONTACT_EMAIL constants — shared site name and primary contact email used by Header, Footer, policy pages, the About page, and lib/categories.ts intro copy (US00066, US00102); SITE_NAME renamed "aff-store" → "MuaGear" for the registered domain (F0013/US00135)
+│   ├── seo.ts           # Shared SEO helper: getSiteUrl(), absoluteUrl(), buildCanonicalPath(), buildRootMetadata(), truncateMetaDescription(), buildPageMetadata() — single chokepoint for canonical + OG URL composition, description truncation, and per-page Metadata assembly (US00091, US00092); buildPageMetadata() resolves real og:image dimensions via lib/image-meta.ts (US00133)
 │   ├── product-schema.ts # buildProductSchema(product) → Product JSON-LD object; raw price (no formatVnd), absolute image/url via lib/seo.ts (US00094)
 │   ├── article-schema.ts # buildArticleSchema(post) → Article JSON-LD object; absolute image/mainEntityOfPage via lib/seo.ts, coverImage falls back to default OG image (US00095)
 │   ├── products.ts      # getAllProducts(), getProductBySlug(), getRelatedProducts() — calls assertAffiliateUrl() + assertCategoryRegistered() + images.length ≥ 1 at build time
 │   ├── filters.ts       # PRICE_BUCKETS, SORT_OPTIONS, getFilterOptions, parseFilterParams, applyFilters, compareDefault (US00044)
-│   ├── posts.ts         # getAllPosts(), getPostBySlug(), getRelatedPosts() — reads content/posts/*.mdx (US00067)
+│   ├── posts.ts         # getAllPosts(), getPostBySlug(), getRelatedPosts() — reads content/posts/*.mdx; calls assertMinShortSide() (coverImage) per post at build time (US00067, US00133)
 │   ├── toc.ts           # extractToc(content): TocEntry[] — AST walk via remark-parse + unist-util-visit; slugs via createHeadingSlugger(); h2+h3 only (US00068)
-│   └── mdx-slug.ts      # createHeadingSlugger() + rehypeHeadingSlugs — heading-slug chokepoint for PostBody + TOC (US00062)
+│   ├── mdx-slug.ts      # createHeadingSlugger() + rehypeHeadingSlugs — heading-slug chokepoint for PostBody + TOC (US00062)
+│   └── image-meta.ts    # readImageSize(path) → {width,height}|null + assertMinShortSide(path, slug, min) + MIN_COVER_IMAGE_SHORT_SIDE_PX=600 — the one place that reads image dimensions; used by lib/posts.ts's build-time cover guard and lib/seo.ts's og:image dimensions (US00133)
 ├── types/               # Shared TypeScript types
 │   ├── product.ts       # Product interface (canonical JSON shape)
 │   ├── post.ts          # PostFrontmatter + Post interfaces (MDX frontmatter + content)
@@ -196,6 +212,7 @@ aff-store/
 │   ├── scaffold-post.ts    # `scaffold:post` CLI entry — MDX post-stub scaffold for content-gap categories, `--products` optional (auto-pick fallback) (US00126)
 │   ├── scaffold/          # renderPostStub() template builder + selectProductsForCategory() auto-pick helper, both + tests (US00126)
 │   ├── rename-product.ts + .test.ts  # `npm run rename:product -- --from=<slug> --to=<slug>` — renames a product's slug across fixture, images[], staged files, and post embeds atomically (F0013/US00131)
+│   ├── verify-canonical.ts + .test.ts  # `npm run verify:canonical -- --base=<url>` — deployment-only canonical-URL verifier; fetches a **live** site, samples one product/post/category URL from its sitemap, asserts canonical/og:url/JSON-LD stay on `--base` and no `example.com` leaks anywhere (F0013/US00135)
 │   └── ingest/           # Candidate model, validation engine, slug generator, dedupe/idempotency, image staging (local, no hotlinking), arg parser, reporter, writer, scrape + curated-file source adapters (US00121, US00122, US00123, US00124, US00125)
 ├── data/
 │   ├── deals/           # Raw shopee-affiliate scrape dumps — input to `ingest:products --source=scrape`; committed as an audit trail (US00124)
@@ -221,14 +238,16 @@ aff-store/
 - **Affiliate URLs** are validated in one place: `lib/affiliate.ts` (`assertAffiliateUrl`). Raw `<a>` elements whose `href` targets a Shopee host (`shopee.vn`, `shopee.ee`, `shope.ee`, `s.shopee.vn`) outside `<AffiliateLink>` are disallowed — block on review.
 - **Prices** are formatted in one place: `lib/format.ts`. Every product surface renders prices via `formatVnd(amount)`. No file outside `lib/format.ts` may use `Intl.NumberFormat`, `toLocaleString`, or hand-rolled `"₫"` concatenation on a price value.
 - **Dates** are formatted in one place: `lib/format.ts`. Every blog surface renders post dates via `formatPostDate(iso)`. No file outside `lib/format.ts` may call `toLocaleDateString`, `Intl.DateTimeFormat`, or hand-roll a `tháng …` string on a post date.
+- **Every published post must clear `MIN_POST_WORDS` (800, counted by the exported `countWords()` in `lib/format.ts` — the same counter that backs `readingTimeVi`), carry ≥2 `h2` sections, embed ≥1 `<ProductCard slug>`, and have non-placeholder frontmatter with a genuine 50–160-char `summary` and non-empty `tags`.** Enforced by `lib/posts.test.ts`, which fails naming the offending post slug and word count — no exemption list (US00134/F0013).
 - **Contact email lives in one place: `lib/site.ts` (`CONTACT_EMAIL`).** No file outside `lib/site.ts` may inline `ttln1201@gmail.com` — Footer, policy pages, and the About page all import the constant.
-- **Categories are registered.** Every distinct `product.category` must have an entry in `lib/categories.ts` (slug + Vietnamese display name + 100–200 word intro + ≤160 char meta description). The product loader calls `assertCategoryRegistered()` at build time and fails with the offending slug if a category is missing.
+- **Categories are registered.** Every distinct `product.category` must have an entry in `lib/categories.ts` (slug + Vietnamese display name + 100–200 word intro + ≤160 char meta description). The product loader calls `assertCategoryRegistered()` at build time and fails with the offending slug if a category is missing. A registered category must have ≥`MIN_PRODUCTS_PER_CATEGORY` (3) products or `next build` fails (`assertCategoriesStocked()`, called from `generateStaticParams()` in `app/danh-muc/[category]/page.tsx`); an under-stocked category lives in `DEFERRED_CATEGORIES` instead, with its copy preserved for a one-line re-add once stocked.
 - **Catalog filter state** lives in the URL (`?category=`, `?brand=`, `?price=`, `?sort=`) only — no local state, no Context, no `localStorage`. Round-trips through `lib/filters.ts`; unknown values silently ignored.
 - **Blog MDX bodies render through `<PostBody>`** via `@mdx-js/mdx` `evaluate()`. The element/component map lives in `components/mdx/mdx-components.tsx`; the root `mdx-components.tsx` re-exports it. New MDX components register in the shared map only.
 - **MDX inline product cards:** Authors type `<ProductCard slug="…" />` in `.mdx` posts. The map key `ProductCard` resolves to `MdxProductCard` (the slug adapter in `components/MdxProductCard.tsx`), not the prop-based `components/ProductCard`. The adapter calls `getProductBySlug` at build time and throws a slug-named `Error` on miss so `next build` fails loudly.
 - **Heading slugs** come from `lib/mdx-slug.ts` (`createHeadingSlugger` wrapping `github-slugger`). No other file may call `github-slugger` or hand-roll heading slugs.
-- **Canonical / OG URLs are composed in one place: `lib/seo.ts`.** The root layout sets `metadataBase`; per-page `alternates.canonical` / `openGraph.url` are relative paths resolved against it. The `` `${process.env.NEXT_PUBLIC_SITE_URL}/...` `` string-template pattern is deprecated and removed — all 9 routes call `buildPageMetadata(...)`. Per-page `title` strings must not bake in `" | aff-store"` — the root `title.template` adds that suffix automatically (the homepage is the one exception, using a `title.absolute` override).
-- **Page metadata is built in one place: `lib/seo.ts`.** Every route's `metadata` / `generateMetadata` returns `buildPageMetadata(...)`. No file outside `lib/seo.ts` may compose canonical URLs, truncate `<meta description>`, or hand-assemble `openGraph` / `twitter` objects. OG image falls back to `DEFAULT_OG_IMAGE` when a page doesn't pass `ogImage`.
+- **Canonical / OG URLs are composed in one place: `lib/seo.ts`.** The root layout sets `metadataBase`; per-page `alternates.canonical` / `openGraph.url` are relative paths resolved against it. The `` `${process.env.NEXT_PUBLIC_SITE_URL}/...` `` string-template pattern is deprecated and removed — all 9 routes call `buildPageMetadata(...)`. Per-page `title` strings must not bake in `" | MuaGear"` (the `SITE_NAME` suffix, `lib/site.ts`) — the root `title.template` adds that suffix automatically (the homepage is the one exception, using a `title.absolute` override).
+- **Page metadata is built in one place: `lib/seo.ts`.** Every route's `metadata` / `generateMetadata` returns `buildPageMetadata(...)`. No file outside `lib/seo.ts` may compose canonical URLs, truncate `<meta description>`, or hand-assemble `openGraph` / `twitter` objects. OG image falls back to `DEFAULT_OG_IMAGE` when a page doesn't pass `ogImage`; `og:image:width`/`height` are resolved from the real file via `lib/image-meta.ts` and omitted when it can't be resolved (US00133).
+- **Image dimensions are read in one place: `lib/image-meta.ts`.** No file may call the `image-size` package or parse an image header directly. `readImageSize(path)` never throws; `assertMinShortSide(path, slug, min)` fails `next build` naming the post slug and path when a cover is missing, unreadable, or under 600px on its shorter side — called from `lib/posts.ts`'s `getAllPosts()` (US00133).
 - **JSON-LD scripts go through one place: `<JsonLd>` (`components/JsonLd.tsx`).** Schema bodies are built by pure helpers in `lib/*-schema.ts` (no JSX), e.g. `lib/product-schema.ts`, `lib/article-schema.ts`. No file outside `<JsonLd>` may emit `<script type="application/ld+json">` directly.
 - **Dev tooling lives in `scripts/`, never in `app/`/`components/`/`lib/`.** Runs via `tsx`, imports the same build-time chokepoints (`assertAffiliateUrl`, `assertCategoryRegistered`) through the `@/*` alias, and never re-implements URL/category validation. The ingestion CLI (`scripts/ingest-products.ts`, F0012) writes `content/products/*.json` fixtures matching the `Product` interface exactly (US00121).
 - **`scripts/scaffold-post.ts` (`npm run scaffold:post`, F0012/US00126) generates an MDX stub for a content-gap category** — frontmatter (title/summary `"TODO: …"` placeholders, category, publishedAt=today, `tags: []`, coverImage sourced from the first of up to 2 product slugs) plus one `<ProductCard slug>` per product. `--products` is optional — omit it to auto-pick up to 2 products from the category (featured first) via `selectProductsForCategory()`. It exits non-zero naming any unknown product slug (or an empty category, when auto-picking) before writing a file, refuses to overwrite an existing post, and reuses `assertCategoryRegistered` + `slugifyProductName` rather than re-implementing them. A human still writes the article prose before publishing. Full scrape→ingest→scaffold→publish flow: `scripts/README.md`.
@@ -238,6 +257,7 @@ aff-store/
 - **The file source (`--source=file --path=<file>`) reads a human-curated JSON array of hand-picked entries.** `scripts/ingest/sources/file.ts` only hard-requires `name` + `url` per entry (D2) — a structurally malformed entry (missing either) is **fatal, named, and blocks the whole file** before anything ingests; a well-formed entry missing optional content (e.g. no `price`) is a normal per-candidate rejection, not fatal. `url` passes straight through to `affiliateUrl` untouched, same as scrape. Goes through the identical validate → slug → dedupe → stage → write pipeline (US00125).
 - **Product slug format is `<brand>-<model>-<qualifier>`, lowercase kebab-case ASCII, ≤60 chars — no category prefix** (F0013/US00131). Any rename must go through `npm run rename:product -- --from=<old> --to=<new>` (`scripts/rename-product.ts`), which moves all five touch-points (fixture, `slug`, `images[]`, staged files, post embeds) atomically — never rename a fixture file by hand.
 - **The catalog-quality guard lives in `lib/products.test.ts`** (F0013/US00131, Vitest) — asserts product count/per-category floor, name/slug length + boilerplate patterns, description boilerplate phrases, image paths, and affiliate host allow-list. Run `npm test` before merging any content change.
+- **The deployed-domain check is `npm run verify:canonical -- --base=<url>`** (`scripts/verify-canonical.ts`, F0013/US00135) — verifies canonical/`og:url`/JSON-LD URLs and `sitemap.xml`/`robots.txt` against a **live, deployed** site, not the local build. Not part of `next build` or CI — run by hand against Production after every domain change; see "Setting the production domain" below.
 
 ### Route map
 
@@ -281,4 +301,4 @@ If the tab is empty after a deploy, confirm that:
 
 ## License
 
-Private. All product data and content © aff-store.
+Private. All product data and content © MuaGear.
