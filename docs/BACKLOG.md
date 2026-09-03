@@ -137,7 +137,7 @@ Feature-level backlog derived from `docs/spec.md`. User stories (`US####`) will 
 
 ## F0007 — Analytics & Click Tracking
 
-> ⚠️ **Never specced, never built.** This feature received no `docs/specs/F0007.md` and no user stories; the 2026-08-12 readiness audit confirmed zero `gtag` / `affiliate_click` hits in application code — only the `F0003` `data-*` seam on `<AffiliateLink>` exists. **Its entire scope is delivered by F0014 (US00141 + US00142).** Treat F0007 as implemented when those ship; it gets no separate spec file. Scope below is retained for traceability.
+> ⚠️ **Never specced, never built.** This feature received no `docs/specs/F0007.md` and no user stories; the 2026-08-12 readiness audit confirmed zero `gtag` / `affiliate_click` hits in application code — only the `F0003` `data-*` seam on `<AffiliateLink>` exists. **Its entire scope is delivered by F0014 (US00143 + US00144).** Treat F0007 as implemented when those ship; it gets no separate spec file. Scope below is retained for traceability.
 
 **Goal:** Measure traffic and identify top-converting products without code changes at launch.
 
@@ -286,14 +286,16 @@ Stories are numbered in dependency order — each consumes the output of the one
 
 **Scope:**
 
-- GA4 integration mounted in the root layout, rendered only when `NEXT_PUBLIC_GA_MEASUREMENT_ID` is set, never in development, without flipping any route off SSG — **delivers F0007's GA4 scope**
-- Delegated `affiliate_click` GA4 event fired from the existing `F0003 ↔ F0007` `data-*` contract on `<AffiliateLink>`, no per-call-site changes — **delivers F0007's click-tracking scope**
-- `test` job added to `.github/workflows/ci.yml` — 121 tests exist but CI runs only typecheck/lint/build, so every guard can regress on a green PR
-- Google Search Console property + ownership verification + sitemap submission (DNS TXT preferred; meta-tag path goes through `lib/env.ts` → `buildRootMetadata()`)
-- Repository-wide Prettier baseline (126 files currently unformatted) as an isolated commit + `.git-blame-ignore-revs` entry, plus a `format` CI job
+Listed in execution order — the story numbers are a topological sort of the dependency graph (renumbered 2026-09-03; see `docs/specs/F0014.md` § "Story numbering"):
+
+- **US00141** — `test` job added to `.github/workflows/ci.yml` — the suite exists but CI runs only typecheck/lint/build, so every guard can regress on a green PR
+- **US00142** — repository-wide Prettier baseline as an isolated commit + `.git-blame-ignore-revs` entry, plus a `format` CI job
+- **US00143** — GA4 integration mounted in the root layout, rendered only when `NEXT_PUBLIC_GA_MEASUREMENT_ID` is set, never in development, without flipping any route off SSG — **delivers F0007's GA4 scope**
+- **US00144** — delegated `affiliate_click` GA4 event fired from the existing `F0003 ↔ F0007` `data-*` contract on `<AffiliateLink>`, no per-call-site changes — **delivers F0007's click-tracking scope**
+- **US00145** — Google Search Console property + ownership verification + sitemap submission (DNS TXT preferred; meta-tag path goes through `lib/env.ts` → `buildRootMetadata()`)
 
 **Out of scope:** Google AdSense (spec §2 P1, still unowned); custom analytics backend, A/B testing, cookie-consent UI; content/catalog fixes (F0013); any change to the SSG-only constraint; redesigning the Prettier ruleset.
 
-**Priority:** P1 (US00144 is P0 — on the §9 launch-day checklist)
+**Priority:** P1 (US00145 is P0 — on the §9 launch-day checklist)
 **Dependencies:** F0001, F0003, F0009, F0011 · supersedes F0007
 **Spec refs:** docs/specs/F0014.md · §3.4, §6.1, §6.2, §6.3, §9
