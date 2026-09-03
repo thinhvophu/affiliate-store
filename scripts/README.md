@@ -143,17 +143,17 @@ results.
 
 ## Directory map
 
-| Path | Purpose |
-| --- | --- |
-| `scripts/ingest-products.ts` | Ingestion CLI entry point (step 2). |
-| `scripts/ingest/` | Candidate model, validation, slug generator, dedupe, image staging, arg parser, reporter, writer, scrape + curated-file source adapters. Detailed docs live in `scripts/ingest/README.md`. |
-| `scripts/rename-product.ts` + `.test.ts` | Slug-rename CLI entry point (step 3) — see "Rename (editorial pass)" above. |
-| `scripts/sync-content-queue.ts` + `.test.ts` | Derives which products still lack a post and merges into `data/content-queue.md` — see "Content queue" below. |
-| `scripts/scaffold-post.ts` | Blog-post scaffold CLI entry point (step 4). |
-| `scripts/scaffold/` | `renderPostStub()` template builder + `selectProductsForCategory()` auto-pick helper, both pure and unit-tested. |
-| `scripts/verify-canonical.ts` | Deployment canonical-URL verifier (`npm run verify:canonical -- --base=<url>`, F0013/US00135) — checks a **live** site, not the local build; run by hand after a domain/env-var change. See `docs/plans/US00135.md` § "Half B" for the swap-day checklist. |
-| `.claude/commands/scrape-ingest.md` | `/scrape-ingest` slash command — steps 1+2+6 (scrape → ingest → publish), no prose step. |
-| `.claude/commands/write-post.md` | `/write-post` slash command — steps 4+5+6 (scaffold → research + write → publish) for an already-ingested category. |
+| Path                                         | Purpose                                                                                                                                                                                                                                                    |
+| -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scripts/ingest-products.ts`                 | Ingestion CLI entry point (step 2).                                                                                                                                                                                                                        |
+| `scripts/ingest/`                            | Candidate model, validation, slug generator, dedupe, image staging, arg parser, reporter, writer, scrape + curated-file source adapters. Detailed docs live in `scripts/ingest/README.md`.                                                                 |
+| `scripts/rename-product.ts` + `.test.ts`     | Slug-rename CLI entry point (step 3) — see "Rename (editorial pass)" above.                                                                                                                                                                                |
+| `scripts/sync-content-queue.ts` + `.test.ts` | Derives which products still lack a post and merges into `data/content-queue.md` — see "Content queue" below.                                                                                                                                              |
+| `scripts/scaffold-post.ts`                   | Blog-post scaffold CLI entry point (step 4).                                                                                                                                                                                                               |
+| `scripts/scaffold/`                          | `renderPostStub()` template builder + `selectProductsForCategory()` auto-pick helper, both pure and unit-tested.                                                                                                                                           |
+| `scripts/verify-canonical.ts`                | Deployment canonical-URL verifier (`npm run verify:canonical -- --base=<url>`, F0013/US00135) — checks a **live** site, not the local build; run by hand after a domain/env-var change. See `docs/plans/US00135.md` § "Half B" for the swap-day checklist. |
+| `.claude/commands/scrape-ingest.md`          | `/scrape-ingest` slash command — steps 1+2+6 (scrape → ingest → publish), no prose step.                                                                                                                                                                   |
+| `.claude/commands/write-post.md`             | `/write-post` slash command — steps 4+5+6 (scaffold → research + write → publish) for an already-ingested category.                                                                                                                                        |
 
 ## Exit codes (both CLIs)
 

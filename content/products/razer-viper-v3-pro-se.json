@@ -5,9 +5,7 @@
   "brand": "Razer",
   "price": 2590000,
   "affiliateUrl": "https://s.shopee.vn/3B67OCXjab",
-  "images": [
-    "/static/images/products/razer-viper-v3-pro-se-1.jpg"
-  ],
+  "images": ["/static/images/products/razer-viper-v3-pro-se-1.jpg"],
   "description": "Razer Viper V3 Pro SE là chuột gaming không dây flagship, nặng chỉ 54g với cảm biến quang học Focus Pro 35K Gen-2 đạt độ phân giải 35.000 DPI. Switch quang học Gen-3 bền đến 90 triệu lần nhấn cùng công nghệ không dây HyperSpeed cho tốc độ phản hồi 1000Hz, lên đến 8000Hz khi dùng kèm HyperPolling Dongle. Pin sạc trong cho thời lượng sử dụng lên đến 95 giờ, đủ cho các buổi luyện tập và thi đấu dài.",
   "specs": {
     "Trọng lượng": "54 g",

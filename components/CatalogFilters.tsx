@@ -41,10 +41,7 @@ export function CatalogFilters({ options, categoryLabels }: Props) {
   );
 
   const toggle = useCallback(
-    <K extends "categories" | "brands" | "priceBucketIds">(
-      key: K,
-      value: string,
-    ) => {
+    <K extends "categories" | "brands" | "priceBucketIds">(key: K, value: string) => {
       const current = active[key] as string[];
       const exists = current.includes(value);
       const nextList = exists ? current.filter((v) => v !== value) : [...current, value];
@@ -141,9 +138,7 @@ export function CatalogFilters({ options, categoryLabels }: Props) {
 
       <fieldset className={styles.group}>
         <legend className={styles.legend}>Danh mục</legend>
-        {options.categories.length === 0 && (
-          <p className={styles.empty}>Chưa có danh mục</p>
-        )}
+        {options.categories.length === 0 && <p className={styles.empty}>Chưa có danh mục</p>}
         {options.categories.map((c) => (
           <label key={c} className={styles.option}>
             <input
@@ -158,9 +153,7 @@ export function CatalogFilters({ options, categoryLabels }: Props) {
 
       <fieldset className={styles.group}>
         <legend className={styles.legend}>Thương hiệu</legend>
-        {options.brands.length === 0 && (
-          <p className={styles.empty}>Chưa có thương hiệu</p>
-        )}
+        {options.brands.length === 0 && <p className={styles.empty}>Chưa có thương hiệu</p>}
         {options.brands.map((b) => (
           <label key={b} className={styles.option}>
             <input

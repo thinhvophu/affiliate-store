@@ -45,10 +45,7 @@ export function PostFilters({ options, categoryLabels }: Props) {
     [active, writeFilters],
   );
 
-  const clearAll = useCallback(
-    () => writeFilters({ categories: [], tags: [] }),
-    [writeFilters],
-  );
+  const clearAll = useCallback(() => writeFilters({ categories: [], tags: [] }), [writeFilters]);
 
   const count = countActivePostFilters(active);
   const categoryLabel = (slug: string) => categoryLabels?.[slug] ?? slug;
@@ -94,9 +91,7 @@ export function PostFilters({ options, categoryLabels }: Props) {
 
       <fieldset className={styles.group}>
         <legend className={styles.legend}>Danh mục</legend>
-        {options.categories.length === 0 && (
-          <p className={styles.empty}>Chưa có danh mục</p>
-        )}
+        {options.categories.length === 0 && <p className={styles.empty}>Chưa có danh mục</p>}
         {options.categories.map((c) => (
           <label key={c} className={styles.option}>
             <input
@@ -111,9 +106,7 @@ export function PostFilters({ options, categoryLabels }: Props) {
 
       <fieldset className={styles.group}>
         <legend className={styles.legend}>Thẻ</legend>
-        {options.tags.length === 0 && (
-          <p className={styles.empty}>Chưa có thẻ</p>
-        )}
+        {options.tags.length === 0 && <p className={styles.empty}>Chưa có thẻ</p>}
         {options.tags.map((t) => (
           <label key={t} className={styles.option}>
             <input

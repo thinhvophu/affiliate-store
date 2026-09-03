@@ -41,13 +41,7 @@ export function ShellLayoutDrawer({
         aria-haspopup="dialog"
         aria-expanded={open}
       >
-        <svg
-          aria-hidden="true"
-          width="20"
-          height="20"
-          viewBox="0 0 20 20"
-          fill="none"
-        >
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path
             d="M3 5h14M3 10h14M3 15h14"
             stroke="currentColor"

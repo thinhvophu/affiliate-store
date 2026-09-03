@@ -57,7 +57,7 @@ export function Drawer({
     const trigger = triggerRef.current;
 
     const focusables = panel.querySelectorAll<HTMLElement>(
-      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
     );
     const first = focusables[0] ?? closeButtonRef.current;
     first?.focus();
@@ -75,8 +75,8 @@ export function Drawer({
 
     const focusables = Array.from(
       panel.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-      )
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      ),
     ).filter((el) => el.offsetParent !== null);
 
     if (focusables.length === 0) {
@@ -99,10 +99,7 @@ export function Drawer({
   };
 
   return (
-    <div
-      className={`${styles.root}${open ? ` ${styles.open}` : ""}`}
-      aria-hidden={!open}
-    >
+    <div className={`${styles.root}${open ? ` ${styles.open}` : ""}`} aria-hidden={!open}>
       <div className={styles.overlay} onClick={onClose} aria-hidden="true" />
       <div
         ref={panelRef}

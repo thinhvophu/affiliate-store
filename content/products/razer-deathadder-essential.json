@@ -5,9 +5,7 @@
   "brand": "Razer",
   "price": 272800,
   "affiliateUrl": "https://s.shopee.vn/4LIFu3UybZ",
-  "images": [
-    "/static/images/products/razer-deathadder-essential-1.jpg"
-  ],
+  "images": ["/static/images/products/razer-deathadder-essential-1.jpg"],
   "description": "Razer DeathAdder Essential là chuột gaming có dây với thiết kế công thái học ôm tay phải, dùng cảm biến quang học độ phân giải 6.400 DPI. Chuột có 5 nút bấm dễ gán chức năng và nút cơ học bền tới 10 triệu lần nhấp. Đèn LED đơn sắc màu xanh lá khắc họa logo Razer tạo điểm nhấn gọn gàng, phù hợp cho game thủ ưa sự đơn giản.",
   "specs": {
     "Cảm biến quang": "6.400 DPI",

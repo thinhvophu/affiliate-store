@@ -59,7 +59,10 @@ describe("selectProductsForCategory", () => {
   });
 
   it("returns an empty array when the category has no products", () => {
-    const picked = selectProductsForCategory([product({ category: "ban-phim-gaming" })], "chuot-gaming");
+    const picked = selectProductsForCategory(
+      [product({ category: "ban-phim-gaming" })],
+      "chuot-gaming",
+    );
     expect(picked).toEqual([]);
   });
 });

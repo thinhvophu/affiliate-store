@@ -14,9 +14,7 @@ function requireUrl(name: string): string {
   try {
     new URL(value);
   } catch {
-    throw new Error(
-      `Environment variable ${name} must be a valid URL.\nReceived: "${value}"`,
-    );
+    throw new Error(`Environment variable ${name} must be a valid URL.\nReceived: "${value}"`);
   }
   return value;
 }

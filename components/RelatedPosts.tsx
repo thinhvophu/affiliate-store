@@ -15,10 +15,7 @@ export function RelatedPosts({ posts }: RelatedPostsProps) {
       <h2 id="related-posts-heading" className={styles.heading}>
         Bài viết liên quan
       </h2>
-      <div
-        className={styles.grid}
-        style={{ "--related-count": posts.length } as CSSProperties}
-      >
+      <div className={styles.grid} style={{ "--related-count": posts.length } as CSSProperties}>
         {posts.map((p) => (
           <PostCard key={p.slug} post={p} />
         ))}

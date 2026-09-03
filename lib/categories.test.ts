@@ -39,7 +39,9 @@ describe("assertCategoriesStocked (US00132)", () => {
       makeProduct({ slug: "a", category: "under-cat" }),
       makeProduct({ slug: "b", category: "under-cat" }),
     ];
-    expect(() => assertCategoriesStocked(products, { "under-cat": {} as never })).toThrow(/under-cat/);
+    expect(() => assertCategoriesStocked(products, { "under-cat": {} as never })).toThrow(
+      /under-cat/,
+    );
   });
 
   it("does not throw when a category has exactly 3 products", () => {
@@ -85,9 +87,10 @@ describe("CATEGORIES registry (US00132)", () => {
       counts.set(p.category, (counts.get(p.category) ?? 0) + 1);
     }
     for (const slug of Object.keys(CATEGORIES)) {
-      expect(counts.get(slug) ?? 0, `"${slug}" has fewer than ${MIN_PRODUCTS_PER_CATEGORY} products`).toBeGreaterThanOrEqual(
-        MIN_PRODUCTS_PER_CATEGORY,
-      );
+      expect(
+        counts.get(slug) ?? 0,
+        `"${slug}" has fewer than ${MIN_PRODUCTS_PER_CATEGORY} products`,
+      ).toBeGreaterThanOrEqual(MIN_PRODUCTS_PER_CATEGORY);
     }
   });
 });

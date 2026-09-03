@@ -76,9 +76,7 @@ function parseScaffoldArgs(argv: string[]): ScaffoldArgs {
       throw new Error('"--products" must not be empty (omit the flag to auto-pick instead).');
     }
     if (productSlugs.length > 2) {
-      throw new Error(
-        `"--products" accepts at most 2 product slugs, got ${productSlugs.length}.`,
-      );
+      throw new Error(`"--products" accepts at most 2 product slugs, got ${productSlugs.length}.`);
     }
   }
 
@@ -109,9 +107,7 @@ function main(): void {
           `ingest some first, or pass --products=<slug-a,slug-b> explicitly.`,
       );
     }
-    console.log(
-      `[scaffold] auto-picked products: ${products.map((p) => p.slug).join(", ")}`,
-    );
+    console.log(`[scaffold] auto-picked products: ${products.map((p) => p.slug).join(", ")}`);
   }
 
   const postSlug =

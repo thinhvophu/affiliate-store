@@ -5,7 +5,12 @@
     "brand": "Dell",
     "price": 6490000,
     "description": "Màn hình gaming Dell 27\" QHD IPS 165Hz, 1ms, G-Sync Compatible.",
-    "specs": { "Kích thước": "27 inch", "Độ phân giải": "2560x1440", "Tần số quét": "165Hz", "Tấm nền": "IPS" },
+    "specs": {
+      "Kích thước": "27 inch",
+      "Độ phân giải": "2560x1440",
+      "Tần số quét": "165Hz",
+      "Tấm nền": "IPS"
+    },
     "images": ["https://cf.shopee.vn/file/abc123"],
     "notes": "flagship pick for man-hinh-gaming"
   },

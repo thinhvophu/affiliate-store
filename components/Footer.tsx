@@ -35,29 +35,20 @@ export function Footer() {
               </Link>
             </li>
             <li>
-              <Link
-                href="/cong-bo-tiep-thi-lien-ket/"
-                className={styles.columnLink}
-              >
+              <Link href="/cong-bo-tiep-thi-lien-ket/" className={styles.columnLink}>
                 Công bố tiếp thị liên kết
               </Link>
             </li>
           </ul>
         </section>
 
-        <section
-          className={styles.column}
-          aria-labelledby="footer-col-contact"
-        >
+        <section className={styles.column} aria-labelledby="footer-col-contact">
           <h2 id="footer-col-contact" className={styles.columnTitle}>
             Liên hệ
           </h2>
           <ul className={styles.columnList}>
             <li>
-              <a
-                href={`mailto:${CONTACT_EMAIL}`}
-                className={styles.columnLink}
-              >
+              <a href={`mailto:${CONTACT_EMAIL}`} className={styles.columnLink}>
                 {CONTACT_EMAIL}
               </a>
             </li>

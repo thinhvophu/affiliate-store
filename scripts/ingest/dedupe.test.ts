@@ -34,11 +34,7 @@ describe("classify", () => {
 
   it("disambiguates a slug collision from a distinct affiliateUrl and flags it", () => {
     const index = buildCatalogIndex([product()]);
-    const result = classify(
-      "https://shope.ee/different-product",
-      "chuot-gaming-logitech",
-      index,
-    );
+    const result = classify("https://shope.ee/different-product", "chuot-gaming-logitech", index);
     expect(result).toEqual({ kind: "collision", slug: "chuot-gaming-logitech-2" });
   });
 

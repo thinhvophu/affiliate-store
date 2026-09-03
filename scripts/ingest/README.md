@@ -113,7 +113,7 @@ So the flow is two steps, run in this order:
 1. **Scrape** (run the shopee-affiliate scrape tool in-session, one or more
    keywords). It writes `data/deals/<date>.json` itself — a `DailyDealsSnapshot`
    grouping `RawDeal[]` per keyword (`{ date, generatedAt, totalKeywords,
-   results: [{ keyword, timestamp, totalFound, deals }] }`).
+results: [{ keyword, timestamp, totalFound, deals }] }`).
 2. **Ingest**, pointing at that file:
    ```bash
    npm run ingest:products -- --category=<slug> --source=scrape \
@@ -183,10 +183,15 @@ normal validation pipeline — not a fatal error, see below).
     "brand": "Dell",
     "price": 6490000,
     "description": "Màn hình gaming Dell 27\" QHD IPS 165Hz, 1ms, G-Sync Compatible.",
-    "specs": { "Kích thước": "27 inch", "Độ phân giải": "2560x1440", "Tần số quét": "165Hz", "Tấm nền": "IPS" },
+    "specs": {
+      "Kích thước": "27 inch",
+      "Độ phân giải": "2560x1440",
+      "Tần số quét": "165Hz",
+      "Tấm nền": "IPS",
+    },
     "images": ["https://cf.shopee.vn/file/abc123"],
-    "notes": "flagship pick for man-hinh-gaming"
-  }
+    "notes": "flagship pick for man-hinh-gaming",
+  },
 ]
 ```
 
@@ -201,7 +206,7 @@ normal validation pipeline — not a fatal error, see below).
 
 This is the one distinction operators need to internalize:
 
-- **Structurally malformed** (the file isn't a JSON array, or *any* entry is
+- **Structurally malformed** (the file isn't a JSON array, or _any_ entry is
   missing `name` or `url` entirely) → **fatal**. The run exits non-zero,
   names every offending entry index, and writes **nothing** — not even the
   well-formed entries in the same file. Fix the file and re-run.

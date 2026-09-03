@@ -28,9 +28,7 @@ function CategoryGrid({ products, categorySlug }: CategoryPageClientProps) {
   const slice = products.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 
   if (products.length === 0) {
-    return (
-      <p className={styles.empty}>Chưa có sản phẩm trong danh mục này.</p>
-    );
+    return <p className={styles.empty}>Chưa có sản phẩm trong danh mục này.</p>;
   }
 
   return (

@@ -97,7 +97,9 @@ export function parseDealsSnapshot(raw: unknown, file: string): DailyDealsSnapsh
     if (!Array.isArray(result.deals)) {
       fail(file, `results[${i}].deals must be an array`);
     }
-    (result.deals as unknown[]).forEach((deal, j) => assertRawDeal(deal, file, `results[${i}].deals[${j}]`));
+    (result.deals as unknown[]).forEach((deal, j) =>
+      assertRawDeal(deal, file, `results[${i}].deals[${j}]`),
+    );
   });
 
   return obj as unknown as DailyDealsSnapshot;

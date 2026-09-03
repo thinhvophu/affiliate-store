@@ -26,7 +26,9 @@ export function PostCard({ post }: { post: Post }) {
         <h2 className={styles.title}>{post.title}</h2>
         <p className={styles.summary}>{post.summary}</p>
         <div className={styles.meta}>
-          <span className={styles.date}>{formatPostDate(post.publishedAt)} · {readingTimeVi(post.content)}</span>
+          <span className={styles.date}>
+            {formatPostDate(post.publishedAt)} · {readingTimeVi(post.content)}
+          </span>
           <span className={styles.category}>{categoryLabel}</span>
         </div>
       </div>

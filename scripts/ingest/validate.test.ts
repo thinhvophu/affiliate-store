@@ -37,10 +37,7 @@ describe("validateCandidate", () => {
   });
 
   it("rejects a candidate with an unregistered category", () => {
-    const rejection = validateCandidate(
-      baseCandidate({ category: "khong-ton-tai" }),
-      "test-slug",
-    );
+    const rejection = validateCandidate(baseCandidate({ category: "khong-ton-tai" }), "test-slug");
     expect(rejection?.reason).toContain("khong-ton-tai");
   });
 

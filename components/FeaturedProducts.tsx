@@ -13,10 +13,7 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
   const hasProducts = products.length > 0;
 
   return (
-    <section
-      className={styles.section}
-      aria-labelledby="featured-products-heading"
-    >
+    <section className={styles.section} aria-labelledby="featured-products-heading">
       <header className={styles.header}>
         <h2 id="featured-products-heading" className={styles.heading}>
           Sản phẩm nổi bật

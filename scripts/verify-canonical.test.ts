@@ -3,7 +3,8 @@ import { normalizeBase, verifyCanonical } from "./verify-canonical";
 
 function mockFetch(routes: Record<string, string>): typeof fetch {
   return vi.fn(async (input: RequestInfo | URL) => {
-    const url = typeof input === "string" ? input : input instanceof URL ? input.toString() : input.url;
+    const url =
+      typeof input === "string" ? input : input instanceof URL ? input.toString() : input.url;
     const path = new URL(url).pathname;
     const body = routes[path];
     if (body === undefined) {
@@ -29,7 +30,12 @@ function robots(host: string): string {
   return `User-agent: *\nAllow: /\n\nSitemap: https://${host}/sitemap.xml\n`;
 }
 
-function page(opts: { canonical: string; ogUrl: string; jsonLdUrl: string; jsonLdImage: string }): string {
+function page(opts: {
+  canonical: string;
+  ogUrl: string;
+  jsonLdUrl: string;
+  jsonLdImage: string;
+}): string {
   return `<!doctype html><html><head>
 <link rel="canonical" href="${opts.canonical}">
 <meta property="og:url" content="${opts.ogUrl}">
@@ -105,9 +111,11 @@ describe("verifyCanonical", () => {
     const result = await verifyCanonical("https://muagear.com", fetchImpl);
 
     expect(result.ok).toBe(false);
-    expect(result.findings.some((f) => f.artefact.includes("sitemap.xml") && f.message.includes("example.com"))).toBe(
-      true,
-    );
+    expect(
+      result.findings.some(
+        (f) => f.artefact.includes("sitemap.xml") && f.message.includes("example.com"),
+      ),
+    ).toBe(true);
   });
 
   it("(c) flags a page whose canonical is on the wrong host", async () => {
@@ -148,7 +156,9 @@ describe("verifyCanonical", () => {
     const result = await verifyCanonical("https://muagear.com/", fetchImpl);
 
     expect(result.ok).toBe(true);
-    const calledUrls = (fetchImpl as unknown as ReturnType<typeof vi.fn>).mock.calls.map((c) => String(c[0]));
+    const calledUrls = (fetchImpl as unknown as ReturnType<typeof vi.fn>).mock.calls.map((c) =>
+      String(c[0]),
+    );
     expect(calledUrls.some((u) => u.includes("//sitemap.xml"))).toBe(false);
     expect(calledUrls).toContain("https://muagear.com/sitemap.xml");
   });

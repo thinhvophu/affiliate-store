@@ -121,9 +121,7 @@ describe("breadcrumbListJsonLd", () => {
     itemListElement.forEach((entry, i) => {
       expect(entry.item).toBe(`https://example.com${crumbs[i].href}`);
     });
-    expect(itemListElement[3].item).toBe(
-      `https://example.com/san-pham/${fixtureProduct.slug}/`,
-    );
+    expect(itemListElement[3].item).toBe(`https://example.com/san-pham/${fixtureProduct.slug}/`);
   });
 
   it("returns an empty itemListElement for an empty items array", () => {

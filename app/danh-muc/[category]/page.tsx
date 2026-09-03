@@ -18,11 +18,7 @@ export function generateStaticParams(): Params[] {
   return getAllCategorySlugs().map((category) => ({ category }));
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<Params>;
-}): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { category } = await params;
   const meta = getCategoryMeta(category);
   if (!meta) return {};
@@ -35,11 +31,7 @@ export async function generateMetadata({
   });
 }
 
-export default async function CategoryPage({
-  params,
-}: {
-  params: Promise<Params>;
-}) {
+export default async function CategoryPage({ params }: { params: Promise<Params> }) {
   const { category } = await params;
 
   const meta = getCategoryMeta(category);
@@ -49,8 +41,7 @@ export default async function CategoryPage({
   const filtered = all
     .filter((p) => p.category === category)
     .sort((a, b) => {
-      const dt =
-        new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+      const dt = new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
       return dt !== 0 ? dt : a.slug.localeCompare(b.slug);
     });
 

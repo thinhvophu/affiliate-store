@@ -26,9 +26,9 @@ describe("parseIngestArgs", () => {
   });
 
   it("throws naming an unknown bare flag", () => {
-    expect(() => parseIngestArgs(["--category=chuot-gaming", "--source=file", "--frobnicate"])).toThrow(
-      /--frobnicate/,
-    );
+    expect(() =>
+      parseIngestArgs(["--category=chuot-gaming", "--source=file", "--frobnicate"]),
+    ).toThrow(/--frobnicate/);
   });
 
   it("throws on a positional argument", () => {
@@ -64,7 +64,11 @@ describe("parseIngestArgs", () => {
   });
 
   it("parses a valid --date", () => {
-    const args = parseIngestArgs(["--category=chuot-gaming", "--source=scrape", "--date=2026-07-22"]);
+    const args = parseIngestArgs([
+      "--category=chuot-gaming",
+      "--source=scrape",
+      "--date=2026-07-22",
+    ]);
     expect(args.date).toBe("2026-07-22");
   });
 

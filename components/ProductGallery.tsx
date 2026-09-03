@@ -50,13 +50,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
                 aria-pressed={i === activeIndex}
                 onClick={() => setActiveIndex(i)}
               >
-                <Image
-                  src={src}
-                  alt=""
-                  fill
-                  sizes="80px"
-                  className={styles.thumbnailImage}
-                />
+                <Image src={src} alt="" fill sizes="80px" className={styles.thumbnailImage} />
               </button>
             </li>
           ))}

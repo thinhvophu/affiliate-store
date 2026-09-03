@@ -5,9 +5,7 @@
   "brand": "Razer",
   "price": 640000,
   "affiliateUrl": "https://s.shopee.vn/8KoueILPMK",
-  "images": [
-    "/static/images/products/razer-blackshark-v2-x-1.jpg"
-  ],
+  "images": ["/static/images/products/razer-blackshark-v2-x-1.jpg"],
   "description": "Tai nghe gaming Razer BlackShark V2 X trang bị driver 50mm cho âm thanh mạnh mẽ, hỗ trợ âm thanh vòm ảo 7.1 Surround giúp định vị tốt tiếng bước chân và tiếng súng trong game. Mic thu âm có khả năng chống ồn, giữ giọng nói rõ ràng khi giao tiếp cùng đồng đội. Tai nghe kết nối qua jack 3.5mm, dùng được trên nhiều thiết bị như PC, laptop và console.",
   "specs": {
     "Driver": "50mm",

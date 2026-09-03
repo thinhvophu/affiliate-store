@@ -91,8 +91,8 @@ export function parseFilterParams(
 
   const categories = readList("category").filter((c) => knownCategories.has(c));
   const brands = readList("brand").filter((b) => knownBrands.has(b));
-  const priceBucketIds = readList("price").filter(
-    (id): id is PriceBucket["id"] => PRICE_BUCKET_ID_SET.has(id as PriceBucket["id"]),
+  const priceBucketIds = readList("price").filter((id): id is PriceBucket["id"] =>
+    PRICE_BUCKET_ID_SET.has(id as PriceBucket["id"]),
   );
 
   const sortRaw = searchParams.get("sort") ?? "";

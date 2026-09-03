@@ -1,11 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll, vi, afterEach } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import {
-  MIN_COVER_IMAGE_SHORT_SIDE_PX,
-  readImageSize,
-  assertMinShortSide,
-} from "./image-meta";
+import { MIN_COVER_IMAGE_SHORT_SIDE_PX, readImageSize, assertMinShortSide } from "./image-meta";
 
 const FIXTURE_DIR = path.join(process.cwd(), "public", "_test-image-meta");
 
@@ -22,7 +18,10 @@ beforeAll(() => {
   fs.mkdirSync(FIXTURE_DIR, { recursive: true });
   fs.writeFileSync(path.join(FIXTURE_DIR, "large.png"), pngBuffer(800, 800));
   fs.writeFileSync(path.join(FIXTURE_DIR, "tiny.png"), pngBuffer(1, 1));
-  fs.writeFileSync(path.join(FIXTURE_DIR, "fake.jpg"), Buffer.from("this is not an image", "utf-8"));
+  fs.writeFileSync(
+    path.join(FIXTURE_DIR, "fake.jpg"),
+    Buffer.from("this is not an image", "utf-8"),
+  );
 });
 
 afterAll(() => {

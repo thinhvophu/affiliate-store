@@ -47,9 +47,7 @@ function validateProduct(data: unknown, filePath: string): Product {
   }
 
   if (!Array.isArray(obj.images) || (obj.images as unknown[]).length === 0) {
-    throw new Error(
-      `[content] ${filePath}: "images" must be a non-empty array of strings.`,
-    );
+    throw new Error(`[content] ${filePath}: "images" must be a non-empty array of strings.`);
   }
 
   if (typeof obj.specs !== "object" || obj.specs === null || Array.isArray(obj.specs)) {
@@ -141,10 +139,7 @@ export function getProductBySlug(slug: string): Product | null {
  * @param all     - Optional pre-loaded product array (defaults to getAllProducts()).
  *                  Pass the already-loaded array to avoid a second disk read.
  */
-export function getRelatedProducts(
-  current: Product,
-  all: Product[] = getAllProducts(),
-): Product[] {
+export function getRelatedProducts(current: Product, all: Product[] = getAllProducts()): Product[] {
   const byRecency = (a: Product, b: Product): number => {
     const t = new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
     return t !== 0 ? t : a.slug.localeCompare(b.slug);

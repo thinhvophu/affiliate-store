@@ -76,7 +76,9 @@ function planRename(options: RenameOptions): RenamePlan {
 
   const imageMoves: { from: string; to: string }[] = [];
   const newImages: string[] = [];
-  const IMAGE_RE = new RegExp(`^/static/images/products/${escapeRegExp(from)}(-\\d+)?\\.([a-zA-Z0-9]+)$`);
+  const IMAGE_RE = new RegExp(
+    `^/static/images/products/${escapeRegExp(from)}(-\\d+)?\\.([a-zA-Z0-9]+)$`,
+  );
 
   for (const imagePath of product.images) {
     const match = IMAGE_RE.exec(imagePath);

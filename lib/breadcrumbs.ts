@@ -32,11 +32,7 @@ export function buildProductBreadcrumbs(product: Product): BreadcrumbItem[] {
 export function buildCategoryBreadcrumbs(categorySlug: string): BreadcrumbItem[] {
   const cat = getCategoryMeta(categorySlug);
   if (!cat) return [ROOT_CRUMB, PRODUCTS_CRUMB];
-  return [
-    ROOT_CRUMB,
-    PRODUCTS_CRUMB,
-    { label: cat.name, href: `/danh-muc/${cat.slug}/` },
-  ];
+  return [ROOT_CRUMB, PRODUCTS_CRUMB, { label: cat.name, href: `/danh-muc/${cat.slug}/` }];
 }
 
 export function buildPostBreadcrumbs(post: Post): BreadcrumbItem[] {
