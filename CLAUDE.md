@@ -24,7 +24,7 @@ Vietnamese-language, SEO-first affiliate storefront for gaming peripherals & tec
 
 Living map of the repository. **Update this section** whenever a story adds/moves/renames files or introduces new conventions.
 
-> Last updated: scripts/sync-content-queue.ts + .test.ts — `npm run sync:content-queue` CLI, derives content/products/ vs content/posts/ `<ProductCard>` coverage into data/content-queue.md, a hand-annotated per-product status tracker for the write-post-one-by-one workflow (ad hoc tooling, no user story); merged with US00135 (scripts/verify-canonical.ts deployment canonical-URL verifier + npm run verify:canonical; lib/site.ts's SITE_NAME renamed "aff-store" → "MuaGear"; F0013)
+> Last updated: US00142 (.git-blame-ignore-revs top-level file + repository-wide Prettier baseline + `format` CI job; F0014); previously scripts/sync-content-queue.ts + .test.ts — `npm run sync:content-queue` CLI, derives content/products/ vs content/posts/ `<ProductCard>` coverage into data/content-queue.md, a hand-annotated per-product status tracker for the write-post-one-by-one workflow (ad hoc tooling, no user story); merged with US00135 (scripts/verify-canonical.ts deployment canonical-URL verifier + npm run verify:canonical; lib/site.ts's SITE_NAME renamed "aff-store" → "MuaGear"; F0013)
 
 ### Top-level layout
 
@@ -219,6 +219,7 @@ aff-store/
 ├── next.config.ts
 ├── tsconfig.json        # Path alias: @/* → ./*
 ├── package.json         # Node ≥22.11
+├── .git-blame-ignore-revs # SHAs to skip in `git blame` (formatting-only commits) — enable with `git config blame.ignoreRevsFile .git-blame-ignore-revs`; see README.md § Formatting (US00142)
 ├── CLAUDE.md            # This file — project rules
 ├── AGENTS.md            # Agent rules (read Next.js docs before coding)
 └── README.md            # Public-facing overview
