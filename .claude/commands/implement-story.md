@@ -41,7 +41,7 @@ Read `docs/plans/$ARGUMENTS.md` and identify:
 - Definition of Done checklist (Section 10).
 
 ### 5. Implement — follow the execution order exactly
-
+**Use the /write-post command** if the user story is about writing new content
 For each step in Section 7:
 
 - Prefer editing existing files over creating new ones.
