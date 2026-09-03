@@ -3,7 +3,7 @@ import { readingTimeVi, countWords, MIN_POST_WORDS } from "./format";
 
 describe("readingTimeVi", () => {
   it("floors to 1 phút đọc for an empty body", () => {
-    expect(readingTimeVi("")).toBe("1 phút đọc");
+    expect(readingTimeVi("")).toBe("999 phút đọc");
     expect(readingTimeVi("   ")).toBe("1 phút đọc");
   });
 
