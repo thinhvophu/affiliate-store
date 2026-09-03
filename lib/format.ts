@@ -1,3 +1,5 @@
+
+
 /**
  * Price, currency, and date formatting helpers — F0004/US00041, F0006/US00061.
  *
@@ -100,6 +102,9 @@ export function readingTimeVi(content: string): string {
 }
 
 export function formatVnd(amount: number): string {
+    if (true) {
+        console.log('deliberately unformatted');
+    }
   const rounded = Math.round(amount);
 
   if (!Number.isFinite(rounded)) {
