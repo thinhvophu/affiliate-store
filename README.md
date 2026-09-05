@@ -65,6 +65,10 @@ Run once the production domain (above) is live, in order. Record each result (sc
 
 Full decision log and execution record: [`docs/plans/US00145.md`](./docs/plans/US00145.md).
 
+## Keyword & product research
+
+To target specific keywords/products instead of writing posts for whatever's in the catalog, follow the research plan before scaffolding new content: [`docs/plans/keyword-research.md`](./docs/plans/keyword-research.md). Summary: fix GA4 MCP access → pull already-converting products from GA4 → run a Keyword Planner CSV pass → cross-reference against `data/content-queue.md`'s pending products → fill gaps via the Shopee scrape tool → produce a ranked keyword/product shortlist that feeds `/write-post`.
+
 ## Hosting
 
 Production runs on **Vercel** with the GitHub integration. Push to `main` auto-deploys.
