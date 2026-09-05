@@ -50,6 +50,21 @@ The real domain (`https://muagear.com`) is set once, on the **Vercel Production*
 
 Full rationale and decision log: [`docs/plans/US00135.md`](./docs/plans/US00135.md).
 
+## Search Console
+
+Run once the production domain (above) is live, in order. Record each result (screenshots attached to the PR or logged in `docs/plans/US00145.md`).
+
+1. **Choose the path.** Confirm DNS record access for the apex domain at the registrar. Yes ⇒ steps 2–3 below (Domain property + DNS TXT). No ⇒ fall back to a URL-prefix property on the `www` host + meta-tag verification (`GOOGLE_SITE_VERIFICATION` env var, wired through `lib/env.ts` → `lib/seo.ts`'s `buildRootMetadata()` — never hand-write the `<meta name="google-site-verification">` tag).
+2. **Create the property.** Search Console → Add property → **Domain** → the apex domain (e.g. `muagear.com`). A Domain property covers every subdomain/scheme in one, which matters when the apex 308-redirects to `www`.
+3. **Verify ownership.** Copy the `google-site-verification=…` TXT record into the registrar's DNS for the apex; wait for propagation (`dig TXT <domain> +short` shows it); click Verify.
+4. **Submit the sitemap.** Sitemaps → enter `sitemap.xml` → Submit. Confirm status **Success**.
+5. **Reconcile the count.** `curl -s https://<production-host>/sitemap.xml | grep -c "<loc>"` must equal Search Console's "Discovered URLs" — this number drifts as content is added, so don't hardcode it anywhere.
+6. **Crawlability spot-check.** URL Inspection on one product, one post, and one category page (pull live slugs from the sitemap). Each must report "URL is available to Google."
+7. **robots.txt.** `curl -s https://<production-host>/robots.txt` shows `Allow: /` and a `Sitemap:` line on the production host; Search Console → Settings → robots.txt shows "Fetched".
+8. **Request indexing** for the homepage and one post to prime the crawler.
+
+Full decision log and execution record: [`docs/plans/US00145.md`](./docs/plans/US00145.md).
+
 ## Hosting
 
 Production runs on **Vercel** with the GitHub integration. Push to `main` auto-deploys.
