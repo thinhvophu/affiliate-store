@@ -30,3 +30,54 @@ export function resolveGaMeasurementId(): string | undefined {
   if (process.env.NODE_ENV !== "production") return undefined;
   return id;
 }
+
+/** GA4 event name for an outbound affiliate click. */
+export const AFFILIATE_CLICK_EVENT = "affiliate_click";
+
+/**
+ * The F0003 ↔ F0007 data-* contract, in code.
+ *
+ * These MUST match the attributes written by <AffiliateLink> exactly.
+ * CLAUDE.md: renaming any of them is a breaking change that must update both
+ * sides in the same PR. `lib/analytics.test.tsx` renders <AffiliateLink> and
+ * asserts the two sides agree, so drift fails the build instead of silently
+ * shipping events with undefined fields.
+ */
+export const AFFILIATE_LINK_SELECTOR = "[data-affiliate-link]";
+export const AFFILIATE_DATA_ATTRIBUTES = {
+  productName: "data-product-name",
+  productCategory: "data-product-category",
+  destinationUrl: "data-destination-url",
+} as const;
+
+export interface AffiliateClickPayload {
+  product_name: string;
+  product_category: string;
+  destination_url: string;
+}
+
+/** Minimal structural type — keeps this function testable in the node env. */
+type AttributeSource = { getAttribute(name: string): string | null };
+
+/**
+ * Read the GA4 payload off a matched affiliate anchor.
+ * Returns null when the element carries none of the contract attributes, so a
+ * future markup change degrades to "no event" rather than an event full of
+ * undefined fields.
+ */
+export function readAffiliateClickPayload(
+  el: AttributeSource | null,
+): AffiliateClickPayload | null {
+  if (!el) return null;
+  const product_name = el.getAttribute(AFFILIATE_DATA_ATTRIBUTES.productName);
+  const product_category = el.getAttribute(AFFILIATE_DATA_ATTRIBUTES.productCategory);
+  const destination_url = el.getAttribute(AFFILIATE_DATA_ATTRIBUTES.destinationUrl);
+  if (product_name === null && product_category === null && destination_url === null) {
+    return null;
+  }
+  return {
+    product_name: product_name ?? "",
+    product_category: product_category ?? "",
+    destination_url: destination_url ?? "",
+  };
+}

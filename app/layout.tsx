@@ -6,6 +6,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SkipLink } from "@/components/SkipLink";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import { AffiliateClickTracker } from "@/components/AffiliateClickTracker";
 import { buildRootMetadata } from "@/lib/seo";
 import { resolveGaMeasurementId } from "@/lib/analytics";
 
@@ -23,7 +24,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </main>
         <Footer />
         <SpeedInsights />
-        {gaMeasurementId && <GoogleAnalytics measurementId={gaMeasurementId} />}
+        {gaMeasurementId && (
+          <>
+            <GoogleAnalytics measurementId={gaMeasurementId} />
+            <AffiliateClickTracker />
+          </>
+        )}
       </body>
     </html>
   );
