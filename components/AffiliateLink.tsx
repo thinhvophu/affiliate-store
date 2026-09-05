@@ -21,9 +21,14 @@ import styles from "./AffiliateLink.module.css";
  *
  * No other component in the codebase may emit `data-affiliate-link`.
  *
- * Until F0007 ships, the seam is INERT: no JS handler is attached from F0003,
- * the click triggers a normal new-tab navigation, and analytics are silently
- * absent. JS-off behaviour is identical (the anchor is a plain server-rendered
+ * F0007's consumer is `components/AffiliateClickTracker.tsx` (US00144): a
+ * delegated `document` click listener, mounted only when analytics is
+ * enabled, that resolves a click to its nearest `[data-affiliate-link]`
+ * ancestor and sends a GA4 `affiliate_click` event. This component never
+ * imports it — the seam stays one-directional. With analytics disabled (no
+ * measurement ID), the listener is never mounted and behaviour is identical
+ * to before F0007 shipped: a normal new-tab navigation, no JS handler. JS-off
+ * behaviour is identical either way (the anchor is a plain server-rendered
  * <a>).
  *
  * Example rendered DOM:
