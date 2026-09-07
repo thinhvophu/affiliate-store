@@ -299,3 +299,24 @@ Listed in execution order — the story numbers are a topological sort of the de
 **Priority:** P1 (US00145 is P0 — on the §9 launch-day checklist)
 **Dependencies:** F0001, F0003, F0009, F0011 · supersedes F0007
 **Spec refs:** docs/specs/F0014.md · §3.4, §6.1, §6.2, §6.3, §9
+
+---
+
+## F0015 — Weekly Deal Roundup Content
+
+**Goal:** Recurring "Top X `<category>` deal trên Shopee" posts generated straight from the `shopee-affiliate` scrape tool's own ranked-deal output, without requiring a `Product` fixture (the tool's spec extraction is unreliable), and without cannibalizing search rankings week over week.
+
+**Scope:**
+
+- New generation script/command: calls `scrape_products({ keywords, top_n })` and consumes the tool's own discount/rating/sold-count ranking as-is — no ranking logic duplicated in this repo
+- New MDX-embeddable deal-card component rendering directly from ranked deal data (name, price, discount, image, affiliate link) — reuses `<AffiliateLink>`'s whole-card pattern and the F0003↔F0007 click-tracking contract, no `Product` fixture written
+- Build-time `assertAffiliateUrl` validation on every deal before render (no existing product-loader call site covers this path)
+- Supersession: the newest roundup per category is framed "tuần này"; generating a new one rewrites the prior post's H1/title/lead paragraph to its specific publish date and drops it from "latest/related" promotion — the anti-cannibalization mechanism
+- Mandatory "giá có thể thay đổi" price-may-have-changed disclaimer on every roundup post
+- No new route — reuses the existing `/bai-viet/[slug]/` post pipeline (`PostBody`, `buildArticleSchema`, breadcrumbs, canonical/OG) unchanged
+
+**Out of scope:** Re-tuning the scrape tool's ranking/filter thresholds; fixing the tool's spec-extraction reliability; cron/scheduled automation (v1 is operator-triggered); `noindex`-ing archived posts; ingesting a standout deal into the permanent catalog (still goes through `F0012` separately).
+
+**Priority:** P2
+**Dependencies:** F0003, F0006, F0009, F0012, F0014
+**Spec refs:** docs/specs/F0015.md
