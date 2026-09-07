@@ -25,7 +25,16 @@ function optionalEnvVar(name: string): string | undefined {
 }
 
 export const env = {
-  NEXT_PUBLIC_SITE_URL: requireUrl("NEXT_PUBLIC_SITE_URL"),
+  // Getter, not an eager property: this object is evaluated at module load,
+  // and lib/analytics.ts (imported by the "use client" AffiliateClickTracker)
+  // pulls this module into the client bundle for its GA4_MEASUREMENT_ID
+  // field alone. An eager `requireUrl` here ran unconditionally in the
+  // browser, where the dynamic `process.env[name]` lookup below is never
+  // inlined and is always undefined — throwing on every page load once GA4
+  // was enabled in production, regardless of what was actually configured.
+  get NEXT_PUBLIC_SITE_URL(): string {
+    return requireUrl("NEXT_PUBLIC_SITE_URL");
+  },
   NEXT_PUBLIC_GA_MEASUREMENT_ID: optionalEnvVar("NEXT_PUBLIC_GA_MEASUREMENT_ID"),
 } as const;
 
