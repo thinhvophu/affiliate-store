@@ -48,7 +48,7 @@ Query organic landing pages + `affiliate_click` events for the 4 existing posts.
 A ranked shortlist, merging keyword-research priority (steps 2–4) with GA4 signal (step 5) once available:
 
 | keyword | category | matched product (existing/new) | priority | rationale |
-| ------- | -------- | ------------------------------- | -------- | --------- |
+| ------- | -------- | ------------------------------ | -------- | --------- |
 
 This list becomes the input queue for `/write-post`, replacing the current unordered `content-queue.md` pending list as the source of "what to write next."
 
