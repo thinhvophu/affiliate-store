@@ -29,11 +29,20 @@ const CONTENT_TYPE_EXT: Record<string, string> = {
   "image/avif": "avif",
 };
 const DEFAULT_DEST_DIR = path.join(process.cwd(), "public", "static", "images", "products");
+const DEFAULT_PUBLIC_PATH_PREFIX = "/static/images/products";
 const DEFAULT_TIMEOUT_MS = 15_000;
 
 export interface StageImagesOptions {
   /** Override the write directory — tests point this at a temp dir. */
   destDir?: string;
+  /**
+   * Override the returned public path prefix (US00152) — pass alongside a
+   * non-default `destDir` so the two stay in sync, e.g.
+   * `destDir: public/static/images/deals, publicPathPrefix: "/static/images/deals"`.
+   * Defaults to `/static/images/products` to keep every existing caller's
+   * behaviour byte-identical.
+   */
+  publicPathPrefix?: string;
   /** Override `fetch` — tests mock this. */
   fetchImpl?: typeof fetch;
   timeoutMs?: number;
@@ -74,8 +83,8 @@ function resolveExt(url: string, contentType: string | null): string | undefined
   return urlExt ?? ctExt;
 }
 
-function publicPath(slug: string, n: number, ext: string): string {
-  return `/static/images/products/${slug}-${n}.${ext}`;
+function publicPath(prefix: string, slug: string, n: number, ext: string): string {
+  return `${prefix}/${slug}-${n}.${ext}`;
 }
 
 export async function stageImages(
@@ -84,6 +93,7 @@ export async function stageImages(
   opts: StageImagesOptions = {},
 ): Promise<{ images: string[] } | Rejection> {
   const destDir = opts.destDir ?? DEFAULT_DEST_DIR;
+  const publicPathPrefix = opts.publicPathPrefix ?? DEFAULT_PUBLIC_PATH_PREFIX;
   const fetchImpl = opts.fetchImpl ?? fetch;
   const timeoutMs = opts.timeoutMs ?? DEFAULT_TIMEOUT_MS;
 
@@ -101,7 +111,7 @@ export async function stageImages(
       if (urlExt !== undefined) {
         const knownAbs = path.join(destDir, `${slug}-${n}.${urlExt}`);
         if (fs.existsSync(knownAbs)) {
-          finalPaths.push(publicPath(slug, n, urlExt)); // D4 — already staged, skip
+          finalPaths.push(publicPath(publicPathPrefix, slug, n, urlExt)); // D4 — already staged, skip
           continue;
         }
       }
@@ -128,7 +138,7 @@ export async function stageImages(
       const abs = path.join(destDir, `${slug}-${n}.${ext}`);
       fs.renameSync(tmp, abs);
       temps.pop();
-      finalPaths.push(publicPath(slug, n, ext));
+      finalPaths.push(publicPath(publicPathPrefix, slug, n, ext));
     }
 
     return { images: finalPaths };

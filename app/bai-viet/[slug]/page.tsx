@@ -5,7 +5,9 @@ import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { JsonLd } from "@/components/JsonLd";
 import { PostBody } from "@/components/PostBody";
+import { PriceDisclaimer } from "@/components/PriceDisclaimer";
 import { TableOfContents } from "@/components/TableOfContents";
+import { postHasDeals } from "@/lib/deals";
 import { getAllPosts, getPostBySlug, getRelatedPosts } from "@/lib/posts";
 import { RelatedPosts } from "@/components/RelatedPosts";
 import { extractToc } from "@/lib/toc";
@@ -82,6 +84,7 @@ export default async function PostDetailPage({ params }: PageProps) {
         </header>
 
         <AffiliateDisclosure />
+        {postHasDeals(post.slug) && <PriceDisclaimer />}
 
         <div className={styles.prose}>
           <PostBody content={post.content} />

@@ -70,12 +70,15 @@ export const MIN_POST_WORDS = 800;
 /**
  * Count body words the same way for read-time estimation and the US00134
  * depth-floor guard — the project's one word-counting chokepoint. Strips
- * fenced code, inline JSX/HTML tags, and markdown image/link syntax before
- * splitting on whitespace.
+ * fenced code, MDX expression comments (US00152 — otherwise the roundup-lead
+ * markers and leftover authoring TODOs would inflate the count), inline
+ * JSX/HTML tags, and markdown image/link syntax before splitting on
+ * whitespace.
  */
 export function countWords(content: string): number {
   const stripped = content
     .replace(/```[\s\S]*?```/g, "")
+    .replace(/\{\/\*[\s\S]*?\*\/\}/g, "")
     .replace(/<[^>]+>/g, "")
     .replace(/!\[.*?\]\(.*?\)/g, "")
     .replace(/\[.*?\]\(.*?\)/g, "")

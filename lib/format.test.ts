@@ -78,6 +78,10 @@ describe("countWords (US00134 — the depth-floor chokepoint)", () => {
     expect(countWords("xem ![alt text here](/x.jpg) và [liên kết dài](/y)")).toBe(2);
   });
 
+  it("strips {/* … */} MDX comments before counting (US00152)", () => {
+    expect(countWords("trước {/* TODO: viết nhận xét ngắn cho deal này */} sau")).toBe(2);
+  });
+
   it("MIN_POST_WORDS is 800", () => {
     expect(MIN_POST_WORDS).toBe(800);
   });

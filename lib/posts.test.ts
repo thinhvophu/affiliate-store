@@ -84,10 +84,14 @@ describe("getAllPosts() publish-grade depth (US00134)", () => {
     }
   });
 
-  it("every post embeds at least one <ProductCard slug=…>", () => {
+  it("every post embeds at least one <ProductCard slug=…> or <DealCard id=…>", () => {
     for (const post of posts) {
-      const embeds = post.content.match(/<ProductCard\s+slug="/g) ?? [];
-      expect(embeds.length, `${post.slug} has no <ProductCard> embed`).toBeGreaterThanOrEqual(1);
+      const productEmbeds = post.content.match(/<ProductCard\s+slug="/g) ?? [];
+      const dealEmbeds = post.content.match(/<DealCard\s+id="/g) ?? [];
+      expect(
+        productEmbeds.length + dealEmbeds.length,
+        `${post.slug} has no <ProductCard> or <DealCard> embed`,
+      ).toBeGreaterThanOrEqual(1);
     }
   });
 

@@ -1,6 +1,8 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { AffiliateLink } from "@/components/AffiliateLink";
+import { DealCard } from "@/components/DealCard";
+import type { Deal } from "@/types";
 import {
   AFFILIATE_DATA_ATTRIBUTES,
   AFFILIATE_LINK_SELECTOR,
@@ -157,6 +159,37 @@ describe("F0003 ↔ F0007 data-* contract", () => {
       product_name: "Chuột Logitech G102",
       product_category: "chuot-gaming",
       destination_url: "https://shope.ee/x",
+    });
+  });
+});
+
+describe("DealCard F0003 ↔ F0007 data-* contract (US00152)", () => {
+  it("<DealCard> emits every attribute name the click listener reads", () => {
+    const deal: Deal = {
+      id: "deal-chuot-gaming-2026-09-07-1",
+      name: "Chuột Gaming Logitech G102 Lightsync",
+      priceVnd: 349000,
+      originalPriceVnd: 499000,
+      discountPercent: 30,
+      rating: 4.7,
+      soldCount: 1500,
+      image: "/static/images/deals/deal-chuot-gaming-2026-09-07-1.jpg",
+      affiliateUrl: "https://s.shopee.vn/deal-aff-1",
+      category: "chuot-gaming",
+    };
+
+    const html = renderToStaticMarkup(<DealCard deal={deal} />);
+
+    expect(html).toContain(AFFILIATE_LINK_SELECTOR.slice(1, -1));
+    for (const attr of Object.values(AFFILIATE_DATA_ATTRIBUTES)) {
+      expect(html).toContain(`${attr}=`);
+    }
+
+    const payload = readAffiliateClickPayload(elementWithAttributesFromHtml(html));
+    expect(payload).toEqual({
+      product_name: deal.name,
+      product_category: deal.category,
+      destination_url: deal.affiliateUrl,
     });
   });
 });

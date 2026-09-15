@@ -141,6 +141,54 @@ proceed for a category with zero products (points back to step 1/2
 instead) and never fabricates specs beyond the product JSON or search
 results.
 
+## Weekly deal roundup (F0015)
+
+A separate, sibling pipeline to the product-content flow above — it never
+touches `content/products/*.json` or `ingest:products`. It exists because
+the scrape tool's `specifications`/`brand` fields are too unreliable to
+gate timely deal content on (the exact gap `F0012`'s scrape source already
+works around by rejecting most scraped candidates — see "1. Get candidate
+products" above).
+
+**Step 1 — fetch + rank (MCP, not this CLI).** The `shopee-affiliate` scrape
+tool must be called separately beforehand to produce
+`data/deals/<date>.json` — the same committed snapshot format
+`--source=scrape` reads. This `tsx` CLI never calls the scrape tool itself
+(`mcp__shopee-affiliate__scrape_products` is only callable from an agent, not
+a `tsx` process). US00154 will wire this into a single `/deal-roundup`
+slash command that runs fetch → generate → supersede → build-verify; until
+then, run the scrape tool by hand, then step 2 below.
+
+**Step 2 — generate the post:**
+
+```bash
+npm run generate:deal-post -- --category=<slug> --query="<keyword>" [--top=<1-10, default 5>] [--date=YYYY-MM-DD] [--dry-run]
+```
+
+Reads that snapshot via `loadRankedDeals()` (US00151), then:
+
+1. Zero usable deals ⇒ prints the summary, exits `0`, writes nothing — a
+   quiet week is not an error.
+2. Stages every deal's image in one atomic `stageImages()` call to
+   `public/static/images/deals/deal-<category>-<date>-<n>.<ext>` — any
+   single image failure (404, timeout, bad content-type) aborts the whole
+   run before any post or sidecar is written.
+3. Picks the first staged image clearing the 600px cover floor; if none
+   clears it, exits non-zero **before** writing the MDX, naming every
+   staged path and its dimensions — a deal-roundup-specific failure instead
+   of a `lib/posts.ts` build error days later.
+4. Writes `content/deals/deal-<category>-<date>.json` (the sidecar —
+   `lib/deals.ts`) and `content/posts/deal-<category>-<date>.mdx` (real
+   title/summary/tags/`<DealCard id>` embeds; body prose left as `TODO`
+   markers for a human, same as `scaffold:post`).
+
+**Overwrites, does not refuse (decision D6).** Unlike `scaffold:post`,
+re-running for the same `--category` and resolved date overwrites both the
+sidecar and the post — an operator fixing a `--query` typo mid-week must be
+able to retry. Because the slug always carries the date, this can never
+clobber a _different_ week's post. `--dry-run` prints the would-be paths
+and stages/writes nothing.
+
 ## Directory map
 
 | Path                                         | Purpose                                                                                                                                                                                                                                                    |
@@ -154,10 +202,15 @@ results.
 | `scripts/verify-canonical.ts`                | Deployment canonical-URL verifier (`npm run verify:canonical -- --base=<url>`, F0013/US00135) — checks a **live** site, not the local build; run by hand after a domain/env-var change. See `docs/plans/US00135.md` § "Half B" for the swap-day checklist. |
 | `.claude/commands/scrape-ingest.md`          | `/scrape-ingest` slash command — steps 1+2+6 (scrape → ingest → publish), no prose step.                                                                                                                                                                   |
 | `.claude/commands/write-post.md`             | `/write-post` slash command — steps 4+5+6 (scaffold → research + write → publish) for an already-ingested category.                                                                                                                                        |
+| `scripts/generate-deal-post.ts`              | Weekly deal-roundup CLI entry point (F0015/US00152) — see "Weekly deal roundup" above.                                                                                                                                                                     |
+| `scripts/deal-roundup/`                      | `RankedDeal`/`DroppedDeal` model, arg parser, snapshot reader, reporter (US00151), plus `renderDealPostStub()` + `writeDealSidecar()` (US00152) — a sibling of `scripts/ingest/`, sharing only the `data/deals/` input.                                    |
 
 ## Exit codes (both CLIs)
 
 - `0` — the run completed. For `ingest:products`, individual rejected/duplicate
-  candidates do **not** fail the run.
+  candidates do **not** fail the run. For `generate:deal-post`, zero usable
+  deals is also a normal `0` exit (a quiet week, not an error).
 - non-zero — a fatal error (bad args, unregistered category, unknown product
-  slug, refusing to overwrite an existing file, or a malformed input file).
+  slug, refusing to overwrite an existing file, a malformed input file, an
+  image-staging failure, or — for `generate:deal-post` only — no staged
+  image clearing the 600px cover floor).
