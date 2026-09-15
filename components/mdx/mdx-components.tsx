@@ -1,6 +1,7 @@
 import type { MDXComponents } from "mdx/types";
 import Image from "next/image";
 import { MdxProductCard } from "@/components/MdxProductCard";
+import { MdxDealCard } from "@/components/MdxDealCard";
 import styles from "./mdx-components.module.css";
 
 function MdxImg({ src, alt }: { src?: string; alt?: string }) {
@@ -64,5 +65,6 @@ export function getMdxComponents(): MDXComponents {
       </a>
     ),
     ProductCard: MdxProductCard as unknown as MDXComponents[string],
+    DealCard: MdxDealCard as unknown as MDXComponents[string],
   };
 }

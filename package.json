@@ -17,7 +17,8 @@
     "scaffold:post": "tsx scripts/scaffold-post.ts",
     "rename:product": "tsx scripts/rename-product.ts",
     "sync:content-queue": "tsx scripts/sync-content-queue.ts",
-    "verify:canonical": "tsx scripts/verify-canonical.ts"
+    "verify:canonical": "tsx scripts/verify-canonical.ts",
+    "generate:deal-post": "tsx scripts/generate-deal-post.ts"
   },
   "engines": {
     "node": ">=22.11.0"

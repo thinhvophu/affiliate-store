@@ -104,6 +104,25 @@ describe("stageImages", () => {
     );
   });
 
+  it("honours a custom publicPathPrefix (US00152 — deal-roundup images)", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(
+      new Response("fake-image-bytes", {
+        status: 200,
+        headers: { "content-type": "image/jpeg" },
+      }),
+    );
+
+    const result = await stageImages(candidate(), "deal-chuot-gaming-2026-09-07", {
+      destDir,
+      fetchImpl,
+      publicPathPrefix: "/static/images/deals",
+    });
+
+    expect(result).toEqual({
+      images: ["/static/images/deals/deal-chuot-gaming-2026-09-07-1.jpg"],
+    });
+  });
+
   it("rejects when the response content-type is not an image (e.g. an HTML error page)", async () => {
     const fetchImpl = vi
       .fn()
