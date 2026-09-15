@@ -1,5 +1,5 @@
 /**
- * Summary reporter — F0015 (US00146).
+ * Summary reporter — F0015 (US00151).
  *
  * Prints the usable/dropped deal groups plus a footer, mirroring
  * `scripts/ingest/report.ts`'s "requested N, ingested M" shape. The exit

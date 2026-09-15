@@ -1,5 +1,5 @@
 /**
- * The F0015 deal model — US00146.
+ * The F0015 deal model — US00151.
  *
  * Deliberately NOT the F0012 `Candidate` shape: a Candidate exists to become
  * a `Product` fixture and therefore requires `brand` + `specs`, which the
@@ -8,7 +8,7 @@
  * §1). A RankedDeal carries only what a deal card renders.
  *
  * `score` and the source ordering come from the tool's rankDeals(); this
- * repo never recomputes either (spec §2 Out of Scope, US00146 Scenario 1).
+ * repo never recomputes either (spec §2 Out of Scope, US00151 Scenario 1).
  */
 export interface RankedDeal {
   /** 1-based position in the tool's own ranking. Never re-derived. */
@@ -22,7 +22,7 @@ export interface RankedDeal {
   shopLocation: string;
   isOfficialShop: boolean;
   isFreeShipping: boolean;
-  /** Remote CDN URL at this stage. US00147 stages it locally before it is ever rendered. */
+  /** Remote CDN URL at this stage. US00152 stages it locally before it is ever rendered. */
   imageUrl: string;
   affiliateUrl: string;
   /** The tool's own score, carried through for the run summary only — never sorted on. */

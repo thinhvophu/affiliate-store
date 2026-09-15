@@ -1,11 +1,11 @@
 /**
- * Ranked-deal source adapter — F0015 (US00146), decision D1.
+ * Ranked-deal source adapter — F0015 (US00151), decision D1.
  *
  * Reads the `data/deals/<date>.json` snapshot already produced out-of-band
  * by the shopee-affiliate scrape tool (identical split to `--source=scrape`,
  * US00124 D1) — this Node process never invokes that tool itself; the file
  * is the contract. The MCP call lives in the `/deal-roundup` slash command
- * (US00149).
+ * (US00154).
  *
  * `parseDealsSnapshot` / `RawDeal` are imported from
  * `scripts/ingest/sources/deal-schema.ts`, the one place that owns the

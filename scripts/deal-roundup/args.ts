@@ -1,5 +1,5 @@
 /**
- * CLI argument parser — F0015 (US00146).
+ * CLI argument parser — F0015 (US00151).
  *
  * Hand-rolled `--key=value` / `--flag` parser, same shape as
  * `scripts/ingest/args.ts` — no `commander`/`yargs` dependency.
