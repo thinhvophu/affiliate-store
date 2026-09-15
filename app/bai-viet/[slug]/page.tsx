@@ -9,6 +9,7 @@ import { PriceDisclaimer } from "@/components/PriceDisclaimer";
 import { TableOfContents } from "@/components/TableOfContents";
 import { postHasDeals } from "@/lib/deals";
 import { getAllPosts, getPostBySlug, getRelatedPosts } from "@/lib/posts";
+import { demoteArchivedRoundups } from "@/lib/roundups";
 import { RelatedPosts } from "@/components/RelatedPosts";
 import { extractToc } from "@/lib/toc";
 import { formatPostDate, readingTimeVi } from "@/lib/format";
@@ -46,7 +47,7 @@ export default async function PostDetailPage({ params }: PageProps) {
   const all = getAllPosts();
   const post = all.find((p) => p.slug === slug);
   if (!post) notFound();
-  const related = getRelatedPosts(post, all);
+  const related = getRelatedPosts(post, demoteArchivedRoundups(all));
   const toc = extractToc(post.content);
   const hasToc = toc.length > 0;
   const crumbs = buildPostBreadcrumbs(post);

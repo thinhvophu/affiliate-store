@@ -1,5 +1,21 @@
 import { describe, it, expect } from "vitest";
-import { readingTimeVi, countWords, MIN_POST_WORDS } from "./format";
+import { readingTimeVi, countWords, formatArchiveDate, MIN_POST_WORDS } from "./format";
+
+describe("formatArchiveDate", () => {
+  it("renders an ISO date as dd/mm/yyyy", () => {
+    expect(formatArchiveDate("2026-08-31")).toBe("31/08/2026");
+    expect(formatArchiveDate("2026-01-02")).toBe("02/01/2026");
+  });
+
+  it("ignores a time-of-day suffix", () => {
+    expect(formatArchiveDate("2026-08-31T13:00:00Z")).toBe("31/08/2026");
+  });
+
+  it("returns an empty string for a malformed input", () => {
+    expect(formatArchiveDate("")).toBe("");
+    expect(formatArchiveDate("not-a-date")).toBe("");
+  });
+});
 
 describe("readingTimeVi", () => {
   it("floors to 1 phút đọc for an empty body", () => {

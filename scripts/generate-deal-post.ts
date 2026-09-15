@@ -30,6 +30,7 @@ import { stageImages } from "./ingest/images";
 import { parseDealRoundupArgs } from "./deal-roundup/args";
 import { printDealSummary } from "./deal-roundup/report";
 import { isoToday, loadRankedDeals } from "./deal-roundup/source";
+import { supersedePriorRoundup } from "./deal-roundup/supersede";
 import { renderDealPostStub } from "./deal-roundup/template";
 import { writeDealSidecar } from "./deal-roundup/writer";
 
@@ -140,6 +141,16 @@ async function main(): Promise<void> {
 
   console.log(`\n[deal-roundup] wrote ${sidecarPath}`);
   console.log(`[deal-roundup] wrote ${postPath}`);
+
+  // Runs only now — after the current post exists on disk (US00153 §3.4),
+  // so a failed run is never left with the prior post relabeled while no
+  // current post exists.
+  const { supersededSlug, alreadyArchived } = supersedePriorRoundup(args.category, postSlug);
+  if (supersededSlug && !alreadyArchived) {
+    console.log(`[deal-roundup] superseded prior roundup: ${supersededSlug}`);
+  } else if (supersededSlug && alreadyArchived) {
+    console.log(`[deal-roundup] prior roundup already archived: ${supersededSlug}`);
+  }
 }
 
 main().catch((err) => {
