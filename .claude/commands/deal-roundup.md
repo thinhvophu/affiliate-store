@@ -71,7 +71,14 @@ All four must exit `0`. `npm test` is where the 800-word floor, the embed-count 
 
 Then verify in a real browser per the project's UI-verification rule: start `npm run dev` in the background, open `/bai-viet/<new-slug>/` (via `mcp__next-devtools__browser_eval`), screenshot it, and check the console (a `/favicon.ico` 404 is fine, anything else must be investigated and fixed). Confirm the deal cards render, both disclosures appear (affiliate disclosure + price-change disclaimer), and TOC/breadcrumbs are correct. Then also open the **superseded** post and confirm its H1 and first paragraph now name its own archived date. Stop the dev server afterward, and revert `next-env.d.ts` if `next dev`/`build` touched it (`git checkout -- next-env.d.ts`) — it's auto-generated noise, not a real change.
 
-**If anything in this step fails, stop before committing.** Leave the working tree as-is — both the new post and the rewritten prior post will be sitting uncommitted, so the operator can fix and retry, or run `git checkout -- content/ public/` to discard both cleanly.
+**If anything in this step fails, stop before committing.** Leave the working tree as-is — both the new post and the rewritten prior post will be sitting uncommitted, so the operator can fix and retry, or discard both cleanly with:
+
+```bash
+git checkout -- content/ public/   # reverts the rewritten prior post back to its "tuần này" framing
+git clean -fd content/ public/     # removes the new post/sidecar/images — checkout alone leaves untracked files behind
+```
+
+Both commands are needed — `git checkout --` only restores already-tracked files (the superseded prior post) to their last-committed state; it does nothing for the brand-new, still-untracked post/sidecar/images, which `git clean -fd` removes. Running `checkout` alone leaves a false impression of a clean tree while stray files remain (confirmed during US00154's failure rehearsal).
 
 ## 7. Commit
 
