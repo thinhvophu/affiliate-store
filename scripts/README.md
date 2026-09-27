@@ -155,9 +155,7 @@ tool must be called separately beforehand to produce
 `data/deals/<date>.json` — the same committed snapshot format
 `--source=scrape` reads. This `tsx` CLI never calls the scrape tool itself
 (`mcp__shopee-affiliate__scrape_products` is only callable from an agent, not
-a `tsx` process). US00154 will wire this into a single `/deal-roundup`
-slash command that runs fetch → generate → supersede → build-verify; until
-then, run the scrape tool by hand, then step 2 below.
+a `tsx` process).
 
 **Step 2 — generate the post:**
 
@@ -189,6 +187,51 @@ able to retry. Because the slug always carries the date, this can never
 clobber a _different_ week's post. `--dry-run` prints the would-be paths
 and stages/writes nothing.
 
+**Step 3 — supersede the prior roundup (automatic).** The real (non-dry-run)
+run of `generate:deal-post` also calls `supersedePriorRoundup()` (US00153)
+immediately after writing the current post — never before, so a run that
+fails mid-way never leaves a relabeled prior post with no current post to
+back it up. It finds the newest _other_ roundup in the same category and
+rewrites its frontmatter `title` + `summary` + the `{/* roundup-lead:… */}`
+paragraph in place to name its own archived date, via targeted raw-string
+replacement (not a `gray-matter` re-serialize) so every untouched line stays
+byte-identical. A category with no prior roundup is a no-op, not an error.
+Hand-editing a post's `{/* roundup-lead:… */}` markers out of existence
+makes this throw on the next `generate:deal-post` run for that category —
+they are not decorative.
+
+**Lapsed category.** If more than one calendar week has passed since the
+last roundup in a category, the flow behaves exactly the same — the newest
+prior roundup (however old) is still the one superseded. There is no
+separate "stale" state; currency is always just "newest `publishedAt` in
+this category" (`lib/roundups.ts`).
+
+**Full flow combined: `/deal-roundup`.** The single weekly entry point
+(F0015/US00154) runs all three steps above end to end in one operator
+command:
+
+```
+/deal-roundup <category-slug> [--query="<từ khoá>"] [--top=5]
+```
+
+It calls `mcp__shopee-affiliate__scrape_products` once (step 1), runs the
+dry-run then real `generate:deal-post` (steps 2–3), replaces the generated
+`TODO` prose with real Vietnamese copy grounded in each deal's own sidecar
+numbers plus a `WebSearch` per brand/model, then runs
+`typecheck`/`lint`/`test`/`build`, a browser check (confirming both the new
+post _and_ the freshly-superseded post render correctly), and commits +
+pushes straight to `main` — same direct-to-`main` convention as
+`/scrape-ingest` and `/write-post`, no feature branch/PR. Zero usable deals
+is treated as a normal outcome: it stops before writing or committing
+anything, and explicitly does **not** supersede the prior week's post,
+since a zero-deal week must never leave the site showing a stale-dated
+roundup as current. See `.claude/commands/deal-roundup.md` for the full
+step-by-step.
+
+The command is operator-triggered, not scheduled — cron automation is a
+deliberate follow-up once the manual flow has been proven over several real
+weekly runs (spec `F0015` §2), not an oversight.
+
 ## Directory map
 
 | Path                                         | Purpose                                                                                                                                                                                                                                                    |
@@ -203,7 +246,8 @@ and stages/writes nothing.
 | `.claude/commands/scrape-ingest.md`          | `/scrape-ingest` slash command — steps 1+2+6 (scrape → ingest → publish), no prose step.                                                                                                                                                                   |
 | `.claude/commands/write-post.md`             | `/write-post` slash command — steps 4+5+6 (scaffold → research + write → publish) for an already-ingested category.                                                                                                                                        |
 | `scripts/generate-deal-post.ts`              | Weekly deal-roundup CLI entry point (F0015/US00152) — see "Weekly deal roundup" above.                                                                                                                                                                     |
-| `scripts/deal-roundup/`                      | `RankedDeal`/`DroppedDeal` model, arg parser, snapshot reader, reporter (US00151), plus `renderDealPostStub()` + `writeDealSidecar()` (US00152) — a sibling of `scripts/ingest/`, sharing only the `data/deals/` input.                                    |
+| `scripts/deal-roundup/`                      | `RankedDeal`/`DroppedDeal` model, arg parser, snapshot reader, reporter (US00151), `renderDealPostStub()` + `writeDealSidecar()` (US00152), `supersedePriorRoundup()` (US00153) — a sibling of `scripts/ingest/`, sharing only the `data/deals/` input.     |
+| `.claude/commands/deal-roundup.md`           | `/deal-roundup` slash command — the F0015 weekly entry point: scrape (MCP) → generate + supersede (CLI) → write prose → verify → publish (US00154).                                                                                                        |
 
 ## Exit codes (both CLIs)
 
