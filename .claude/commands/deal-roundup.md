@@ -41,7 +41,7 @@ Print both summaries and read them carefully — there are three distinct outcom
 - **Shortfall** (e.g. "requested 5, usable 3") ⇒ proceed with what came back. Never re-run with a padded `--top` to hit a round number, and never fabricate an entry to fill the gap.
 - **Dropped deals** (bad host, null affiliate URL) ⇒ mention them in your report to the user; the roundup is still valid with the deals that passed.
 
-The real (non-dry-run) run also supersedes the prior week's roundup post in this category (US00153), but only *after* writing the current post — so a run that fails before this point never leaves the prior post relabeled with no current post to back it up.
+The real (non-dry-run) run also supersedes the prior week's roundup post in this category (US00153), but only _after_ writing the current post — so a run that fails before this point never leaves the prior post relabeled with no current post to back it up.
 
 ## 5. Write the prose
 
