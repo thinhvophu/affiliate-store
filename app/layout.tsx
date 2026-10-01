@@ -2,6 +2,7 @@ import "@/lib/env";
 import "./globals.css";
 import type { Metadata } from "next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SkipLink } from "@/components/SkipLink";
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </main>
         <Footer />
         <SpeedInsights />
+        <Analytics />
         {gaMeasurementId && (
           <>
             <GoogleAnalytics measurementId={gaMeasurementId} />
