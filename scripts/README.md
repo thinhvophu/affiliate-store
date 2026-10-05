@@ -150,12 +150,34 @@ gate timely deal content on (the exact gap `F0012`'s scrape source already
 works around by rejecting most scraped candidates — see "1. Get candidate
 products" above).
 
+**Deals are not catalog products.** `/deal-roundup` does scrape Shopee live
+on every run, but what it produces — the roundup post, its
+`content/deals/<post-slug>.json` sidecar and the staged images — is
+self-contained. Nothing is added to `content/products/`, so deals never
+appear on `/san-pham/`, a category page or the featured-products strip, and
+they have no detail page of their own; they are only `<DealCard>`s inside the
+roundup post. To grow the catalog with Shopee products, use the other flow:
+`/scrape-ingest` (or `npm run ingest:products`, steps 1–2 above), which
+validates candidates and writes `content/products/*.json`. The two flows
+share only the `data/deals/` snapshot file.
+
 **Step 1 — fetch + rank (MCP, not this CLI).** The `shopee-affiliate` scrape
 tool must be called separately beforehand to produce
 `data/deals/<date>.json` — the same committed snapshot format
 `--source=scrape` reads. This `tsx` CLI never calls the scrape tool itself
 (`mcp__shopee-affiliate__scrape_products` is only callable from an agent, not
 a `tsx` process).
+
+**One snapshot file per day, grouped by keyword.** The scrape tool writes to
+`data/deals/<date>.json` and groups results under the exact keyword it was
+called with. Scraping a second, different keyword on the same day adds a
+second group to the same file rather than replacing the first (observed on
+2026-10-01: `Chuột gaming` then `Bàn phím gaming` ended up as two groups in one file). `--query` must match a
+group's keyword exactly, otherwise the roundup comes back empty. What
+happens when the _same_ keyword is scraped twice in one day has not been
+verified — check the file before relying on either outcome. The file is
+committed as an audit trail, so a later scrape shows up as a diff against
+the earlier commit.
 
 **Step 2 — generate the post:**
 
