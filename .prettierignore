@@ -5,3 +5,8 @@ node_modules/
 package-lock.json
 *.tsbuildinfo
 next-env.d.ts
+
+# non-source files
+data/
+docs/
+.claude/
