@@ -320,3 +320,25 @@ Listed in execution order — the story numbers are a topological sort of the de
 **Priority:** P2
 **Dependencies:** F0003, F0006, F0009, F0012, F0014
 **Spec refs:** docs/specs/F0015.md
+
+---
+
+## F0016 — Traffic Foundations
+
+**Goal:** Remove the repo-side blockers to indexing and ranking found in the 2026-10-18 traffic analysis (`docs/ideas/1-traffic-improvement-plan.md`): only 4 organic sessions in ~6 weeks live.
+
+**Scope:**
+
+- **US00161** — canonical/`og:url`/JSON-LD/breadcrumb/sitemap/internal links switched to the no-trailing-slash form (every canonical currently 308-redirects); `verify:canonical` fails on any redirecting canonical
+- **US00162** — one fixed roundup URL per category (`/bai-viet/deal-<category>`) refreshed in place, with `updatedAt` → "Cập nhật ngày …" / `dateModified` / sitemap `lastModified`; F0015 supersession retired
+- **US00163** — the 10 dated roundups permanently redirected to their category's fixed URL and deleted
+- **US00164** — `cleanDealName()` strips seller boilerplate from deal names; rules shared with the product guard
+- **US00165** — products featured in the last 3 runs are skipped (tool order kept), backed by a committed featured-product history
+- **US00166** — real author registry, `/tac-gia/[slug]` page, `Person` Article author, "Cách chúng tôi chọn sản phẩm" note
+- **US00167** — internal links: category ↔ guides ↔ deal page, product → posts that embed it
+
+**Out of scope:** Search Console work, writing new guides, catalog growth, distribution/backlinks, GA4 filters, hands-on review content, `noindex`, cron automation, AdSense.
+
+**Priority:** P0 (US00161 is likely blocking indexing today)
+**Dependencies:** F0006, F0009, F0013, F0015
+**Spec refs:** docs/specs/F0016.md · docs/ideas/1-traffic-improvement-plan.md
