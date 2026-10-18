@@ -22,7 +22,7 @@ export default function ProductNotFound() {
         Sản phẩm bạn đang tìm kiếm không có trên trang web hoặc đã bị gỡ xuống.
       </p>
       <Link
-        href="/san-pham/"
+        href="/san-pham"
         style={{
           display: "inline-block",
           padding: "var(--spacing-sm) var(--spacing-lg)",

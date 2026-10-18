@@ -26,7 +26,7 @@ describe("buildProductSchema", () => {
     expect(schema.description).toBe(fixtureProduct.description);
     expect(schema.brand).toEqual({ "@type": "Brand", name: "Logitech" });
     expect(schema.image).toBe("https://example.com/static/images/products/foo.jpg");
-    expect(schema.url).toBe("https://example.com/san-pham/foo/");
+    expect(schema.url).toBe("https://example.com/san-pham/foo");
 
     const offers = schema.offers as Record<string, unknown>;
     expect(offers.price).toBe(390000);

@@ -20,7 +20,7 @@ export function LatestPosts({ posts }: LatestPostsProps) {
         <h2 id="latest-posts-heading" className={styles.heading}>
           Bài viết mới nhất
         </h2>
-        <Link href="/bai-viet/" className={styles.seeAll}>
+        <Link href="/bai-viet" className={styles.seeAll}>
           Xem tất cả
         </Link>
       </header>

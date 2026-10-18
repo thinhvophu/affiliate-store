@@ -18,7 +18,7 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
         <h2 id="featured-products-heading" className={styles.heading}>
           Sản phẩm nổi bật
         </h2>
-        <Link href="/san-pham/" className={styles.viewAll}>
+        <Link href="/san-pham" className={styles.viewAll}>
           Xem tất cả
         </Link>
       </header>

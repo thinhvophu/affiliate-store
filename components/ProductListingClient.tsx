@@ -7,7 +7,7 @@ import type { Product } from "@/types";
 import styles from "./ProductListingClient.module.css";
 
 const PAGE_SIZE = 24;
-const BASE_PATH = "/san-pham/";
+const BASE_PATH = "/san-pham";
 
 export function ProductListingClient({ products }: { products: Product[] }) {
   const searchParams = useSearchParams();

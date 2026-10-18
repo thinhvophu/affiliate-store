@@ -7,14 +7,14 @@ import { CatalogGrid } from "@/components/CatalogGrid";
 import { getAllProducts } from "@/lib/products";
 import { getFilterOptions } from "@/lib/filters";
 import { getCategoryLabels } from "@/lib/categories";
-import { buildPageMetadata } from "@/lib/seo";
+import { buildCanonicalPath, buildPageMetadata } from "@/lib/seo";
 import styles from "./page.module.css";
 
 // D15: canonical never reflects filter params — bare listing path always
 export const metadata: Metadata = buildPageMetadata({
   title: "Tất cả sản phẩm",
   description: "Khám phá toàn bộ sản phẩm gaming và công nghệ với giá tốt nhất.",
-  path: "/san-pham/",
+  path: buildCanonicalPath(["san-pham"]),
 });
 
 export default function SanPhamPage() {

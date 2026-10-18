@@ -2,13 +2,13 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { AFFILIATE_DISCLOSURE_VI } from "@/lib/disclosures";
 import { CONTACT_EMAIL, SITE_NAME } from "@/lib/site";
-import { buildPageMetadata } from "@/lib/seo";
+import { buildCanonicalPath, buildPageMetadata } from "@/lib/seo";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Công bố tiếp thị liên kết",
   description: `${SITE_NAME} sử dụng liên kết tiếp thị liên kết Shopee. Chúng tôi có thể nhận hoa hồng khi bạn mua hàng, không phát sinh thêm chi phí cho bạn. Tìm hiểu thêm về cam kết minh bạch của chúng tôi.`,
-  path: "/cong-bo-tiep-thi-lien-ket/",
+  path: buildCanonicalPath(["cong-bo-tiep-thi-lien-ket"]),
 });
 
 export default function CongBoTiepThiLienKetPage() {
@@ -86,7 +86,7 @@ export default function CongBoTiepThiLienKetPage() {
           </h2>
           <p>
             Để hiểu rõ hơn về cách chúng tôi xử lý dữ liệu khi bạn truy cập trang, vui lòng đọc{" "}
-            <Link href="/chinh-sach-bao-mat/" className={styles.internalLink}>
+            <Link href="/chinh-sach-bao-mat" className={styles.internalLink}>
               Chính sách bảo mật
             </Link>{" "}
             của chúng tôi. Nếu bạn có câu hỏi về chương trình tiếp thị liên kết, vui lòng liên hệ

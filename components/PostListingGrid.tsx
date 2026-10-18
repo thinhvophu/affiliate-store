@@ -13,7 +13,7 @@ import type { Post } from "@/types";
 import styles from "./PostListingGrid.module.css";
 
 const PAGE_SIZE = 12;
-const BASE_PATH = "/bai-viet/";
+const BASE_PATH = "/bai-viet";
 
 interface Props {
   posts: Post[];

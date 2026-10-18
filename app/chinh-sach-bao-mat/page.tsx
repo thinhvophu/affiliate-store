@@ -1,13 +1,13 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { CONTACT_EMAIL, SITE_NAME } from "@/lib/site";
-import { buildPageMetadata } from "@/lib/seo";
+import { buildCanonicalPath, buildPageMetadata } from "@/lib/seo";
 import styles from "./chinh-sach-bao-mat.module.css";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Chính sách bảo mật",
   description: `Tìm hiểu cách ${SITE_NAME} thu thập dữ liệu ẩn danh qua Google Analytics, sử dụng cookie, và liên kết đến dịch vụ bên thứ ba như Shopee và Google AdSense.`,
-  path: "/chinh-sach-bao-mat/",
+  path: buildCanonicalPath(["chinh-sach-bao-mat"]),
 });
 
 export default function ChinhSachBaoMatPage() {
@@ -140,7 +140,7 @@ export default function ChinhSachBaoMatPage() {
             Trang web sử dụng các liên kết tiếp thị liên kết. Khi bạn mua hàng qua các liên kết này,
             chúng tôi có thể nhận hoa hồng mà không phát sinh thêm chi phí cho bạn. Để biết thêm chi
             tiết, vui lòng xem{" "}
-            <Link href="/cong-bo-tiep-thi-lien-ket/" className={styles.internalLink}>
+            <Link href="/cong-bo-tiep-thi-lien-ket" className={styles.internalLink}>
               trang Công bố tiếp thị liên kết
             </Link>{" "}
             của chúng tôi.

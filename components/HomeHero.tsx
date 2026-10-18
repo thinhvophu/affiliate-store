@@ -14,10 +14,10 @@ export default function HomeHero() {
         và phụ kiện công nghệ — chọn nhanh sản phẩm phù hợp với ngân sách của bạn.
       </p>
       <div className={styles.ctaGroup}>
-        <Link href="/san-pham/" className={styles.ctaPrimary}>
+        <Link href="/san-pham" className={styles.ctaPrimary}>
           Khám phá sản phẩm
         </Link>
-        <Link href="/bai-viet/" className={styles.ctaSecondary}>
+        <Link href="/bai-viet" className={styles.ctaSecondary}>
           Đọc bài viết &amp; hướng dẫn
         </Link>
       </div>

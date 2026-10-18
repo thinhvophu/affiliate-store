@@ -30,7 +30,7 @@ describe("buildArticleSchema", () => {
     expect(schema.publisher).toEqual(schema.author);
     expect(schema.mainEntityOfPage).toEqual({
       "@type": "WebPage",
-      "@id": "https://example.com/bai-viet/top-5-tai-nghe-gaming/",
+      "@id": "https://example.com/bai-viet/top-5-tai-nghe-gaming",
     });
   });
 
@@ -55,7 +55,7 @@ describe("buildArticleSchema", () => {
   it("mainEntityOfPage @id ends with a single trailing slash, no double slash", () => {
     const schema = buildArticleSchema(fixturePost);
     const mainEntity = schema.mainEntityOfPage as Record<string, unknown>;
-    expect(mainEntity["@id"]).toMatch(/\/bai-viet\/top-5-tai-nghe-gaming\/$/);
+    expect(mainEntity["@id"]).toMatch(/\/bai-viet\/top-5-tai-nghe-gaming$/);
     expect(mainEntity["@id"]).not.toMatch(/\/\/bai-viet/);
   });
 

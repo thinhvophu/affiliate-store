@@ -115,7 +115,7 @@ describe("supersedePriorRoundup", () => {
     expect(rewritten.data.summary).toContain("(01/08/2026)");
     expect(rewritten.data.summary).not.toContain("tuần này");
     expect(rewritten.content).toContain("ghi nhận ngày 01/08/2026");
-    expect(rewritten.content).toContain(`/bai-viet/${currentSlug}/`);
+    expect(rewritten.content).toContain(`/bai-viet/${currentSlug})`);
 
     // Untouched fields.
     expect(rewritten.data.publishedAt).toBe("2026-08-01");

@@ -2,13 +2,13 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
 import { CONTACT_EMAIL, SITE_NAME } from "@/lib/site";
-import { buildPageMetadata } from "@/lib/seo";
+import { buildCanonicalPath, buildPageMetadata } from "@/lib/seo";
 import styles from "./ve-chung-toi.module.css";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Về chúng tôi",
   description: `${SITE_NAME} là trang đánh giá và gợi ý mua sắm thiết bị gaming, công nghệ tại Việt Nam. Tìm hiểu sứ mệnh, đội ngũ và cách chúng tôi chọn sản phẩm để giới thiệu.`,
-  path: "/ve-chung-toi/",
+  path: buildCanonicalPath(["ve-chung-toi"]),
 });
 
 export default function VeChungToiPage() {
@@ -112,7 +112,7 @@ export default function VeChungToiPage() {
           <AffiliateDisclosure />
           <p className={styles.disclosureMore}>
             Đọc đầy đủ tại{" "}
-            <Link href="/cong-bo-tiep-thi-lien-ket/" className={styles.internalLink}>
+            <Link href="/cong-bo-tiep-thi-lien-ket" className={styles.internalLink}>
               Công bố tiếp thị liên kết
             </Link>
             .

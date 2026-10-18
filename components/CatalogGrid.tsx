@@ -8,7 +8,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { Pagination } from "@/components/Pagination";
 import styles from "./CatalogGrid.module.css";
 
-const BASE_PATH = "/san-pham/";
+const BASE_PATH = "/san-pham";
 
 interface Props {
   products: Product[];

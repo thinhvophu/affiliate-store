@@ -38,8 +38,8 @@ describe("buildCategoryBreadcrumbs", () => {
     const crumbs = buildCategoryBreadcrumbs("chuot-gaming");
     expect(crumbs).toHaveLength(3);
     expect(crumbs[0]).toEqual({ label: "Trang chủ", href: "/" });
-    expect(crumbs[1]).toEqual({ label: "Sản phẩm", href: "/san-pham/" });
-    expect(crumbs[2]).toEqual({ label: "Chuột gaming", href: "/danh-muc/chuot-gaming/" });
+    expect(crumbs[1]).toEqual({ label: "Sản phẩm", href: "/san-pham" });
+    expect(crumbs[2]).toEqual({ label: "Chuột gaming", href: "/danh-muc/chuot-gaming" });
   });
 
   it("returns 2-item fallback for unknown slug", () => {
@@ -55,11 +55,11 @@ describe("buildProductBreadcrumbs", () => {
     const crumbs = buildProductBreadcrumbs(fixtureProduct);
     expect(crumbs).toHaveLength(4);
     expect(crumbs[0]).toEqual({ label: "Trang chủ", href: "/" });
-    expect(crumbs[1]).toEqual({ label: "Sản phẩm", href: "/san-pham/" });
-    expect(crumbs[2]).toEqual({ label: "Chuột gaming", href: "/danh-muc/chuot-gaming/" });
+    expect(crumbs[1]).toEqual({ label: "Sản phẩm", href: "/san-pham" });
+    expect(crumbs[2]).toEqual({ label: "Chuột gaming", href: "/danh-muc/chuot-gaming" });
     expect(crumbs[3]).toEqual({
       label: fixtureProduct.name,
-      href: `/san-pham/${fixtureProduct.slug}/`,
+      href: `/san-pham/${fixtureProduct.slug}`,
     });
   });
 
@@ -75,11 +75,11 @@ describe("buildPostBreadcrumbs", () => {
     const crumbs = buildPostBreadcrumbs(fixturePost);
     expect(crumbs).toHaveLength(4);
     expect(crumbs[0]).toEqual({ label: "Trang chủ", href: "/" });
-    expect(crumbs[1]).toEqual({ label: "Bài viết", href: "/bai-viet/" });
-    expect(crumbs[2]).toEqual({ label: "Chuột gaming", href: "/danh-muc/chuot-gaming/" });
+    expect(crumbs[1]).toEqual({ label: "Bài viết", href: "/bai-viet" });
+    expect(crumbs[2]).toEqual({ label: "Chuột gaming", href: "/danh-muc/chuot-gaming" });
     expect(crumbs[3]).toEqual({
       label: fixturePost.title,
-      href: `/bai-viet/${fixturePost.slug}/`,
+      href: `/bai-viet/${fixturePost.slug}`,
     });
   });
 });
@@ -121,7 +121,7 @@ describe("breadcrumbListJsonLd", () => {
     itemListElement.forEach((entry, i) => {
       expect(entry.item).toBe(`https://example.com${crumbs[i].href}`);
     });
-    expect(itemListElement[3].item).toBe(`https://example.com/san-pham/${fixtureProduct.slug}/`);
+    expect(itemListElement[3].item).toBe(`https://example.com/san-pham/${fixtureProduct.slug}`);
   });
 
   it("returns an empty itemListElement for an empty items array", () => {

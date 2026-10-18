@@ -7,7 +7,7 @@ import { ProductGallery } from "@/components/ProductGallery";
 import { RelatedProducts } from "@/components/RelatedProducts";
 import { getAllProducts, getRelatedProducts } from "@/lib/products";
 import { formatVnd } from "@/lib/format";
-import { buildPageMetadata } from "@/lib/seo";
+import { buildCanonicalPath, buildPageMetadata } from "@/lib/seo";
 import { buildProductBreadcrumbs, breadcrumbListJsonLd } from "@/lib/breadcrumbs";
 import { buildProductSchema } from "@/lib/product-schema";
 import styles from "./product-detail.module.css";
@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return buildPageMetadata({
     title: product.name,
     description: product.description,
-    path: `/san-pham/${product.slug}/`,
+    path: buildCanonicalPath(["san-pham", product.slug]),
     ogImage: product.images[0],
     ogImageAlt: product.name,
     ogType: "article",
