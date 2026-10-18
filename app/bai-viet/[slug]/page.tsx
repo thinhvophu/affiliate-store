@@ -14,7 +14,7 @@ import { RelatedPosts } from "@/components/RelatedPosts";
 import { extractToc } from "@/lib/toc";
 import { formatPostDate, readingTimeVi } from "@/lib/format";
 import { SITE_NAME } from "@/lib/site";
-import { buildPageMetadata } from "@/lib/seo";
+import { buildCanonicalPath, buildPageMetadata } from "@/lib/seo";
 import { buildPostBreadcrumbs, breadcrumbListJsonLd } from "@/lib/breadcrumbs";
 import { buildArticleSchema } from "@/lib/article-schema";
 import styles from "./post-detail.module.css";
@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return buildPageMetadata({
     title: post.title,
     description: post.summary,
-    path: `/bai-viet/${post.slug}/`,
+    path: buildCanonicalPath(["bai-viet", post.slug]),
     ogImage: post.coverImage,
     ogImageAlt: post.title,
     ogType: "article",

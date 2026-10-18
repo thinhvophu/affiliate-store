@@ -10,6 +10,9 @@
  * and that the literal substring "example.com" appears nowhere (catches a
  * markup-shape variant a regex might miss, per D3/R3).
  *
+ * Every sitemap `<loc>` and each sampled page's canonical is also HEAD-fetched
+ * with `redirect: "manual"`; any 3xx is a finding (US00161).
+ *
  * Run via `npm run verify:canonical -- --base=https://<domain>`.
  */
 
@@ -127,9 +130,33 @@ export async function verifyCanonical(
     }
   }
 
+  async function checkNoRedirect(artefact: string, url: string): Promise<void> {
+    checked.push(artefact);
+    let res: Response;
+    try {
+      res = await fetchImpl(url, { method: "HEAD", redirect: "manual" });
+    } catch (err) {
+      findings.push({
+        artefact,
+        message: `"${url}" could not be fetched: ${err instanceof Error ? err.message : String(err)}`,
+      });
+      return;
+    }
+    if (res.status >= 300 && res.status < 400) {
+      findings.push({
+        artefact,
+        message: `"${url}" answered ${res.status} → ${res.headers.get("location") ?? "(no location)"}`,
+      });
+    }
+  }
+
   const sitemapXml = await fetchText("/sitemap.xml");
   checkNoPlaceholder("sitemap.xml", sitemapXml);
   const locs = extractLocs(sitemapXml);
+
+  for (const loc of locs) {
+    await checkNoRedirect("sitemap.xml <loc> redirect", loc);
+  }
 
   const robotsTxt = await fetchText("/robots.txt");
   checkNoPlaceholder("robots.txt", robotsTxt);
@@ -151,6 +178,7 @@ export async function verifyCanonical(
     const canonical = extractCanonical(html);
     if (canonical) {
       checkAbsoluteUrl(`${label} canonical`, canonical);
+      await checkNoRedirect(`${label} canonical redirect`, canonical);
     } else {
       checked.push(`${label} canonical`);
       findings.push({

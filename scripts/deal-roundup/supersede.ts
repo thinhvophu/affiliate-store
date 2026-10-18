@@ -190,7 +190,7 @@ export function supersedePriorRoundup(
   const leadBody =
     `Bài viết này tổng hợp các deal ${categoryName.toLowerCase()} trên Shopee, ghi nhận ngày ` +
     `${archiveDate}. Giá và mức giảm có thể đã thay đổi — xem bản cập nhật mới nhất tại ` +
-    `[đây](/bai-viet/${currentPostSlug}/).`;
+    `[đây](/bai-viet/${currentPostSlug}).`;
 
   let updated = rewriteFrontmatterLine(raw, "title", title, newTitle, prior.filePath);
   updated = rewriteFrontmatterLine(updated, "summary", summary, newSummary, prior.filePath);

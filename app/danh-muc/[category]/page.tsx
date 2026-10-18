@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getAllProducts } from "@/lib/products";
 import { getAllCategorySlugs, getCategoryMeta, assertCategoriesStocked } from "@/lib/categories";
-import { buildPageMetadata } from "@/lib/seo";
+import { buildCanonicalPath, buildPageMetadata } from "@/lib/seo";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { JsonLd } from "@/components/JsonLd";
 import { buildCategoryBreadcrumbs, breadcrumbListJsonLd } from "@/lib/breadcrumbs";
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   return buildPageMetadata({
     title: meta.name,
     description: meta.metaDescription,
-    path: `/danh-muc/${meta.slug}/`,
+    path: buildCanonicalPath(["danh-muc", meta.slug]),
   });
 }
 

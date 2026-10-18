@@ -15,12 +15,11 @@ export function absoluteUrl(path: string): string {
 }
 
 export function buildCanonicalPath(segments: ReadonlyArray<string>): string {
-  if (segments.length === 0) return "/";
   const joined = segments
     .map((s) => s.replace(/^\/+|\/+$/g, ""))
     .filter(Boolean)
     .join("/");
-  return `/${joined}/`;
+  return joined ? `/${joined}` : "/";
 }
 
 export const DEFAULT_OG_IMAGE = "/static/images/og-default.png";
@@ -84,7 +83,7 @@ export interface PageMetadataInput {
   title: string;
   /** Long-form description; truncated for <meta description>. */
   description: string;
-  /** Absolute-from-root path WITH trailing slash, e.g. "/san-pham/". */
+  /** Root-relative canonical path from buildCanonicalPath(), no trailing slash (root is "/"). */
   path: string;
   /** Optional per-page OG image (absolute or root-relative). Falls back to DEFAULT_OG_IMAGE. */
   ogImage?: string;

@@ -17,7 +17,7 @@ export default function PostNotFound() {
         Bài viết bạn đang tìm kiếm không có trên trang web hoặc đã bị gỡ xuống.
       </p>
       <Link
-        href="/bai-viet/"
+        href="/bai-viet"
         style={{
           display: "inline-block",
           padding: "var(--spacing-sm) var(--spacing-lg)",

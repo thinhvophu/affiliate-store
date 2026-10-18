@@ -10,7 +10,7 @@ export function PostCard({ post }: { post: Post }) {
   const categoryLabel = categoryLabels[post.category] ?? post.category;
 
   return (
-    <Link href={`/bai-viet/${post.slug}/`} className={styles.card}>
+    <Link href={`/bai-viet/${post.slug}`} className={styles.card}>
       {post.coverImage && (
         <div className={styles.imageFrame}>
           <Image

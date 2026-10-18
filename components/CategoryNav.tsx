@@ -18,7 +18,7 @@ export function CategoryNav({ currentSlug }: CategoryNavProps) {
         <ul className={styles.list}>
           {others.map((c) => (
             <li key={c.slug}>
-              <Link href={`/danh-muc/${c.slug}/`} className={styles.link}>
+              <Link href={`/danh-muc/${c.slug}`} className={styles.link}>
                 {c.name}
               </Link>
             </li>

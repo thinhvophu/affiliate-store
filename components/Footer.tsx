@@ -17,7 +17,7 @@ export function Footer() {
           </h2>
           <ul className={styles.columnList}>
             <li>
-              <Link href="/ve-chung-toi/" className={styles.columnLink}>
+              <Link href="/ve-chung-toi" className={styles.columnLink}>
                 Giới thiệu
               </Link>
             </li>
@@ -30,12 +30,12 @@ export function Footer() {
           </h2>
           <ul className={styles.columnList}>
             <li>
-              <Link href="/chinh-sach-bao-mat/" className={styles.columnLink}>
+              <Link href="/chinh-sach-bao-mat" className={styles.columnLink}>
                 Chính sách bảo mật
               </Link>
             </li>
             <li>
-              <Link href="/cong-bo-tiep-thi-lien-ket/" className={styles.columnLink}>
+              <Link href="/cong-bo-tiep-thi-lien-ket" className={styles.columnLink}>
                 Công bố tiếp thị liên kết
               </Link>
             </li>

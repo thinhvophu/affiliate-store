@@ -18,7 +18,7 @@ export function CategoryHighlights() {
       <ul className={styles.grid}>
         {slugs.map((slug) => (
           <li key={slug} className={styles.item}>
-            <Link href={`/danh-muc/${slug}/`} className={styles.link}>
+            <Link href={`/danh-muc/${slug}`} className={styles.link}>
               {labels[slug]}
             </Link>
           </li>

@@ -6,7 +6,7 @@ import { PostListingGrid } from "@/components/PostListingGrid";
 import { getAllPosts } from "@/lib/posts";
 import { getPostFilterOptions } from "@/lib/post-filters";
 import { getCategoryLabels } from "@/lib/categories";
-import { buildPageMetadata } from "@/lib/seo";
+import { buildCanonicalPath, buildPageMetadata } from "@/lib/seo";
 import styles from "./page.module.css";
 
 // canonical never reflects filter params — bare path always
@@ -14,7 +14,7 @@ export const metadata: Metadata = buildPageMetadata({
   title: "Bài viết & hướng dẫn mua sắm",
   description:
     "Đánh giá, hướng dẫn mua sắm và mẹo chọn thiết bị gaming, công nghệ — cập nhật mới nhất.",
-  path: "/bai-viet/",
+  path: buildCanonicalPath(["bai-viet"]),
 });
 
 export default function BaiVietPage() {

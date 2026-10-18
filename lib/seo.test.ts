@@ -32,12 +32,12 @@ describe("buildCanonicalPath", () => {
     expect(buildCanonicalPath([])).toBe("/");
   });
 
-  it("joins segments with a single trailing slash", () => {
-    expect(buildCanonicalPath(["san-pham", "abc"])).toBe("/san-pham/abc/");
+  it("joins segments with no trailing slash", () => {
+    expect(buildCanonicalPath(["san-pham", "abc"])).toBe("/san-pham/abc");
   });
 
   it("strips redundant slashes from each segment", () => {
-    expect(buildCanonicalPath(["/san-pham/", "/abc/"])).toBe("/san-pham/abc/");
+    expect(buildCanonicalPath(["/san-pham/", "/abc/"])).toBe("/san-pham/abc");
   });
 });
 
@@ -116,16 +116,16 @@ describe("buildPageMetadata", () => {
     const metadata = buildPageMetadata({
       title: "Tiêu đề",
       description: "Mô tả",
-      path: "/x/",
+      path: "/x",
     });
-    expect(metadata.alternates?.canonical).toBe("/x/");
+    expect(metadata.alternates?.canonical).toBe("/x");
   });
 
   it("falls back to DEFAULT_OG_IMAGE when no ogImage is given", () => {
     const metadata = buildPageMetadata({
       title: "Tiêu đề",
       description: "Mô tả",
-      path: "/x/",
+      path: "/x",
     });
     const openGraph = metadata.openGraph as { images: Array<{ url: string }> };
     const twitter = metadata.twitter as { images: string[] };
@@ -137,7 +137,7 @@ describe("buildPageMetadata", () => {
     const metadata = buildPageMetadata({
       title: "Tiêu đề",
       description: "Mô tả",
-      path: "/x/",
+      path: "/x",
       ogImage: "/static/images/products/foo.jpg",
     });
     const openGraph = metadata.openGraph as { images: Array<{ url: string }> };
@@ -148,7 +148,7 @@ describe("buildPageMetadata", () => {
     const metadata = buildPageMetadata({
       title: "Tiêu đề",
       description: "Mô tả",
-      path: "/x/",
+      path: "/x",
     });
     const openGraph = metadata.openGraph as { title: string; description: string };
     const twitter = metadata.twitter as { title: string; description: string; card: string };
@@ -164,7 +164,7 @@ describe("buildPageMetadata", () => {
     const metadata = buildPageMetadata({
       title: "Tiêu đề",
       description: longDescription,
-      path: "/x/",
+      path: "/x",
     });
     const expected = truncateMetaDescription(longDescription);
     const openGraph = metadata.openGraph as { description: string };
@@ -178,7 +178,7 @@ describe("buildPageMetadata", () => {
     const metadata = buildPageMetadata({
       title: "Tiêu đề",
       description: "Mô tả",
-      path: "/x/",
+      path: "/x",
     });
     const openGraph = metadata.openGraph as { images: Array<{ width?: number; height?: number }> };
     expect(openGraph.images[0].width).toBe(1200);
@@ -189,7 +189,7 @@ describe("buildPageMetadata", () => {
     const metadata = buildPageMetadata({
       title: "Tiêu đề",
       description: "Mô tả",
-      path: "/x/",
+      path: "/x",
       ogImage: "/static/images/products/aula-f75-mach-xuoi-hotswap-1.png",
     });
     const openGraph = metadata.openGraph as { images: Array<{ width?: number; height?: number }> };
@@ -201,7 +201,7 @@ describe("buildPageMetadata", () => {
     const metadata = buildPageMetadata({
       title: "Tiêu đề",
       description: "Mô tả",
-      path: "/x/",
+      path: "/x",
       ogImage: "/static/images/products/does-not-exist.jpg",
     });
     const openGraph = metadata.openGraph as { images: Array<Record<string, unknown>> };
