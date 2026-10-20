@@ -3,6 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { Post } from "@/types";
+import { getAllPosts } from "@/lib/posts";
 import {
   assertOneRoundupPerCategory,
   getRoundupForCategory,
@@ -113,5 +114,21 @@ describe("assertOneRoundupPerCategory", () => {
       post({ slug: "deal-chuot-gaming-2026-08-01" }),
     ];
     expect(() => assertOneRoundupPerCategory(posts, { dealsDir })).toThrow();
+  });
+});
+
+describe("live content (US00163)", () => {
+  it("has exactly one evergreen roundup per category", () => {
+    expect(() => assertOneRoundupPerCategory(getAllPosts())).not.toThrow();
+  });
+
+  it("every roundup was updated after it was first published", () => {
+    for (const p of getAllPosts()) {
+      if (!isRoundupPost(p)) continue;
+      expect(p.updatedAt, `${p.slug} has no updatedAt`).toBeDefined();
+      expect(p.publishedAt < p.updatedAt!, `${p.slug} publishedAt must precede updatedAt`).toBe(
+        true,
+      );
+    }
   });
 });
