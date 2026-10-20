@@ -113,6 +113,7 @@
   margin-right: var(--spacing-sm);
 }
 
+.updated::before,
 .readTime::before {
   content: "·";
   margin-right: var(--spacing-sm);

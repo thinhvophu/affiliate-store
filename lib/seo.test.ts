@@ -209,3 +209,13 @@ describe("buildPageMetadata", () => {
     expect("height" in openGraph.images[0]).toBe(false);
   });
 });
+
+describe("postLastModified (US00162)", () => {
+  it("prefers updatedAt, falls back to publishedAt", async () => {
+    const { postLastModified } = await import("./seo");
+    expect(postLastModified({ publishedAt: "2026-10-12", updatedAt: "2026-10-19" })).toEqual(
+      new Date("2026-10-19"),
+    );
+    expect(postLastModified({ publishedAt: "2026-10-12" })).toEqual(new Date("2026-10-12"));
+  });
+});

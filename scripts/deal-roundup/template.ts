@@ -26,13 +26,14 @@ export interface DealPostStubInput {
   /** Vietnamese display name from `getCategoryMeta()` — never `--query`. */
   categoryName: string;
   publishedAt: string;
+  updatedAt: string;
   coverImage: string;
   /** In rank order — one `<DealCard id>` embed per deal, in this order. */
   deals: DealPostStubDeal[];
 }
 
 export function renderDealPostStub(input: DealPostStubInput): string {
-  const { category, categoryName, publishedAt, coverImage, deals } = input;
+  const { category, categoryName, publishedAt, updatedAt, coverImage, deals } = input;
   const categoryLower = categoryName.toLowerCase();
   const count = deals.length;
 
@@ -46,6 +47,7 @@ export function renderDealPostStub(input: DealPostStubInput): string {
     `title: ${JSON.stringify(title)}`,
     `summary: ${JSON.stringify(summary)}`,
     `publishedAt: ${JSON.stringify(publishedAt)}`,
+    `updatedAt: ${JSON.stringify(updatedAt)}`,
     `category: ${JSON.stringify(category)}`,
     `tags: ${JSON.stringify(["deal shopee", categoryLower, "khuyến mãi"])}`,
     `coverImage: ${JSON.stringify(coverImage)}`,
@@ -53,10 +55,8 @@ export function renderDealPostStub(input: DealPostStubInput): string {
   ].join("\n");
 
   const lead =
-    `{/* roundup-lead:start */}\n` +
     `Tuần này chúng tôi chọn ra ${count} deal ${categoryLower} đáng chú ý nhất trên Shopee, ` +
-    `dựa trên mức giảm giá, điểm đánh giá và lượt bán thực tế.\n` +
-    `{/* roundup-lead:end */}`;
+    `dựa trên mức giảm giá, điểm đánh giá và lượt bán thực tế.`;
 
   const dealSections = deals
     .map(

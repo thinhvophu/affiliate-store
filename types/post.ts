@@ -5,6 +5,7 @@ export interface PostFrontmatter {
   category: string;
   tags: string[];
   coverImage: string;
+  updatedAt?: string;
 }
 
 export interface Post extends PostFrontmatter {

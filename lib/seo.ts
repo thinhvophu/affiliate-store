@@ -126,3 +126,8 @@ export function buildPageMetadata(input: PageMetadataInput): Metadata {
     },
   };
 }
+
+/** Sitemap `lastModified` for a post: its freshness signal, else its publish date (US00162). */
+export function postLastModified(post: { publishedAt: string; updatedAt?: string }): Date {
+  return new Date(post.updatedAt ?? post.publishedAt);
+}

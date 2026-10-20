@@ -13,6 +13,7 @@ export function buildArticleSchema(post: Post): Record<string, unknown> {
     headline: post.title,
     image: absoluteUrl(cover),
     datePublished: post.publishedAt,
+    dateModified: post.updatedAt ?? post.publishedAt,
     author,
     publisher: author,
     mainEntityOfPage: { "@type": "WebPage", "@id": url },

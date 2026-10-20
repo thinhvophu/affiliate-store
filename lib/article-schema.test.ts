@@ -73,6 +73,16 @@ describe("buildArticleSchema", () => {
     expect(schema.datePublished).toBe("2026-05-20");
   });
 
+  it("dateModified falls back to publishedAt without updatedAt", () => {
+    expect(buildArticleSchema(fixturePost).dateModified).toBe("2026-05-20");
+  });
+
+  it("dateModified is updatedAt when present", () => {
+    const schema = buildArticleSchema({ ...fixturePost, updatedAt: "2026-06-01" });
+    expect(schema.dateModified).toBe("2026-06-01");
+    expect(schema.datePublished).toBe("2026-05-20");
+  });
+
   it("author and publisher are identical Organization objects using SITE_NAME", () => {
     const schema = buildArticleSchema(fixturePost);
     expect(schema.author).toEqual(schema.publisher);

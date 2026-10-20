@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { SITE_NAME } from "@/lib/site";
 import { getAllProducts } from "@/lib/products";
 import { getAllPosts } from "@/lib/posts";
-import { demoteArchivedRoundups } from "@/lib/roundups";
 import { buildPageMetadata } from "@/lib/seo";
 import HomeHero from "@/components/HomeHero";
 import { FeaturedProducts, MAX_FEATURED_PRODUCTS } from "@/components/FeaturedProducts";
@@ -35,7 +34,7 @@ export default function HomePage() {
       <HomeHero />
       <FeaturedProducts products={featured} />
       <CategoryHighlights />
-      <LatestPosts posts={demoteArchivedRoundups(posts)} />
+      <LatestPosts posts={posts} />
     </div>
   );
 }

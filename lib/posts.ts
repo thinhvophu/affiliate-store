@@ -7,7 +7,7 @@ import { assertMinShortSide } from "@/lib/image-meta";
 
 const POSTS_DIR = path.join(process.cwd(), "content", "posts");
 
-function validatePostFrontmatter(data: Record<string, unknown>, filePath: string): void {
+export function validatePostFrontmatter(data: Record<string, unknown>, filePath: string): void {
   const requiredStrings: string[] = ["title", "summary", "publishedAt", "category", "coverImage"];
   for (const field of requiredStrings) {
     if (typeof data[field] !== "string" || (data[field] as string).trim() === "") {
@@ -19,6 +19,20 @@ function validatePostFrontmatter(data: Record<string, unknown>, filePath: string
 
   if (!Array.isArray(data.tags)) {
     throw new Error(`[content] ${filePath}: frontmatter "tags" must be an array of strings.`);
+  }
+
+  if (data.updatedAt !== undefined) {
+    const updatedAt = data.updatedAt;
+    if (typeof updatedAt !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(updatedAt)) {
+      throw new Error(
+        `[content] ${filePath}: frontmatter "updatedAt" must be a YYYY-MM-DD string.`,
+      );
+    }
+    if (updatedAt < (data.publishedAt as string)) {
+      throw new Error(
+        `[content] ${filePath}: frontmatter "updatedAt" (${updatedAt}) is earlier than "publishedAt" (${data.publishedAt}).`,
+      );
+    }
   }
 }
 
@@ -78,6 +92,7 @@ export function getAllPosts(): Post[] {
       category: frontmatter.category as string,
       tags: frontmatter.tags as string[],
       coverImage: frontmatter.coverImage as string,
+      ...(frontmatter.updatedAt !== undefined && { updatedAt: frontmatter.updatedAt as string }),
       content: parsed.content,
     });
   }

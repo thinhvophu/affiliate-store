@@ -197,39 +197,27 @@ Reads that snapshot via `loadRankedDeals()` (US00151), then:
    clears it, exits non-zero **before** writing the MDX, naming every
    staged path and its dimensions — a deal-roundup-specific failure instead
    of a `lib/posts.ts` build error days later.
-4. Writes `content/deals/deal-<category>-<date>.json` (the sidecar —
-   `lib/deals.ts`) and `content/posts/deal-<category>-<date>.mdx` (real
+4. Writes `content/deals/deal-<category>.json` (the sidecar —
+   `lib/deals.ts`) and `content/posts/deal-<category>.mdx` (real
    title/summary/tags/`<DealCard id>` embeds; body prose left as `TODO`
    markers for a human, same as `scaffold:post`).
 
-**Overwrites, does not refuse (decision D6).** Unlike `scaffold:post`,
-re-running for the same `--category` and resolved date overwrites both the
-sidecar and the post — an operator fixing a `--query` typo mid-week must be
-able to retry. Because the slug always carries the date, this can never
-clobber a _different_ week's post. `--dry-run` prints the would-be paths
-and stages/writes nothing.
-
-**Step 3 — supersede the prior roundup (automatic).** The real (non-dry-run)
-run of `generate:deal-post` also calls `supersedePriorRoundup()` (US00153)
-immediately after writing the current post — never before, so a run that
-fails mid-way never leaves a relabeled prior post with no current post to
-back it up. It finds the newest _other_ roundup in the same category and
-rewrites its frontmatter `title` + `summary` + the `{/* roundup-lead:… */}`
-paragraph in place to name its own archived date, via targeted raw-string
-replacement (not a `gray-matter` re-serialize) so every untouched line stays
-byte-identical. A category with no prior roundup is a no-op, not an error.
-Hand-editing a post's `{/* roundup-lead:… */}` markers out of existence
-makes this throw on the next `generate:deal-post` run for that category —
-they are not decorative.
-
-**Lapsed category.** If more than one calendar week has passed since the
-last roundup in a category, the flow behaves exactly the same — the newest
-prior roundup (however old) is still the one superseded. There is no
-separate "stale" state; currency is always just "newest `publishedAt` in
-this category" (`lib/roundups.ts`).
+**One evergreen post per category (F0016/US00162).** The post slug is
+`deal-<category>` (`roundupSlugFor()` in `lib/roundups.ts`), and every run
+overwrites its post and sidecar in place — unlike `scaffold:post`, which
+refuses. The post keeps its original `publishedAt` (read back from the
+existing file) and gets `updatedAt` = the run date, which drives the
+"Cập nhật ngày …" header line, Article `dateModified` and the sitemap
+`lastModified`. Staged images keep a dated filename
+(`deal-<category>-<date>-<n>.<ext>`) so a changed picture never reuses a
+cached URL; deal ids are `deal-<category>-<n>`. After writing, the run prunes
+every file in `public/static/images/deals/` that no sidecar, post
+`coverImage` or MDX body references (`findUnreferencedDealImages()`).
+There is no archive step and no supersession. `--dry-run` prints the
+would-be paths and dates and stages/writes nothing.
 
 **Full flow combined: `/deal-roundup`.** The single weekly entry point
-(F0015/US00154) runs all three steps above end to end in one operator
+(F0015/US00154) runs all the steps above end to end in one operator
 command:
 
 ```
@@ -237,17 +225,14 @@ command:
 ```
 
 It calls `mcp__shopee-affiliate__scrape_products` once (step 1), runs the
-dry-run then real `generate:deal-post` (steps 2–3), replaces the generated
+dry-run then real `generate:deal-post` (step 2), replaces the generated
 `TODO` prose with real Vietnamese copy grounded in each deal's own sidecar
 numbers plus a `WebSearch` per brand/model, then runs
-`typecheck`/`lint`/`test`/`build`, a browser check (confirming both the new
-post _and_ the freshly-superseded post render correctly), and commits +
+`typecheck`/`lint`/`test`/`build`, a browser check (confirming the post renders with both its publish and update dates), and commits +
 pushes straight to `main` — same direct-to-`main` convention as
 `/scrape-ingest` and `/write-post`, no feature branch/PR. Zero usable deals
 is treated as a normal outcome: it stops before writing or committing
-anything, and explicitly does **not** supersede the prior week's post,
-since a zero-deal week must never leave the site showing a stale-dated
-roundup as current. See `.claude/commands/deal-roundup.md` for the full
+anything; the existing post stays live with its older "Cập nhật" date. See `.claude/commands/deal-roundup.md` for the full
 step-by-step.
 
 The command is operator-triggered, not scheduled — cron automation is a
@@ -256,20 +241,20 @@ weekly runs (spec `F0015` §2), not an oversight.
 
 ## Directory map
 
-| Path                                         | Purpose                                                                                                                                                                                                                                                    |
-| -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `scripts/ingest-products.ts`                 | Ingestion CLI entry point (step 2).                                                                                                                                                                                                                        |
-| `scripts/ingest/`                            | Candidate model, validation, slug generator, dedupe, image staging, arg parser, reporter, writer, scrape + curated-file source adapters. Detailed docs live in `scripts/ingest/README.md`.                                                                 |
-| `scripts/rename-product.ts` + `.test.ts`     | Slug-rename CLI entry point (step 3) — see "Rename (editorial pass)" above.                                                                                                                                                                                |
-| `scripts/sync-content-queue.ts` + `.test.ts` | Derives which products still lack a post and merges into `data/content-queue.md` — see "Content queue" below.                                                                                                                                              |
-| `scripts/scaffold-post.ts`                   | Blog-post scaffold CLI entry point (step 4).                                                                                                                                                                                                               |
-| `scripts/scaffold/`                          | `renderPostStub()` template builder + `selectProductsForCategory()` auto-pick helper, both pure and unit-tested.                                                                                                                                           |
-| `scripts/verify-canonical.ts`                | Deployment canonical-URL verifier (`npm run verify:canonical -- --base=<url>`, F0013/US00135) — checks a **live** site, not the local build; run by hand after a domain/env-var change. See `docs/plans/US00135.md` § "Half B" for the swap-day checklist. |
-| `.claude/commands/scrape-ingest.md`          | `/scrape-ingest` slash command — steps 1+2+6 (scrape → ingest → publish), no prose step.                                                                                                                                                                   |
-| `.claude/commands/write-post.md`             | `/write-post` slash command — steps 4+5+6 (scaffold → research + write → publish) for an already-ingested category.                                                                                                                                        |
-| `scripts/generate-deal-post.ts`              | Weekly deal-roundup CLI entry point (F0015/US00152) — see "Weekly deal roundup" above.                                                                                                                                                                     |
-| `scripts/deal-roundup/`                      | `RankedDeal`/`DroppedDeal` model, arg parser, snapshot reader, reporter (US00151), `renderDealPostStub()` + `writeDealSidecar()` (US00152), `supersedePriorRoundup()` (US00153) — a sibling of `scripts/ingest/`, sharing only the `data/deals/` input.    |
-| `.claude/commands/deal-roundup.md`           | `/deal-roundup` slash command — the F0015 weekly entry point: scrape (MCP) → generate + supersede (CLI) → write prose → verify → publish (US00154).                                                                                                        |
+| Path                                         | Purpose                                                                                                                                                                                                                                                                                    |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `scripts/ingest-products.ts`                 | Ingestion CLI entry point (step 2).                                                                                                                                                                                                                                                        |
+| `scripts/ingest/`                            | Candidate model, validation, slug generator, dedupe, image staging, arg parser, reporter, writer, scrape + curated-file source adapters. Detailed docs live in `scripts/ingest/README.md`.                                                                                                 |
+| `scripts/rename-product.ts` + `.test.ts`     | Slug-rename CLI entry point (step 3) — see "Rename (editorial pass)" above.                                                                                                                                                                                                                |
+| `scripts/sync-content-queue.ts` + `.test.ts` | Derives which products still lack a post and merges into `data/content-queue.md` — see "Content queue" below.                                                                                                                                                                              |
+| `scripts/scaffold-post.ts`                   | Blog-post scaffold CLI entry point (step 4).                                                                                                                                                                                                                                               |
+| `scripts/scaffold/`                          | `renderPostStub()` template builder + `selectProductsForCategory()` auto-pick helper, both pure and unit-tested.                                                                                                                                                                           |
+| `scripts/verify-canonical.ts`                | Deployment canonical-URL verifier (`npm run verify:canonical -- --base=<url>`, F0013/US00135) — checks a **live** site, not the local build; run by hand after a domain/env-var change. See `docs/plans/US00135.md` § "Half B" for the swap-day checklist.                                 |
+| `.claude/commands/scrape-ingest.md`          | `/scrape-ingest` slash command — steps 1+2+6 (scrape → ingest → publish), no prose step.                                                                                                                                                                                                   |
+| `.claude/commands/write-post.md`             | `/write-post` slash command — steps 4+5+6 (scaffold → research + write → publish) for an already-ingested category.                                                                                                                                                                        |
+| `scripts/generate-deal-post.ts`              | Weekly deal-roundup CLI entry point (F0015/US00152) — see "Weekly deal roundup" above.                                                                                                                                                                                                     |
+| `scripts/deal-roundup/`                      | `RankedDeal`/`DroppedDeal` model, arg parser, snapshot reader, reporter (US00151), `renderDealPostStub()` + `writeDealSidecar()` (US00152), `readExistingPublishedAt()` + `findUnreferencedDealImages()` (US00162) — a sibling of `scripts/ingest/`, sharing only the `data/deals/` input. |
+| `.claude/commands/deal-roundup.md`           | `/deal-roundup` slash command — the F0015 weekly entry point: scrape (MCP) → generate (CLI) → write prose → verify → publish (US00154).                                                                                                                                                    |
 
 ## Exit codes (both CLIs)
 
