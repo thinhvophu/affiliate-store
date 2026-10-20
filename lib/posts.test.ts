@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
-import { getAllPosts } from "./posts";
+import { getAllPosts, validatePostFrontmatter } from "./posts";
 import { readImageSize, MIN_COVER_IMAGE_SHORT_SIDE_PX } from "./image-meta";
 import { countWords, MIN_POST_WORDS } from "./format";
 
@@ -100,5 +100,35 @@ describe("getAllPosts() publish-grade depth (US00134)", () => {
       const h2s = post.content.match(/^## /gm) ?? [];
       expect(h2s.length, `${post.slug} has ${h2s.length} h2 sections`).toBeGreaterThanOrEqual(2);
     }
+  });
+});
+
+describe("validatePostFrontmatter updatedAt (US00162)", () => {
+  const base = {
+    title: "t",
+    summary: "s",
+    publishedAt: "2026-10-12",
+    category: "chuot-gaming",
+    coverImage: "/x.jpg",
+    tags: [],
+  };
+
+  it("accepts a missing updatedAt and one on/after publishedAt", () => {
+    expect(() => validatePostFrontmatter(base, "p.mdx")).not.toThrow();
+    expect(() =>
+      validatePostFrontmatter({ ...base, updatedAt: "2026-10-12" }, "p.mdx"),
+    ).not.toThrow();
+  });
+
+  it("throws on a malformed updatedAt", () => {
+    expect(() => validatePostFrontmatter({ ...base, updatedAt: "12/10/2026" }, "p.mdx")).toThrow(
+      /p\.mdx.*updatedAt/,
+    );
+  });
+
+  it("throws on an updatedAt earlier than publishedAt", () => {
+    expect(() => validatePostFrontmatter({ ...base, updatedAt: "2026-10-01" }, "p.mdx")).toThrow(
+      /earlier than/,
+    );
   });
 });

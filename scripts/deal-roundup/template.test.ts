@@ -7,13 +7,14 @@ function baseInput(overrides: Partial<DealPostStubInput> = {}): DealPostStubInpu
     category: "chuot-gaming",
     categoryName: "Chuột gaming",
     publishedAt: "2026-09-07",
-    coverImage: "/static/images/deals/deal-chuot-gaming-2026-09-07-1.jpg",
+    updatedAt: "2026-09-14",
+    coverImage: "/static/images/deals/deal-chuot-gaming-1.jpg",
     deals: [
-      { id: "deal-chuot-gaming-2026-09-07-1", name: "Chuột Gaming Logitech G102 Lightsync" },
-      { id: "deal-chuot-gaming-2026-09-07-2", name: "Chuột Gaming Razer DeathAdder" },
-      { id: "deal-chuot-gaming-2026-09-07-3", name: "Chuột Gaming Rapoo V16" },
-      { id: "deal-chuot-gaming-2026-09-07-4", name: "Chuột Gaming Fuhlen L102" },
-      { id: "deal-chuot-gaming-2026-09-07-5", name: "Chuột Gaming HyperX Pulsefire" },
+      { id: "deal-chuot-gaming-1", name: "Chuột Gaming Logitech G102 Lightsync" },
+      { id: "deal-chuot-gaming-2", name: "Chuột Gaming Razer DeathAdder" },
+      { id: "deal-chuot-gaming-3", name: "Chuột Gaming Rapoo V16" },
+      { id: "deal-chuot-gaming-4", name: "Chuột Gaming Fuhlen L102" },
+      { id: "deal-chuot-gaming-5", name: "Chuột Gaming HyperX Pulsefire" },
     ],
     ...overrides,
   };
@@ -30,7 +31,7 @@ describe("renderDealPostStub", () => {
     expect(parsed.data.category).toBe("chuot-gaming");
     expect(Array.isArray(parsed.data.tags)).toBe(true);
     expect(parsed.data.tags.length).toBeGreaterThan(0);
-    expect(parsed.data.coverImage).toBe("/static/images/deals/deal-chuot-gaming-2026-09-07-1.jpg");
+    expect(parsed.data.coverImage).toBe("/static/images/deals/deal-chuot-gaming-1.jpg");
   });
 
   it("title ends with 'tuần này' and contains no TODO", () => {
@@ -58,11 +59,11 @@ describe("renderDealPostStub", () => {
     const stub = renderDealPostStub(baseInput());
     const matches = [...stub.matchAll(/<DealCard id="([^"]+)"/g)].map((m) => m[1]);
     expect(matches).toEqual([
-      "deal-chuot-gaming-2026-09-07-1",
-      "deal-chuot-gaming-2026-09-07-2",
-      "deal-chuot-gaming-2026-09-07-3",
-      "deal-chuot-gaming-2026-09-07-4",
-      "deal-chuot-gaming-2026-09-07-5",
+      "deal-chuot-gaming-1",
+      "deal-chuot-gaming-2",
+      "deal-chuot-gaming-3",
+      "deal-chuot-gaming-4",
+      "deal-chuot-gaming-5",
     ]);
   });
 
@@ -80,10 +81,10 @@ describe("renderDealPostStub", () => {
     expect(h3s.length).toBe(5);
   });
 
-  it("both roundup-lead markers are present exactly once", () => {
+  it("writes updatedAt and no roundup-lead markers", () => {
     const stub = renderDealPostStub(baseInput());
-    expect(stub.match(/\{\/\* roundup-lead:start \*\/\}/g)?.length).toBe(1);
-    expect(stub.match(/\{\/\* roundup-lead:end \*\/\}/g)?.length).toBe(1);
+    expect(matter(stub).data.updatedAt).toBe("2026-09-14");
+    expect(stub).not.toContain("roundup-lead");
   });
 
   it("uses the registry category display name, lowercased, not the raw category slug", () => {

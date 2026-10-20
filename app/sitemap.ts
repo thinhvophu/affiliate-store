@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { absoluteUrl, buildCanonicalPath } from "@/lib/seo";
+import { absoluteUrl, buildCanonicalPath, postLastModified } from "@/lib/seo";
 import { getAllProducts } from "@/lib/products";
 import { getAllPosts } from "@/lib/posts";
 import { getAllCategorySlugs } from "@/lib/categories";
@@ -35,7 +35,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const postEntries: MetadataRoute.Sitemap = posts.map((post) => ({
     url: absoluteUrl(buildCanonicalPath(["bai-viet", post.slug])),
-    lastModified: new Date(post.publishedAt),
+    lastModified: postLastModified(post),
   }));
 
   return [...staticEntries, ...categoryEntries, ...productEntries, ...postEntries];

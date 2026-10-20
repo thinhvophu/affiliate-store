@@ -175,8 +175,9 @@ export function getDealById(id: string, opts: GetDealsOptions = {}): Deal | null
 
 /** Deals for one post's sidecar, in id order (`<post-slug>-1`, `-2`, …). */
 export function getDealsForPost(postSlug: string, opts: GetDealsOptions = {}): Deal[] {
+  const idPattern = new RegExp(`^${escapeRegExp(postSlug)}-\\d+$`);
   return getAllDeals(opts)
-    .filter((d) => d.id.startsWith(`${postSlug}-`))
+    .filter((d) => idPattern.test(d.id))
     .sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true }));
 }
 

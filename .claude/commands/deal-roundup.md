@@ -1,8 +1,8 @@
-<!-- Scrapes ranked Shopee deals for a category, generates the weekly deal-roundup post (superseding the prior week's), writes real Vietnamese prose, verifies, then commits and pushes directly to main. -->
+<!-- Scrapes ranked Shopee deals for a category, generates the weekly deal-roundup post (overwriting the category's one evergreen post), writes real Vietnamese prose, verifies, then commits and pushes directly to main. -->
 
-# Task: Generate, supersede, write, and publish the weekly deal-roundup post
+# Task: Generate, write, and publish the weekly deal-roundup post
 
-You are running the F0015 weekly deal-roundup flow for this affiliate storefront: scrape ranked Shopee deals for one category, generate the roundup post + sidecar (`npm run generate:deal-post`, which also supersedes the prior week's roundup in the same category), replace the generated `TODO` prose with real Vietnamese copy grounded in the deals' own numbers, verify, and publish. This is a repeatable **content** operation, not a code user story — it commits and pushes straight to `main` (see `## Working conventions` in `CLAUDE.md`: "Publishing flow: add file → push to main → Vercel rebuilds"). Do not create a feature branch or PR for this.
+You are running the F0015 weekly deal-roundup flow for this affiliate storefront: scrape ranked Shopee deals for one category, generate the roundup post + sidecar (`npm run generate:deal-post`, which overwrites the category's one evergreen `deal-<category>` post in place, keeping its original `publishedAt` and setting `updatedAt` to today), replace the generated `TODO` prose with real Vietnamese copy grounded in the deals' own numbers, verify, and publish. This is a repeatable **content** operation, not a code user story — it commits and pushes straight to `main` (see `## Working conventions` in `CLAUDE.md`: "Publishing flow: add file → push to main → Vercel rebuilds"). Do not create a feature branch or PR for this.
 
 **The user's raw argument is appended below your instructions**, as `$ARGUMENTS`. Expected shape (everything but the category is optional):
 
@@ -37,11 +37,11 @@ npm run generate:deal-post -- --category=<slug> --query="<keyword>" --top=<n>
 
 Print both summaries and read them carefully — there are three distinct outcomes, not one:
 
-- **Zero usable deals** ⇒ the CLI exits `0` having written nothing. **Stop here.** Report this plainly to the user and explain that the prior week's roundup deliberately stays framed as "tuần này" — this is a normal quiet week, not a failure. Do not widen `--query` or drop `--top` to manufacture a post, and do not commit anything.
+- **Zero usable deals** ⇒ the CLI exits `0` having written nothing. **Stop here.** Report this plainly to the user and explain that the existing roundup stays live with its older "Cập nhật ngày …" date — this is a normal quiet week, not a failure. Do not widen `--query` or drop `--top` to manufacture a post, and do not commit anything.
 - **Shortfall** (e.g. "requested 5, usable 3") ⇒ proceed with what came back. Never re-run with a padded `--top` to hit a round number, and never fabricate an entry to fill the gap.
 - **Dropped deals** (bad host, null affiliate URL) ⇒ mention them in your report to the user; the roundup is still valid with the deals that passed.
 
-The real (non-dry-run) run also supersedes the prior week's roundup post in this category (US00153), but only _after_ writing the current post — so a run that fails before this point never leaves the prior post relabeled with no current post to back it up.
+The real run overwrites `content/posts/deal-<category>.mdx` and its sidecar, stages images as `deal-<category>-<date>-<n>.<ext>`, and then prunes staged images nothing references any more (last week's).
 
 ## 5. Write the prose
 
@@ -52,12 +52,11 @@ Edit the generated `.mdx` file directly (`Edit`/`Write`, never the CLI). Replace
 - A closing "Lưu ý khi săn deal" section covering stock/variant caveats, checking the seller before buying, and that the price shown was captured at publish time and may have changed.
 - The final post must clear **800 words** (`MIN_POST_WORDS`) with no `TODO` left anywhere.
 
-Four things must survive completely untouched:
+Three things must survive completely untouched:
 
 1. Every `<DealCard id>` embed — do not add, remove, or reorder any.
-2. The `{/* roundup-lead:… */}` markers — `supersedePriorRoundup()` depends on them and throws if they're gone.
-3. `publishedAt`, `category`, and `coverImage` in the frontmatter.
-4. The "tuần này" framing in `title` and the lead paragraph.
+2. `publishedAt`, `updatedAt`, `category`, and `coverImage` in the frontmatter.
+3. The "tuần này" framing in `title` and the lead paragraph.
 
 `summary` and `tags` may be refined — the generator writes real (non-placeholder) values, but a human sentence is usually clearer. Keep `summary` within 50–160 characters.
 
@@ -69,35 +68,35 @@ npm run typecheck && npm run lint && npm run test && npm run build
 
 All four must exit `0`. `npm test` is where the 800-word floor, the embed-count check, the cover-image floor, and the duplicate-cover-image check actually bite.
 
-Then verify in a real browser per the project's UI-verification rule: start `npm run dev` in the background, open `/bai-viet/<new-slug>/` (via `mcp__next-devtools__browser_eval`), screenshot it, and check the console (a `/favicon.ico` 404 is fine, anything else must be investigated and fixed). Confirm the deal cards render, both disclosures appear (affiliate disclosure + price-change disclaimer), and TOC/breadcrumbs are correct. Then also open the **superseded** post and confirm its H1 and first paragraph now name its own archived date. Stop the dev server afterward, and revert `next-env.d.ts` if `next dev`/`build` touched it (`git checkout -- next-env.d.ts`) — it's auto-generated noise, not a real change.
+Then verify in a real browser per the project's UI-verification rule: start `npm run dev` in the background, open `/bai-viet/deal-<category>` (via `mcp__next-devtools__browser_eval`), screenshot it, and check the console (a `/favicon.ico` 404 is fine, anything else must be investigated and fixed). Confirm the deal cards render, both disclosures appear (affiliate disclosure + price-change disclaimer), the header shows both the publish date and "Cập nhật ngày …", and TOC/breadcrumbs are correct. Stop the dev server afterward, and revert `next-env.d.ts` if `next dev`/`build` touched it (`git checkout -- next-env.d.ts`) — it's auto-generated noise, not a real change.
 
-**If anything in this step fails, stop before committing.** Leave the working tree as-is — both the new post and the rewritten prior post will be sitting uncommitted, so the operator can fix and retry, or discard both cleanly with:
+**If anything in this step fails, stop before committing.** Leave the working tree as-is — the overwritten post, sidecar and pruned images will be sitting uncommitted, so the operator can fix and retry, or discard both cleanly with:
 
 ```bash
-git checkout -- content/ public/   # reverts the rewritten prior post back to its "tuần này" framing
-git clean -fd content/ public/     # removes the new post/sidecar/images — checkout alone leaves untracked files behind
+git checkout -- content/ public/   # restores the previous post, sidecar and any pruned images
+git clean -fd content/ public/     # removes newly staged images — checkout alone leaves untracked files behind
 ```
 
-Both commands are needed — `git checkout --` only restores already-tracked files (the superseded prior post) to their last-committed state; it does nothing for the brand-new, still-untracked post/sidecar/images, which `git clean -fd` removes. Running `checkout` alone leaves a false impression of a clean tree while stray files remain (confirmed during US00154's failure rehearsal).
+Both commands are needed — `git checkout --` only restores already-tracked files (the previous post, sidecar and pruned images) to their last-committed state; it does nothing for the brand-new, still-untracked staged images, which `git clean -fd` removes. Running `checkout` alone leaves a false impression of a clean tree while stray files remain (confirmed during US00154's failure rehearsal).
 
 ## 7. Commit
 
 `git status --porcelain` should show exactly these paths — nothing else:
 
 ```
-content/posts/deal-<category>-<date>.mdx        (new)
-content/posts/deal-<category>-<prior-date>.mdx  (modified — the superseded post)
-content/deals/deal-<category>-<date>.json       (new)
+content/posts/deal-<category>.mdx                (new or modified)
+content/deals/deal-<category>.json               (new or modified)
 public/static/images/deals/deal-<category>-<date>-*.{jpg,png,webp}  (new)
+public/static/images/deals/<prior images>        (deleted)
 data/deals/<today>.json                          (new — the scrape audit trail)
 ```
 
-If a prior roundup didn't exist in this category, the second path is simply absent — that's fine. Stage exactly the paths above (nothing else) and commit:
+On a category's first run nothing is modified or deleted — that's fine. Stage exactly the paths above (nothing else) and commit:
 
 ```
 content: weekly <category> deal roundup (<date>)
 
-<n> deals · superseded <prior-slug-or-"none">
+<n> deals · pruned <k> prior image(s)
 
 Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
 ```
@@ -115,7 +114,6 @@ Report the pushed commit hash, the new post's path, and remind the user this tri
 - Never fabricate a deal, a price, a rating, or a sold count — the sidecar and web-search results are the only sources.
 - Never hand-edit `content/deals/*.json` — it is CLI output. A wrong deal means re-running the CLI, not patching the sidecar.
 - Never remove, reorder, or invent `<DealCard>` embeds beyond what `generate:deal-post` wrote.
-- Never delete the `{/* roundup-lead:… */}` markers — the supersede step depends on them.
 - Never commit anything outside the paths listed in step 7.
 - Never push to any branch other than `main` — this command has no feature-branch/PR step by design.
 - Never skip `npm run build` or the browser check before committing.

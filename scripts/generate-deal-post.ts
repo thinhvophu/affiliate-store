@@ -8,13 +8,13 @@
  * is left for a human to write (D8), exactly as `scaffold:post` does for
  * ordinary buying guides.
  *
- * `generate:deal-post` OVERWRITES both the sidecar and the post on a
- * re-run for the same category+date (D6) — unlike `scaffold:post`, which
- * refuses to overwrite. Because the slug carries the date, "overwrite" is
- * scoped to today's post for this category only.
+ * There is one evergreen post per category at `roundupSlugFor(category)`
+ * (F0016/US00162). `generate:deal-post` OVERWRITES both the sidecar and the
+ * post every run — keeping the post's original `publishedAt` and setting
+ * `updatedAt` to the run date — then prunes staged images nothing references.
  *
- * Zero usable deals ⇒ prints the summary, exits 0, writes nothing (spec §5
- * first bullet) — the caller (US00154) reads this as "do not supersede".
+ * Zero usable deals ⇒ prints the summary, exits 0, writes nothing; the
+ * existing post stays live with its older `updatedAt`.
  *
  * Run via `npm run generate:deal-post -- --category=<slug> --query=<term>
  * [--top=<1-10>] [--date=YYYY-MM-DD] [--dry-run]`.
@@ -24,17 +24,20 @@ import fs from "node:fs";
 import path from "node:path";
 import { assertCategoryRegistered, getCategoryMeta } from "@/lib/categories";
 import { MIN_COVER_IMAGE_SHORT_SIDE_PX, readImageSize } from "@/lib/image-meta";
+import { roundupSlugFor } from "@/lib/roundups";
 import type { Deal } from "@/types";
 import type { Candidate } from "./ingest/candidate";
 import { stageImages } from "./ingest/images";
 import { parseDealRoundupArgs } from "./deal-roundup/args";
+import { readExistingPublishedAt } from "./deal-roundup/existing";
+import { findUnreferencedDealImages } from "./deal-roundup/image-gc";
 import { printDealSummary } from "./deal-roundup/report";
 import { isoToday, loadRankedDeals } from "./deal-roundup/source";
-import { supersedePriorRoundup } from "./deal-roundup/supersede";
 import { renderDealPostStub } from "./deal-roundup/template";
 import { writeDealSidecar } from "./deal-roundup/writer";
 
 const POSTS_DIR = path.join(process.cwd(), "content", "posts");
+const DEALS_DIR = path.join(process.cwd(), "content", "deals");
 const DEALS_IMAGES_DIR = path.join(process.cwd(), "public", "static", "images", "deals");
 const DEALS_PUBLIC_PATH_PREFIX = "/static/images/deals";
 
@@ -57,8 +60,10 @@ async function main(): Promise<void> {
     return;
   }
 
-  const postSlug = `deal-${args.category}-${date}`;
+  const postSlug = roundupSlugFor(args.category);
   const postPath = path.join(POSTS_DIR, `${postSlug}.mdx`);
+  const publishedAt = readExistingPublishedAt(postPath) ?? date;
+  const updatedAt = date;
   const sidecarRelPath = path.join("content", "deals", `${postSlug}.json`);
 
   if (args.dryRun) {
@@ -67,6 +72,7 @@ async function main(): Promise<void> {
     );
     console.log(`[deal-roundup] --dry-run: would write ${sidecarRelPath}`);
     console.log(`[deal-roundup] --dry-run: would write ${path.relative(process.cwd(), postPath)}`);
+    console.log(`[deal-roundup] --dry-run: publishedAt ${publishedAt}, updatedAt ${updatedAt}`);
     return;
   }
 
@@ -85,7 +91,7 @@ async function main(): Promise<void> {
     sourceRef: postSlug,
   };
 
-  const staged = await stageImages(pseudoCandidate, postSlug, {
+  const staged = await stageImages(pseudoCandidate, `${postSlug}-${date}`, {
     destDir: DEALS_IMAGES_DIR,
     publicPathPrefix: DEALS_PUBLIC_PATH_PREFIX,
   });
@@ -131,7 +137,8 @@ async function main(): Promise<void> {
   const stub = renderDealPostStub({
     category: args.category,
     categoryName: categoryMeta.name,
-    publishedAt: date,
+    publishedAt,
+    updatedAt,
     coverImage,
     deals: dealRecords.map((d) => ({ id: d.id, name: d.name })),
   });
@@ -142,15 +149,14 @@ async function main(): Promise<void> {
   console.log(`\n[deal-roundup] wrote ${sidecarPath}`);
   console.log(`[deal-roundup] wrote ${postPath}`);
 
-  // Runs only now — after the current post exists on disk (US00153 §3.4),
-  // so a failed run is never left with the prior post relabeled while no
-  // current post exists.
-  const { supersededSlug, alreadyArchived } = supersedePriorRoundup(args.category, postSlug);
-  if (supersededSlug && !alreadyArchived) {
-    console.log(`[deal-roundup] superseded prior roundup: ${supersededSlug}`);
-  } else if (supersededSlug && alreadyArchived) {
-    console.log(`[deal-roundup] prior roundup already archived: ${supersededSlug}`);
-  }
+  const orphans = findUnreferencedDealImages({
+    imagesDir: DEALS_IMAGES_DIR,
+    dealsDir: DEALS_DIR,
+    postsDir: POSTS_DIR,
+  });
+  for (const orphan of orphans) fs.unlinkSync(orphan);
+  console.log(`[deal-roundup] pruned ${orphans.length} unreferenced image(s)`);
+  for (const orphan of orphans) console.log(`  - ${path.relative(process.cwd(), orphan)}`);
 }
 
 main().catch((err) => {

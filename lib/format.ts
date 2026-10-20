@@ -62,28 +62,6 @@ export function formatPostDate(iso: string): string {
   return `${day} tháng ${month}, ${year}`;
 }
 
-/**
- * Render an ISO date string as `dd/mm/yyyy`, e.g. `"31/08/2026"` — the
- * short numeric date `scripts/deal-roundup/supersede.ts` (US00153) bakes
- * into a superseded roundup's title/summary/lead paragraph. A distinct
- * format from `formatPostDate`'s long-form `"31 tháng 8, 2026"`, so it lives
- * here as a second export rather than a second chokepoint (US00153).
- *
- * Same SSG-determinism rationale as `formatPostDate`: no `Intl`, manual
- * regex split, byte-identical across build pools.
- *
- * @example
- *   formatArchiveDate("2026-08-31") // "31/08/2026"
- *   formatArchiveDate("")           // ""  (malformed → silent sentinel)
- */
-export function formatArchiveDate(iso: string): string {
-  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso.trim());
-  if (!match) return "";
-
-  const [, year, month, day] = match;
-  return `${day}/${month}/${year}`;
-}
-
 const WORDS_PER_MINUTE = 200;
 
 /** Depth floor for a published post body, in `countWords()` tokens (US00134). */
@@ -92,8 +70,8 @@ export const MIN_POST_WORDS = 800;
 /**
  * Count body words the same way for read-time estimation and the US00134
  * depth-floor guard — the project's one word-counting chokepoint. Strips
- * fenced code, MDX expression comments (US00152 — otherwise the roundup-lead
- * markers and leftover authoring TODOs would inflate the count), inline
+ * fenced code, MDX expression comments (US00152 — otherwise leftover authoring
+ * TODO markers would inflate the count), inline
  * JSX/HTML tags, and markdown image/link syntax before splitting on
  * whitespace.
  */

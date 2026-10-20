@@ -3,7 +3,12 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { Post } from "@/types";
-import { currentRoundupSlugs, demoteArchivedRoundups, isRoundupPost } from "./roundups";
+import {
+  assertOneRoundupPerCategory,
+  getRoundupForCategory,
+  isRoundupPost,
+  roundupSlugFor,
+} from "./roundups";
 
 let root: string;
 let dealsDir: string;
@@ -63,90 +68,50 @@ describe("isRoundupPost", () => {
   });
 });
 
-describe("currentRoundupSlugs / demoteArchivedRoundups", () => {
-  it("keeps the single roundup in a category current (Scenario 1)", () => {
-    writeSidecar("deal-chuot-gaming-2026-08-01");
-    const posts = [post({ slug: "deal-chuot-gaming-2026-08-01", publishedAt: "2026-08-01" })];
+describe("roundupSlugFor", () => {
+  it("derives the evergreen slug from the category", () => {
+    expect(roundupSlugFor("chuot-gaming")).toBe("deal-chuot-gaming");
+  });
+});
 
-    expect(currentRoundupSlugs(posts, { dealsDir })).toEqual(
-      new Set(["deal-chuot-gaming-2026-08-01"]),
+describe("getRoundupForCategory", () => {
+  it("returns the category's roundup and ignores ordinary posts", () => {
+    writeSidecar("deal-chuot-gaming");
+    const posts = [post({ slug: "logitech-g102-review" }), post({ slug: "deal-chuot-gaming" })];
+    expect(getRoundupForCategory(posts, "chuot-gaming", { dealsDir })?.slug).toBe(
+      "deal-chuot-gaming",
     );
-    expect(demoteArchivedRoundups(posts, { dealsDir })).toEqual(posts);
+    expect(getRoundupForCategory(posts, "tai-nghe-gaming", { dealsDir })).toBeNull();
+  });
+});
+
+describe("assertOneRoundupPerCategory", () => {
+  it("passes with one correctly-slugged roundup per category", () => {
+    writeSidecar("deal-chuot-gaming");
+    writeSidecar("deal-tai-nghe-gaming");
+    const posts = [
+      post({ slug: "deal-chuot-gaming" }),
+      post({ slug: "deal-tai-nghe-gaming", category: "tai-nghe-gaming" }),
+      post({ slug: "logitech-g102-review" }),
+    ];
+    expect(() => assertOneRoundupPerCategory(posts, { dealsDir })).not.toThrow();
   });
 
-  it("keeps only the newest publishedAt among three roundups in one category (Scenario 3)", () => {
+  it("throws on a roundup whose slug is not roundupSlugFor(category)", () => {
     writeSidecar("deal-chuot-gaming-2026-08-01");
-    writeSidecar("deal-chuot-gaming-2026-08-08");
-    writeSidecar("deal-chuot-gaming-2026-08-15");
-    const posts = [
-      post({ slug: "deal-chuot-gaming-2026-08-15", publishedAt: "2026-08-15" }),
-      post({ slug: "deal-chuot-gaming-2026-08-08", publishedAt: "2026-08-08" }),
-      post({ slug: "deal-chuot-gaming-2026-08-01", publishedAt: "2026-08-01" }),
-    ];
-
-    expect(currentRoundupSlugs(posts, { dealsDir })).toEqual(
-      new Set(["deal-chuot-gaming-2026-08-15"]),
-    );
-    const demoted = demoteArchivedRoundups(posts, { dealsDir });
-    expect(demoted.map((p) => p.slug)).toEqual(["deal-chuot-gaming-2026-08-15"]);
-  });
-
-  it("keeps each category's own current roundup independently", () => {
-    writeSidecar("deal-chuot-gaming-2026-08-08");
-    writeSidecar("deal-chuot-gaming-2026-08-01");
-    writeSidecar("deal-tai-nghe-gaming-2026-08-05");
-    const posts = [
-      post({
-        slug: "deal-chuot-gaming-2026-08-08",
-        category: "chuot-gaming",
-        publishedAt: "2026-08-08",
-      }),
-      post({
-        slug: "deal-chuot-gaming-2026-08-01",
-        category: "chuot-gaming",
-        publishedAt: "2026-08-01",
-      }),
-      post({
-        slug: "deal-tai-nghe-gaming-2026-08-05",
-        category: "tai-nghe-gaming",
-        publishedAt: "2026-08-05",
-      }),
-    ];
-
-    expect(currentRoundupSlugs(posts, { dealsDir })).toEqual(
-      new Set(["deal-chuot-gaming-2026-08-08", "deal-tai-nghe-gaming-2026-08-05"]),
+    const posts = [post({ slug: "deal-chuot-gaming-2026-08-01" })];
+    expect(() => assertOneRoundupPerCategory(posts, { dealsDir })).toThrow(
+      /deal-chuot-gaming-2026-08-01/,
     );
   });
 
-  it("always passes non-roundup posts through, order preserved", () => {
-    writeSidecar("deal-chuot-gaming-2026-08-08");
+  it("throws on two roundups in one category", () => {
+    writeSidecar("deal-chuot-gaming");
     writeSidecar("deal-chuot-gaming-2026-08-01");
     const posts = [
-      post({ slug: "logitech-g102-review", publishedAt: "2026-08-10" }),
-      post({
-        slug: "deal-chuot-gaming-2026-08-08",
-        publishedAt: "2026-08-08",
-      }),
-      post({ slug: "razer-deathadder-review", publishedAt: "2026-08-06" }),
-      post({
-        slug: "deal-chuot-gaming-2026-08-01",
-        publishedAt: "2026-08-01",
-      }),
+      post({ slug: "deal-chuot-gaming" }),
+      post({ slug: "deal-chuot-gaming-2026-08-01" }),
     ];
-
-    const demoted = demoteArchivedRoundups(posts, { dealsDir });
-    expect(demoted.map((p) => p.slug)).toEqual([
-      "logitech-g102-review",
-      "deal-chuot-gaming-2026-08-08",
-      "razer-deathadder-review",
-    ]);
-  });
-
-  it("returns the list unchanged when there are no roundups at all", () => {
-    const posts = [
-      post({ slug: "logitech-g102-review", publishedAt: "2026-08-10" }),
-      post({ slug: "razer-deathadder-review", publishedAt: "2026-08-06" }),
-    ];
-    expect(demoteArchivedRoundups(posts, { dealsDir })).toEqual(posts);
+    expect(() => assertOneRoundupPerCategory(posts, { dealsDir })).toThrow();
   });
 });
