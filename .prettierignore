@@ -10,3 +10,6 @@ next-env.d.ts
 data/
 docs/
 .claude/
+
+# MDX posts are authored content, not formatted by Prettier
+*.mdx
