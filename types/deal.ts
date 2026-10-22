@@ -20,6 +20,9 @@ export interface Deal {
   /** Root-relative `/static/images/deals/…` ONLY. A remote URL here is a build error. */
   image: string;
   affiliateUrl: string;
+  /** Shopee ids, present on sidecars written since US00165 — the recency key. */
+  itemId?: number;
+  shopId?: number;
   /** The registered category slug — feeds `data-product-category` on the card. */
   category: string;
 }

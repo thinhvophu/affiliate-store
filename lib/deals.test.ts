@@ -21,6 +21,8 @@ interface DealFixtureOverrides {
   image?: string;
   affiliateUrl?: string;
   category?: string;
+  itemId?: unknown;
+  shopId?: unknown;
 }
 
 function dealFixture(overrides: DealFixtureOverrides = {}) {
@@ -81,6 +83,23 @@ describe("getAllDeals", () => {
     expect(() => getAllDeals({ dealsDir })).toThrow(
       new RegExp(`${postSlug}-1.*not an allowed Shopee host`, "s"),
     );
+  });
+
+  it("throws naming the deal id when itemId is not a number (US00165)", () => {
+    const postSlug = "deal-tai-nghe-2026-09-07";
+    writeSidecar(postSlug, [dealFixture({ id: `${postSlug}-1`, itemId: "41773751059" })]);
+
+    expect(() => getAllDeals({ dealsDir })).toThrow(new RegExp(`${postSlug}-1.*itemId`, "s"));
+  });
+
+  it("accepts a sidecar with numeric itemId/shopId and one without (US00165)", () => {
+    const postSlug = "deal-tai-nghe-2026-09-07";
+    writeSidecar(postSlug, [
+      dealFixture({ id: `${postSlug}-1`, itemId: 1, shopId: 2 }),
+      dealFixture({ id: `${postSlug}-2` }),
+    ]);
+
+    expect(getAllDeals({ dealsDir })).toHaveLength(2);
   });
 
   it("throws when a deal's image is a remote URL instead of a root-relative path", () => {

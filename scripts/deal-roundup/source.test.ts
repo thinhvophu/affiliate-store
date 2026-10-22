@@ -3,6 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { DealRoundupArgs } from "./args";
+import { dealKey } from "./history";
 import { loadRankedDeals } from "./source";
 
 const FIXTURE = path.join(__dirname, "__fixtures__", "deals-sample.json");
@@ -12,6 +13,7 @@ function args(overrides: Partial<DealRoundupArgs> = {}): DealRoundupArgs {
     category: "chuot-gaming",
     query: "chuột gaming",
     top: 5,
+    repeatWindow: 3,
     date: "2026-09-01",
     dryRun: false,
     ...overrides,
@@ -113,5 +115,79 @@ describe("loadRankedDeals", () => {
     expect(result.dropped.find((d) => d.rank === 2)?.reason).toMatch(
       /name empty after removing seller boilerplate/,
     );
+  });
+});
+
+describe("loadRankedDeals recency skipping", () => {
+  function writeTenDeals(mutate?: (deals: Record<string, unknown>[]) => void) {
+    const raw = JSON.parse(fs.readFileSync(FIXTURE, "utf-8"));
+    const template = raw.results[0].deals[0];
+    const deals = Array.from({ length: 10 }, (_, i) => ({
+      ...template,
+      itemId: 200 + i,
+      shopId: 20 + i,
+      name: `Chuột Gaming Mẫu ${i + 1}`,
+      affiliateUrl: `https://s.shopee.vn/ten-${i + 1}`,
+      score: 100 - ((i * 37) % 11),
+    }));
+    mutate?.(deals);
+    raw.results[0].deals = deals;
+    fs.writeFileSync(path.join(dealsDir, "2026-09-01.json"), JSON.stringify(raw));
+  }
+  const keyOf = (rank: number) => dealKey({ itemId: 200 + rank - 1, shopId: 20 + rank - 1 });
+
+  it("skips recent deals and backfills in tool order (S1)", () => {
+    writeTenDeals();
+    const result = loadRankedDeals(args({ top: 5 }), {
+      dealsDir,
+      recent: new Set([keyOf(1), keyOf(3)]),
+    });
+
+    expect(result.deals.map((d) => d.rank)).toEqual([2, 4, 5, 6, 7]);
+    expect(result.skippedRecent.map((d) => d.rank)).toEqual([1, 3]);
+    expect(result.skippedRecent[0].name).toBe("Chuột Gaming Mẫu 1");
+  });
+
+  it("carries itemId and shopId onto RankedDeal", () => {
+    writeTenDeals();
+    const [first] = loadRankedDeals(args({ top: 1 }), { dealsDir }).deals;
+    expect(first.itemId).toBe(200);
+    expect(first.shopId).toBe(20);
+  });
+
+  it("returns what is left when nearly everything is recent, without throwing (S3)", () => {
+    writeTenDeals();
+    const recent = new Set([1, 2, 3, 4, 5, 6, 7, 8].map(keyOf));
+    const result = loadRankedDeals(args({ top: 5 }), { dealsDir, recent });
+
+    expect(result.deals.map((d) => d.rank)).toEqual([9, 10]);
+    expect(result.skippedRecent).toHaveLength(8);
+  });
+
+  it("does not backfill deals dropped for a bad affiliate link", () => {
+    writeTenDeals((deals) => {
+      deals[1].affiliateUrl = null;
+    });
+    const result = loadRankedDeals(args({ top: 3 }), { dealsDir, recent: new Set([keyOf(1)]) });
+
+    expect(result.deals.map((d) => d.rank)).toEqual([3, 4]);
+    expect(result.dropped.map((d) => d.rank)).toEqual([2]);
+  });
+
+  it("drops a deal with no itemId/shopId, with the reason (§5)", () => {
+    writeTenDeals((deals) => {
+      delete deals[0].itemId;
+    });
+    const result = loadRankedDeals(args({ top: 2 }), { dealsDir });
+
+    expect(result.dropped.find((d) => d.rank === 1)?.reason).toMatch(/no itemId\/shopId/);
+    expect(result.deals.map((d) => d.rank)).toEqual([2, 3]);
+  });
+
+  it("skips nothing when no recent set is given", () => {
+    writeTenDeals();
+    const result = loadRankedDeals(args({ top: 5 }), { dealsDir });
+    expect(result.skippedRecent).toEqual([]);
+    expect(result.deals.map((d) => d.rank)).toEqual([1, 2, 3, 4, 5]);
   });
 });

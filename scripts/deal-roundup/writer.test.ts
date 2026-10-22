@@ -59,6 +59,15 @@ describe("writeDealSidecar", () => {
     expect(readBack).toEqual(deals);
   });
 
+  it("round-trips itemId and shopId", () => {
+    const postSlug = "deal-chuot-gaming-2026-09-07";
+    const deals = sampleDeals(postSlug).map((d, i) => ({ ...d, itemId: 100 + i, shopId: 10 + i }));
+
+    writeDealSidecar(postSlug, deals, { dealsDir });
+
+    expect(getAllDeals({ dealsDir })).toEqual(deals);
+  });
+
   it("refuses to write a remote image URL", () => {
     const postSlug = "deal-chuot-gaming-2026-09-07";
     const deals = sampleDeals(postSlug);

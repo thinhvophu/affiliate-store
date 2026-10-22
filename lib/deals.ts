@@ -75,6 +75,15 @@ function validateDeal(
 
   const id = obj.id as string;
 
+  for (const field of ["itemId", "shopId"] as const) {
+    const value = obj[field];
+    if (value !== undefined && (typeof value !== "number" || !Number.isFinite(value))) {
+      throw new Error(
+        `[content] ${filePath}: deal "${id}" ${field} must be a number when present.`,
+      );
+    }
+  }
+
   const existingFile = seenIds.get(id);
   if (existingFile) {
     throw new Error(
