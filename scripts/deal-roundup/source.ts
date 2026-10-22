@@ -17,6 +17,7 @@ import path from "node:path";
 import { assertAffiliateUrl } from "@/lib/affiliate";
 import { parseDealsSnapshot, type RawDeal } from "../ingest/sources/deal-schema";
 import type { DealRoundupArgs } from "./args";
+import { cleanDealName } from "./clean-name";
 import type { DroppedDeal, RankedDeal } from "./deal";
 
 export function isoToday(): string {
@@ -37,10 +38,11 @@ export interface LoadRankedDealsResult {
   snapshotPath: string;
 }
 
-function toRankedDeal(deal: RawDeal, rank: number): RankedDeal {
+function toRankedDeal(deal: RawDeal, rank: number, name: string): RankedDeal {
   return {
     rank,
-    name: deal.name,
+    name,
+    rawName: deal.name,
     priceVnd: deal.priceVnd,
     originalPriceVnd: deal.originalPriceVnd,
     discountPercent: deal.discountPercent,
@@ -99,7 +101,17 @@ export function loadRankedDeals(
       return;
     }
 
-    deals.push(toRankedDeal(raw, rank));
+    const name = cleanDealName(raw.name);
+    if (!name) {
+      dropped.push({
+        rank,
+        name: raw.name,
+        reason: "name empty after removing seller boilerplate",
+      });
+      return;
+    }
+
+    deals.push(toRankedDeal(raw, rank, name));
   });
 
   return { deals, dropped, requested: args.top, snapshotPath: file };

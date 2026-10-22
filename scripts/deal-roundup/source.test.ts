@@ -90,4 +90,28 @@ describe("loadRankedDeals", () => {
       /"results" must be an array/,
     );
   });
+
+  it("cleans RankedDeal.name and keeps the seller title as rawName", () => {
+    const raw = JSON.parse(fs.readFileSync(FIXTURE, "utf-8"));
+    raw.results[0].deals[0].name = "[HOT] Chuột Logitech G102 Lightsync | Freeship | BH 12 tháng!";
+    fs.writeFileSync(path.join(dealsDir, "2026-09-01.json"), JSON.stringify(raw));
+
+    const [first] = loadRankedDeals(args({ top: 1 }), { dealsDir }).deals;
+
+    expect(first.name).toBe("Chuột Logitech G102 Lightsync");
+    expect(first.rawName).toBe("[HOT] Chuột Logitech G102 Lightsync | Freeship | BH 12 tháng!");
+  });
+
+  it("drops a deal whose name is empty after cleaning, naming the reason, and it is not usable", () => {
+    const raw = JSON.parse(fs.readFileSync(FIXTURE, "utf-8"));
+    raw.results[0].deals[1].name = "【Freeship】";
+    fs.writeFileSync(path.join(dealsDir, "2026-09-01.json"), JSON.stringify(raw));
+
+    const result = loadRankedDeals(args({ top: 3 }), { dealsDir });
+
+    expect(result.deals.map((d) => d.rank)).toEqual([1, 3]);
+    expect(result.dropped.find((d) => d.rank === 2)?.reason).toMatch(
+      /name empty after removing seller boilerplate/,
+    );
+  });
 });

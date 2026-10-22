@@ -3,6 +3,9 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { getAllDeals, getDealById, getDealsForPost, postHasDeals } from "./deals";
+import { getAllPosts } from "./posts";
+import { findBoilerplateViolations } from "./seller-boilerplate";
+import type { Deal } from "@/types";
 
 let root: string;
 let dealsDir: string;
@@ -172,5 +175,66 @@ describe("postHasDeals", () => {
 
   it("is false for an ordinary buying-guide post with no sidecar", () => {
     expect(postHasDeals("logitech-g102-lightsync-review", { dealsDir })).toBe(false);
+  });
+});
+
+function describeNameViolations(deals: Pick<Deal, "id" | "name">[]): string[] {
+  return deals.flatMap((d) =>
+    findBoilerplateViolations(d.name).map(
+      (rule) => `"${d.id}": name "${d.name}" breaks rule "${rule.id}" (${rule.label})`,
+    ),
+  );
+}
+
+function describeHeadingMismatches(
+  slug: string,
+  content: string,
+  deals: Pick<Deal, "id" | "name">[],
+): string[] {
+  const nameById = new Map(deals.map((d) => [d.id, d.name]));
+  const problems: string[] = [];
+  const embed = /<DealCard\s+id="([^"]+)"\s*\/>/g;
+  for (const match of content.matchAll(embed)) {
+    const id = match[1];
+    const name = nameById.get(id);
+    if (name === undefined) continue;
+    const before = content.slice(0, match.index);
+    const heading = [...before.matchAll(/^### \d+\. (.+)$/gm)].pop()?.[1];
+    if (heading !== name) {
+      problems.push(
+        `post "${slug}", deal "${id}": heading ${JSON.stringify(heading)} does not match sidecar name ${JSON.stringify(name)}`,
+      );
+    }
+  }
+  return problems;
+}
+
+describe("deal display-name guard (US00164)", () => {
+  it("names the deal id and broken rule on a fixture with a pipe", () => {
+    const messages = describeNameViolations([{ id: "deal-x-1", name: "Chuột Razer | Quang Học" }]);
+    expect(messages).toHaveLength(1);
+    expect(messages[0]).toContain('"deal-x-1"');
+    expect(messages[0]).toContain('rule "pipe"');
+  });
+
+  it("flags a heading that was edited without the sidecar name", () => {
+    const content = '### 1. Chuột Razer Cobra\n\n<DealCard id="deal-x-1" />\n';
+    expect(
+      describeHeadingMismatches("deal-x", content, [{ id: "deal-x-1", name: "Chuột Razer" }]),
+    ).toHaveLength(1);
+    expect(
+      describeHeadingMismatches("deal-x", content, [{ id: "deal-x-1", name: "Chuột Razer Cobra" }]),
+    ).toEqual([]);
+  });
+
+  it("every live deal name is free of seller boilerplate", () => {
+    expect(describeNameViolations(getAllDeals())).toEqual([]);
+  });
+
+  it("every live roundup heading matches its sidecar deal name", () => {
+    const problems = getAllPosts().flatMap((post) =>
+      describeHeadingMismatches(post.slug, post.content, getDealsForPost(post.slug)),
+    );
+    expect(problems).toEqual([]);
   });
 });

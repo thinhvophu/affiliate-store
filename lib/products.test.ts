@@ -3,22 +3,13 @@ import fs from "node:fs";
 import path from "node:path";
 import { getAllProducts } from "@/lib/products";
 import { isAffiliateHost } from "@/lib/affiliate";
+import { SELLER_BOILERPLATE_RULES } from "@/lib/seller-boilerplate";
 
 const MIN_TOTAL_PRODUCTS = 12;
 const MIN_PER_CATEGORY = 3;
 const MAX_NAME_LENGTH = 70;
 const MAX_SLUG_LENGTH = 60;
 const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-
-const BOILERPLATE_PATTERNS: RegExp[] = [
-  /!/,
-  /\|/,
-  /chính hãng/i,
-  /giá rẻ/i,
-  /BH\s*\d+\s*tháng/i,
-  /freeship/i,
-  /CAM KẾT/,
-];
 
 const DESCRIPTION_BOILERPLATE_PATTERNS: RegExp[] = [/Mô tả chi tiết/i, /Đặc điểm kỹ thuật/i];
 
@@ -47,10 +38,10 @@ describe("catalog quality guard (US00131)", () => {
         p.name.length,
         `"${p.slug}": name too long (${p.name.length} chars)`,
       ).toBeLessThanOrEqual(MAX_NAME_LENGTH);
-      for (const pattern of BOILERPLATE_PATTERNS) {
+      for (const rule of SELLER_BOILERPLATE_RULES) {
         expect(
-          pattern.test(p.name),
-          `"${p.slug}": name "${p.name}" matches boilerplate pattern ${pattern}`,
+          rule.pattern.test(p.name),
+          `"${p.slug}": name "${p.name}" breaks rule "${rule.id}" (${rule.label})`,
         ).toBe(false);
       }
     }

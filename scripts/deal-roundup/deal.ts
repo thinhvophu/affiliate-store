@@ -13,7 +13,10 @@
 export interface RankedDeal {
   /** 1-based position in the tool's own ranking. Never re-derived. */
   rank: number;
+  /** Display name with seller boilerplate removed (cleanDealName). */
   name: string;
+  /** The seller's original title, kept for the run summary only. */
+  rawName: string;
   priceVnd: number;
   originalPriceVnd: number;
   discountPercent: number;
