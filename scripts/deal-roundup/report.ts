@@ -23,8 +23,9 @@ export function printDealSummary(summary: DealRoundupSummary): void {
 
   console.log(`\nDeals (${deals.length} of ${requested} requested):`);
   for (const d of deals) {
+    const renamed = d.rawName !== d.name ? `${d.rawName} → ` : "";
     console.log(
-      `  ${d.rank}. ${d.name} — ${formatVnd(d.priceVnd)} (-${d.discountPercent}%), ` +
+      `  ${d.rank}. ${renamed}${d.name} — ${formatVnd(d.priceVnd)} (-${d.discountPercent}%), ` +
         `${d.rating}★, ${d.soldCount} đã bán`,
     );
   }

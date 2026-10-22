@@ -50,6 +50,7 @@ Edit the generated `.mdx` file directly (`Edit`/`Write`, never the CLI). Replace
 - An intro paragraph under the first `h2`, framing the week's picks.
 - A short, honest paragraph per deal under its own `h3`, grounded in that deal's own sidecar numbers (`content/deals/<slug>.json` — price, discount, rating, sold count). Run one `WebSearch` per distinct brand+model where one is identifiable (e.g. `"<brand> <model> review specs"`), exactly as `/write-post` does, for supplementary verifiable detail. Never fabricate a spec, price, rating, or sold count that isn't grounded in the sidecar or a search result.
 - A closing "Lưu ý khi săn deal" section covering stock/variant caveats, checking the seller before buying, and that the price shown was captured at publish time and may have changed.
+- You may shorten or refine a deal name (for example drop the category prefix). If you do, edit the sidecar `name` **and** the matching `### n.` heading together. `npm test` checks both the seller-boilerplate rules and that the two match.
 - The final post must clear **800 words** (`MIN_POST_WORDS`) with no `TODO` left anywhere.
 
 Three things must survive completely untouched:
@@ -112,7 +113,7 @@ Report the pushed commit hash, the new post's path, and remind the user this tri
 ## Rules
 
 - Never fabricate a deal, a price, a rating, or a sold count — the sidecar and web-search results are the only sources.
-- Never hand-edit `content/deals/*.json` — it is CLI output. A wrong deal means re-running the CLI, not patching the sidecar.
+- Never hand-edit `content/deals/*.json` — it is CLI output — except the `name` field, per step 5. A wrong deal means re-running the CLI, not patching the sidecar.
 - Never remove, reorder, or invent `<DealCard>` embeds beyond what `generate:deal-post` wrote.
 - Never commit anything outside the paths listed in step 7.
 - Never push to any branch other than `main` — this command has no feature-branch/PR step by design.
