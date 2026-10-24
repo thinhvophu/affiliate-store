@@ -1,0 +1,64 @@
+/* Author page — reading-width container, bio, methodology, post grid (US00166) */
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--spacing-lg) var(--spacing-md);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-block: var(--spacing-lg);
+}
+
+.avatar {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.heading {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.jobTitle {
+  color: var(--color-text-secondary);
+  margin: var(--spacing-xs) 0 0;
+}
+
+.bio {
+  line-height: var(--line-height-base);
+  max-width: 70ch;
+}
+
+.section {
+  margin-block-start: var(--spacing-2xl);
+  line-height: var(--line-height-base);
+}
+
+.sectionHeading {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-block-end: var(--spacing-md);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+}
+
+@media (min-width: 1280px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

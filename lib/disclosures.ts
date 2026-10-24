@@ -19,3 +19,14 @@ export const AFFILIATE_DISCLOSURE_VI =
 export const PRICE_CHANGE_DISCLAIMER_VI =
   "Giá và mức giảm trong bài được ghi nhận tại thời điểm đăng bài và có thể đã thay đổi khi bạn xem. " +
   "Vui lòng kiểm tra giá cuối cùng trên Shopee trước khi đặt mua.";
+
+/**
+ * Methodology notes shown at the end of every post (F0016/US00166). The guide
+ * variant covers hands-on-researched buying guides; the deal variant is honest
+ * that weekly roundup picks follow Shopee's ranking and were not tested.
+ */
+export const METHODOLOGY_GUIDE_VI =
+  "Các sản phẩm trong bài được chọn dựa trên thông số chính thức, đánh giá thực tế của người dùng Việt và mức giá trên Shopee, không dựa trên mức hoa hồng.";
+
+export const METHODOLOGY_DEAL_VI =
+  "Các ưu đãi trong bài được chọn theo bảng xếp hạng của Shopee (mức giảm giá, đánh giá và lượt bán). Chúng tôi chưa trực tiếp kiểm tra các sản phẩm này.";

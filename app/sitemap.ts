@@ -3,6 +3,7 @@ import { absoluteUrl, buildCanonicalPath, postLastModified } from "@/lib/seo";
 import { getAllProducts } from "@/lib/products";
 import { getAllPosts } from "@/lib/posts";
 import { getAllCategorySlugs } from "@/lib/categories";
+import { getAllAuthors, getPostAuthor } from "@/lib/authors";
 
 const BUILD_TIME = new Date();
 
@@ -38,5 +39,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: postLastModified(post),
   }));
 
-  return [...staticEntries, ...categoryEntries, ...productEntries, ...postEntries];
+  const authorEntries: MetadataRoute.Sitemap = getAllAuthors().map((author) => {
+    const times = posts
+      .filter((p) => getPostAuthor(p).slug === author.slug)
+      .map((p) => postLastModified(p).getTime());
+    return {
+      url: absoluteUrl(buildCanonicalPath(["tac-gia", author.slug])),
+      lastModified: times.length ? new Date(Math.max(...times)) : BUILD_TIME,
+    };
+  });
+
+  return [
+    ...staticEntries,
+    ...categoryEntries,
+    ...productEntries,
+    ...postEntries,
+    ...authorEntries,
+  ];
 }

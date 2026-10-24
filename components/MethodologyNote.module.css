@@ -1,0 +1,22 @@
+/* MethodologyNote — end-of-post methodology notice (US00166) */
+
+.note {
+  background: var(--color-bg-secondary);
+  border-inline-start: 4px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  margin-block: var(--spacing-xl);
+}
+
+.text {
+  color: var(--color-text);
+  font-size: 0.9rem;
+  line-height: var(--line-height-base);
+  margin: 0;
+}
+
+.link {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: underline;
+}

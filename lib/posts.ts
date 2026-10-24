@@ -4,6 +4,7 @@ import matter from "gray-matter";
 import type { Post } from "@/types";
 import { assertCategoryRegistered } from "@/lib/categories";
 import { assertMinShortSide } from "@/lib/image-meta";
+import { assertAuthorRegistered } from "@/lib/authors";
 
 const POSTS_DIR = path.join(process.cwd(), "content", "posts");
 
@@ -34,6 +35,14 @@ export function validatePostFrontmatter(data: Record<string, unknown>, filePath:
       );
     }
   }
+}
+
+export function validatePostAuthor(data: Record<string, unknown>, postSlug: string): void {
+  if (data.author === undefined) return;
+  if (typeof data.author !== "string") {
+    throw new Error(`[content] post "${postSlug}": frontmatter "author" must be a string.`);
+  }
+  assertAuthorRegistered(data.author, postSlug);
 }
 
 export function getAllPosts(): Post[] {
@@ -72,6 +81,7 @@ export function getAllPosts(): Post[] {
     const slug = path.basename(file, ".mdx");
     assertCategoryRegistered(frontmatter.category as string, slug);
     assertMinShortSide(frontmatter.coverImage as string, slug);
+    validatePostAuthor(frontmatter, slug);
 
     const existing = slugMap.get(slug);
     if (existing) {
@@ -93,6 +103,7 @@ export function getAllPosts(): Post[] {
       tags: frontmatter.tags as string[],
       coverImage: frontmatter.coverImage as string,
       ...(frontmatter.updatedAt !== undefined && { updatedAt: frontmatter.updatedAt as string }),
+      ...(frontmatter.author !== undefined && { author: frontmatter.author as string }),
       content: parsed.content,
     });
   }

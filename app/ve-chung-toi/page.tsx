@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
+import { PRIMARY_AUTHOR_SLUG, authorPath } from "@/lib/authors";
 import { CONTACT_EMAIL, SITE_NAME } from "@/lib/site";
 import { buildCanonicalPath, buildPageMetadata } from "@/lib/seo";
 import styles from "./ve-chung-toi.module.css";
@@ -97,6 +98,16 @@ export default function VeChungToiPage() {
             Thứ tự sản phẩm trong bài viết và trang danh mục được sắp xếp dựa trên{" "}
             <strong>giá trị thực tế cho người dùng</strong>, không dựa trên mức hoa hồng tiếp thị
             liên kết. Không có nhãn hàng nào trả tiền để sản phẩm của họ được ưu tiên hiển thị.
+          </p>
+          <p>
+            Phương pháp đầy đủ được trình bày tại{" "}
+            <Link
+              href={`${authorPath(PRIMARY_AUTHOR_SLUG)}#cach-chon-san-pham`}
+              className={styles.internalLink}
+            >
+              trang tác giả
+            </Link>
+            .
           </p>
           <p>
             Khi giá thị trường, chính sách bán hàng hoặc cộng đồng đánh giá có thay đổi đáng kể,

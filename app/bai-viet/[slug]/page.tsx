@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
 import { Breadcrumb } from "@/components/Breadcrumb";
@@ -7,12 +8,14 @@ import { JsonLd } from "@/components/JsonLd";
 import { PostBody } from "@/components/PostBody";
 import { PriceDisclaimer } from "@/components/PriceDisclaimer";
 import { TableOfContents } from "@/components/TableOfContents";
+import { MethodologyNote } from "@/components/MethodologyNote";
+import { authorPath, getPostAuthor } from "@/lib/authors";
 import { postHasDeals } from "@/lib/deals";
+import { isRoundupPost } from "@/lib/roundups";
 import { getAllPosts, getPostBySlug, getRelatedPosts } from "@/lib/posts";
 import { RelatedPosts } from "@/components/RelatedPosts";
 import { extractToc } from "@/lib/toc";
 import { formatPostDate, readingTimeVi } from "@/lib/format";
-import { SITE_NAME } from "@/lib/site";
 import { buildCanonicalPath, buildPageMetadata } from "@/lib/seo";
 import { buildPostBreadcrumbs, breadcrumbListJsonLd } from "@/lib/breadcrumbs";
 import { buildArticleSchema } from "@/lib/article-schema";
@@ -50,6 +53,7 @@ export default async function PostDetailPage({ params }: PageProps) {
   const toc = extractToc(post.content);
   const hasToc = toc.length > 0;
   const crumbs = buildPostBreadcrumbs(post);
+  const author = getPostAuthor(post);
   const articleSchema = buildArticleSchema(post);
 
   return (
@@ -78,7 +82,9 @@ export default async function PostDetailPage({ params }: PageProps) {
           <h1 className={styles.title}>{post.title}</h1>
           <p className={styles.meta}>
             <time dateTime={post.publishedAt}>{formatPostDate(post.publishedAt)}</time>
-            <span className={styles.byline}>{SITE_NAME}</span>
+            <span className={styles.byline}>
+              Bởi <Link href={authorPath(author.slug)}>{author.name}</Link>
+            </span>
             {post.updatedAt && (
               <span className={styles.updated}>
                 Cập nhật ngày{" "}
@@ -95,6 +101,11 @@ export default async function PostDetailPage({ params }: PageProps) {
         <div className={styles.prose}>
           <PostBody content={post.content} />
         </div>
+
+        <MethodologyNote
+          variant={isRoundupPost(post) ? "deal" : "guide"}
+          authorSlug={author.slug}
+        />
 
         <RelatedPosts posts={related} />
         <JsonLd data={articleSchema} />
