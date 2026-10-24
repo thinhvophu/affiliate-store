@@ -9,11 +9,14 @@ const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const DEFAULT_TOP = 5;
 const MIN_TOP = 1;
 const MAX_TOP = 10;
+const DEFAULT_REPEAT_WINDOW = 3;
 
 export interface DealRoundupArgs {
   category: string;
   query: string;
   top: number;
+  /** Skip deals featured in the last N roundup runs (0 disables). */
+  repeatWindow: number;
   date?: string;
   dryRun: boolean;
 }
@@ -22,6 +25,7 @@ export function parseDealRoundupArgs(argv: string[]): DealRoundupArgs {
   let category: string | undefined;
   let query: string | undefined;
   let top: number | undefined;
+  let repeatWindow: number | undefined;
   let date: string | undefined;
   let dryRun = false;
 
@@ -55,6 +59,14 @@ export function parseDealRoundupArgs(argv: string[]): DealRoundupArgs {
         );
       }
       top = n;
+    } else if (key === "repeat-window") {
+      const n = Number(value);
+      if (value.trim() === "" || !Number.isInteger(n) || n < 0) {
+        throw new Error(
+          `Invalid value for "--repeat-window": "${value}" (expected an integer >= 0).`,
+        );
+      }
+      repeatWindow = n;
     } else if (key === "date") {
       if (!DATE_RE.test(value)) {
         throw new Error(`Invalid value for "--date": "${value}" (expected "YYYY-MM-DD").`);
@@ -72,5 +84,12 @@ export function parseDealRoundupArgs(argv: string[]): DealRoundupArgs {
     throw new Error('Missing required flag: "--query=<term>".');
   }
 
-  return { category, query, top: top ?? DEFAULT_TOP, date, dryRun };
+  return {
+    category,
+    query,
+    top: top ?? DEFAULT_TOP,
+    repeatWindow: repeatWindow ?? DEFAULT_REPEAT_WINDOW,
+    date,
+    dryRun,
+  };
 }

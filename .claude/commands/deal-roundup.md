@@ -26,19 +26,20 @@ Use `--query="<...>"` if given. Otherwise use the resolved category's registered
 
 ## 3. Scrape
 
-Call `mcp__shopee-affiliate__scrape_products` **once**, with `keywords` set to `[<resolved keyword>]` and `top_n` set to `--top` (default 5). This writes `data/deals/<today>.json` itself — this command never writes that file by hand, and the CLI in the next step only reads it.
+Call `mcp__shopee-affiliate__scrape_products` **once**, with `keywords` set to `[<resolved keyword>]` and `top_n` set to `top × (repeatWindow + 1)` (20 with the defaults `--top=5`, `--repeat-window=3`). The tool only returns `top_n` deals per keyword, so a deeper scrape is what leaves something to backfill with after recently featured deals are skipped. The tool's order is still the order used. This writes `data/deals/<today>.json` itself — this command never writes that file by hand, and the CLI in the next step only reads it.
 
 ## 4. Generate (dry run, then real)
 
 ```bash
-npm run generate:deal-post -- --category=<slug> --query="<keyword>" --top=<n> --dry-run
-npm run generate:deal-post -- --category=<slug> --query="<keyword>" --top=<n>
+npm run generate:deal-post -- --category=<slug> --query="<keyword>" --top=<n> [--repeat-window=<n>] --dry-run
+npm run generate:deal-post -- --category=<slug> --query="<keyword>" --top=<n> [--repeat-window=<n>]
 ```
 
 Print both summaries and read them carefully — there are three distinct outcomes, not one:
 
 - **Zero usable deals** ⇒ the CLI exits `0` having written nothing. **Stop here.** Report this plainly to the user and explain that the existing roundup stays live with its older "Cập nhật ngày …" date — this is a normal quiet week, not a failure. Do not widen `--query` or drop `--top` to manufacture a post, and do not commit anything.
 - **Shortfall** (e.g. "requested 5, usable 3") ⇒ proceed with what came back. Never re-run with a padded `--top` to hit a round number, and never fabricate an entry to fill the gap.
+- **Skipped as recent** ⇒ deals featured in the last `--repeat-window` runs (default 3) are passed over and the next ones in tool order fill the slots. Pass `--repeat-window` through only when the operator gave it.
 - **Dropped deals** (bad host, null affiliate URL) ⇒ mention them in your report to the user; the roundup is still valid with the deals that passed.
 
 The real run overwrites `content/posts/deal-<category>.mdx` and its sidecar, stages images as `deal-<category>-<date>-<n>.<ext>`, and then prunes staged images nothing references any more (last week's).
@@ -90,6 +91,7 @@ content/deals/deal-<category>.json               (new or modified)
 public/static/images/deals/deal-<category>-<date>-*.{jpg,png,webp}  (new)
 public/static/images/deals/<prior images>        (deleted)
 data/deals/<today>.json                          (new — the scrape audit trail)
+data/deal-history/<category>.json                (new or modified — what this run featured)
 ```
 
 On a category's first run nothing is modified or deleted — that's fine. Stage exactly the paths above (nothing else) and commit:

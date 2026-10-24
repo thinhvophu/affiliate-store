@@ -9,7 +9,9 @@
     "soldCount": 2000,
     "image": "/static/images/deals/deal-ban-phim-gaming-2026-10-19-1.jpg",
     "affiliateUrl": "https://s.shopee.vn/4B0plNX9VN",
-    "category": "ban-phim-gaming"
+    "category": "ban-phim-gaming",
+    "itemId": 18690097977,
+    "shopId": 94273103
   },
   {
     "id": "deal-ban-phim-gaming-2",
@@ -21,7 +23,9 @@
     "soldCount": 1000,
     "image": "/static/images/deals/deal-ban-phim-gaming-2026-10-19-2.jpg",
     "affiliateUrl": "https://s.shopee.vn/4LKFxgWWAQ",
-    "category": "ban-phim-gaming"
+    "category": "ban-phim-gaming",
+    "itemId": 18675300230,
+    "shopId": 479578975
   },
   {
     "id": "deal-ban-phim-gaming-3",
@@ -33,7 +37,9 @@
     "soldCount": 530,
     "image": "/static/images/deals/deal-ban-phim-gaming-2026-10-19-3.jpg",
     "affiliateUrl": "https://s.shopee.vn/4Vdg9zVspT",
-    "category": "ban-phim-gaming"
+    "category": "ban-phim-gaming",
+    "itemId": 50359467119,
+    "shopId": 94273103
   },
   {
     "id": "deal-ban-phim-gaming-4",
@@ -45,7 +51,9 @@
     "soldCount": 884,
     "image": "/static/images/deals/deal-ban-phim-gaming-2026-10-19-4.jpg",
     "affiliateUrl": "https://s.shopee.vn/3LRilqaKCG",
-    "category": "ban-phim-gaming"
+    "category": "ban-phim-gaming",
+    "itemId": 47156498589,
+    "shopId": 1289456065
   },
   {
     "id": "deal-ban-phim-gaming-5",
@@ -57,6 +65,8 @@
     "soldCount": 114,
     "image": "/static/images/deals/deal-ban-phim-gaming-2026-10-19-5.jpg",
     "affiliateUrl": "https://s.shopee.vn/3Vl8y9ZgrJ",
-    "category": "ban-phim-gaming"
+    "category": "ban-phim-gaming",
+    "itemId": 24342036117,
+    "shopId": 81063801
   }
 ]

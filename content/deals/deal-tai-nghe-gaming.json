@@ -9,7 +9,9 @@
     "soldCount": 50000,
     "image": "/static/images/deals/deal-tai-nghe-gaming-2026-10-20-1.jpg",
     "affiliateUrl": "https://s.shopee.vn/5fpfBM3Xmx",
-    "category": "tai-nghe-gaming"
+    "category": "tai-nghe-gaming",
+    "itemId": 42267550167,
+    "shopId": 1618525064
   },
   {
     "id": "deal-tai-nghe-gaming-2",
@@ -21,7 +23,9 @@
     "soldCount": 10000,
     "image": "/static/images/deals/deal-tai-nghe-gaming-2026-10-20-2.jpg",
     "affiliateUrl": "https://s.shopee.vn/7VHJMiwZ4K",
-    "category": "tai-nghe-gaming"
+    "category": "tai-nghe-gaming",
+    "itemId": 18155660998,
+    "shopId": 329027326
   },
   {
     "id": "deal-tai-nghe-gaming-3",
@@ -33,7 +37,9 @@
     "soldCount": 1000,
     "image": "/static/images/deals/deal-tai-nghe-gaming-2026-10-20-3.jpg",
     "affiliateUrl": "https://s.shopee.vn/7KxtAPxCPJ",
-    "category": "tai-nghe-gaming"
+    "category": "tai-nghe-gaming",
+    "itemId": 53612770470,
+    "shopId": 1103428920
   },
   {
     "id": "deal-tai-nghe-gaming-4",
@@ -45,7 +51,9 @@
     "soldCount": 70000,
     "image": "/static/images/deals/deal-tai-nghe-gaming-2026-10-20-4.jpg",
     "affiliateUrl": "https://s.shopee.vn/7pu9lKvIOQ",
-    "category": "tai-nghe-gaming"
+    "category": "tai-nghe-gaming",
+    "itemId": 26206563819,
+    "shopId": 1277844538
   },
   {
     "id": "deal-tai-nghe-gaming-5",
@@ -57,7 +65,9 @@
     "soldCount": 7000,
     "image": "/static/images/deals/deal-tai-nghe-gaming-2026-10-20-5.jpg",
     "affiliateUrl": "https://s.shopee.vn/7fajZ1vvjP",
-    "category": "tai-nghe-gaming"
+    "category": "tai-nghe-gaming",
+    "itemId": 43655393375,
+    "shopId": 1568221839
   },
   {
     "id": "deal-tai-nghe-gaming-6",
@@ -69,6 +79,8 @@
     "soldCount": 3000,
     "image": "/static/images/deals/deal-tai-nghe-gaming-2026-10-20-6.jpg",
     "affiliateUrl": "https://s.shopee.vn/6q1cZUz6QG",
-    "category": "tai-nghe-gaming"
+    "category": "tai-nghe-gaming",
+    "itemId": 54907511475,
+    "shopId": 1768966840
   }
 ]

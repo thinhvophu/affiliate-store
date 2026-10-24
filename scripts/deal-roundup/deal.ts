@@ -17,6 +17,9 @@ export interface RankedDeal {
   name: string;
   /** The seller's original title, kept for the run summary only. */
   rawName: string;
+  /** Shopee ids — the identity used for cross-run recency (history.ts). */
+  itemId: number;
+  shopId: number;
   priceVnd: number;
   originalPriceVnd: number;
   discountPercent: number;
@@ -37,4 +40,10 @@ export interface DroppedDeal {
   rank: number;
   name: string;
   reason: string;
+}
+
+/** A deal passed over because a recent roundup run already featured it. */
+export interface SkippedDeal {
+  rank: number;
+  name: string;
 }

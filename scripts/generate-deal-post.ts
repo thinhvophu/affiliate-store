@@ -13,11 +13,15 @@
  * post every run — keeping the post's original `publishedAt` and setting
  * `updatedAt` to the run date — then prunes staged images nothing references.
  *
+ * Deals featured in the last `--repeat-window` runs (default 3) are skipped and
+ * the next ones in tool order take their place (F0016/US00165); the run is then
+ * recorded in `data/deal-history/<category>.json`.
+ *
  * Zero usable deals ⇒ prints the summary, exits 0, writes nothing; the
  * existing post stays live with its older `updatedAt`.
  *
  * Run via `npm run generate:deal-post -- --category=<slug> --query=<term>
- * [--top=<1-10>] [--date=YYYY-MM-DD] [--dry-run]`.
+ * [--top=<1-10>] [--repeat-window=<n>] [--date=YYYY-MM-DD] [--dry-run]`.
  */
 
 import fs from "node:fs";
@@ -30,6 +34,7 @@ import type { Candidate } from "./ingest/candidate";
 import { stageImages } from "./ingest/images";
 import { parseDealRoundupArgs } from "./deal-roundup/args";
 import { readExistingPublishedAt } from "./deal-roundup/existing";
+import { readHistory, recentKeys, recordRun, writeHistory } from "./deal-roundup/history";
 import { findUnreferencedDealImages } from "./deal-roundup/image-gc";
 import { printDealSummary } from "./deal-roundup/report";
 import { isoToday, loadRankedDeals } from "./deal-roundup/source";
@@ -52,8 +57,13 @@ async function main(): Promise<void> {
   }
 
   const date = args.date ?? isoToday();
-  const { deals, dropped, requested, snapshotPath } = loadRankedDeals({ ...args, date });
-  printDealSummary({ requested, deals, dropped, snapshotPath, query: args.query });
+  const history = readHistory(args.category);
+  const recent = recentKeys(history, args.repeatWindow, date);
+  const { deals, dropped, skippedRecent, requested, snapshotPath } = loadRankedDeals(
+    { ...args, date },
+    { recent },
+  );
+  printDealSummary({ requested, deals, dropped, skippedRecent, snapshotPath, query: args.query });
 
   if (deals.length === 0) {
     console.log("\n[deal-roundup] no usable deals — nothing written.");
@@ -127,6 +137,8 @@ async function main(): Promise<void> {
     discountPercent: d.discountPercent,
     rating: d.rating,
     soldCount: d.soldCount,
+    itemId: d.itemId,
+    shopId: d.shopId,
     image: staged.images[i],
     affiliateUrl: d.affiliateUrl,
     category: args.category,
@@ -146,7 +158,16 @@ async function main(): Promise<void> {
   fs.mkdirSync(POSTS_DIR, { recursive: true });
   fs.writeFileSync(postPath, stub);
 
+  const historyPath = writeHistory(
+    recordRun(
+      history,
+      date,
+      deals.map(({ itemId, shopId }) => ({ itemId, shopId })),
+    ),
+  );
+
   console.log(`\n[deal-roundup] wrote ${sidecarPath}`);
+  console.log(`[deal-roundup] wrote ${historyPath}`);
   console.log(`[deal-roundup] wrote ${postPath}`);
 
   const orphans = findUnreferencedDealImages({

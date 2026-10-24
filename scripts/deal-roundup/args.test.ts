@@ -67,3 +67,21 @@ describe("parseDealRoundupArgs", () => {
     expect(args.dryRun).toBe(true);
   });
 });
+
+describe("parseDealRoundupArgs --repeat-window", () => {
+  const base = ["--category=chuot-gaming", "--query=chuột gaming"];
+
+  it("defaults to 3", () => {
+    expect(parseDealRoundupArgs(base).repeatWindow).toBe(3);
+  });
+
+  it("accepts 0", () => {
+    expect(parseDealRoundupArgs([...base, "--repeat-window=0"]).repeatWindow).toBe(0);
+  });
+
+  it.each(["-1", "1.5", ""])("rejects %j naming the flag", (v) => {
+    expect(() => parseDealRoundupArgs([...base, `--repeat-window=${v}`])).toThrow(
+      /--repeat-window/,
+    );
+  });
+});

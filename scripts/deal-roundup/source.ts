@@ -18,7 +18,8 @@ import { assertAffiliateUrl } from "@/lib/affiliate";
 import { parseDealsSnapshot, type RawDeal } from "../ingest/sources/deal-schema";
 import type { DealRoundupArgs } from "./args";
 import { cleanDealName } from "./clean-name";
-import type { DroppedDeal, RankedDeal } from "./deal";
+import type { DroppedDeal, RankedDeal, SkippedDeal } from "./deal";
+import { dealKey } from "./history";
 
 export function isoToday(): string {
   return new Date().toISOString().slice(0, 10);
@@ -27,11 +28,15 @@ export function isoToday(): string {
 export interface LoadRankedDealsOptions {
   /** Override the deals directory — tests point this at a fixture dir. */
   dealsDir?: string;
+  /** `dealKey()`s featured in recent runs (history.ts `recentKeys`) — skipped, not backfilled from drops. */
+  recent?: Set<string>;
 }
 
 export interface LoadRankedDealsResult {
   deals: RankedDeal[];
   dropped: DroppedDeal[];
+  /** Deals skipped because a recent run already featured them. */
+  skippedRecent: SkippedDeal[];
   /** What --top asked for. `deals.length` may legitimately be lower (Scenario 3). */
   requested: number;
   /** Absolute path of the snapshot actually read — echoed in the summary for auditability. */
@@ -48,6 +53,8 @@ function toRankedDeal(deal: RawDeal, rank: number, name: string): RankedDeal {
     discountPercent: deal.discountPercent,
     rating: deal.rating,
     soldCount: deal.soldCount,
+    itemId: deal.itemId,
+    shopId: deal.shopId,
     shopLocation: deal.shopLocation,
     isOfficialShop: deal.isOfficialShop,
     isFreeShipping: deal.isFreeShipping,
@@ -75,30 +82,45 @@ export function loadRankedDeals(
   const matched = snapshot.results.find((r) => r.keyword.trim() === args.query.trim());
   const rawDeals = matched?.deals ?? [];
 
-  // Take the tool's top N in the tool's own order. No sort, no filter, no
-  // re-scoring — the tool's rankDeals() output order is authoritative
-  // (spec §2 Out of Scope, Scenario 1). Do not "improve" this into a sort.
-  const capped = rawDeals.slice(0, args.top);
-
+  // Walk the tool's list in its own order — never sort or score (spec §2
+  // Out of Scope, Scenario 1). Skipping only removes items: a recent deal, or
+  // one with no itemId/shopId (untrackable), is passed over and the next
+  // deal fills the slot (US00165 D4). Later per-deal drops are not backfilled.
+  const recent = opts.recent ?? new Set<string>();
   const deals: RankedDeal[] = [];
   const dropped: DroppedDeal[] = [];
+  const skippedRecent: SkippedDeal[] = [];
+  const eligible: { raw: RawDeal; rank: number }[] = [];
 
-  capped.forEach((raw, i) => {
+  for (const [i, raw] of rawDeals.entries()) {
+    if (eligible.length === args.top) break;
     const rank = i + 1;
+    if (!Number.isFinite(raw.itemId) || !Number.isFinite(raw.shopId)) {
+      dropped.push({ rank, name: raw.name, reason: "no itemId/shopId to track recency" });
+      continue;
+    }
+    if (recent.has(dealKey(raw))) {
+      skippedRecent.push({ rank, name: raw.name });
+      continue;
+    }
+    eligible.push({ raw, rank });
+  }
+
+  for (const { raw, rank } of eligible) {
     if (!raw.affiliateUrl) {
       dropped.push({
         rank,
         name: raw.name,
         reason: "no affiliate link resolved by the scrape tool",
       });
-      return;
+      continue;
     }
 
     try {
       assertAffiliateUrl(raw.affiliateUrl, `deal#${rank}`);
     } catch (e) {
       dropped.push({ rank, name: raw.name, reason: (e as Error).message });
-      return;
+      continue;
     }
 
     const name = cleanDealName(raw.name);
@@ -108,11 +130,11 @@ export function loadRankedDeals(
         name: raw.name,
         reason: "name empty after removing seller boilerplate",
       });
-      return;
+      continue;
     }
 
     deals.push(toRankedDeal(raw, rank, name));
-  });
+  }
 
-  return { deals, dropped, requested: args.top, snapshotPath: file };
+  return { deals, dropped, skippedRecent, requested: args.top, snapshotPath: file };
 }
