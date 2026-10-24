@@ -3,6 +3,7 @@ import {
   buildCategoryBreadcrumbs,
   buildProductBreadcrumbs,
   buildPostBreadcrumbs,
+  buildAuthorBreadcrumbs,
   breadcrumbListJsonLd,
 } from "@/lib/breadcrumbs";
 import type { Product } from "@/types";
@@ -139,5 +140,24 @@ describe("breadcrumbListJsonLd", () => {
       "Chuột gaming",
       fixturePost.title,
     ]);
+  });
+});
+
+describe("buildAuthorBreadcrumbs (US00166)", () => {
+  const author = { slug: "nguyen-van-a", name: "Nguyễn Văn A", bio: ["x"] };
+
+  it("returns [Trang chủ, Bài viết, <author>] with real links", () => {
+    expect(buildAuthorBreadcrumbs(author)).toEqual([
+      { label: "Trang chủ", href: "/" },
+      { label: "Bài viết", href: "/bai-viet" },
+      { label: "Nguyễn Văn A", href: "/tac-gia/nguyen-van-a" },
+    ]);
+  });
+
+  it("feeds a BreadcrumbList with absolute urls", () => {
+    const ld = breadcrumbListJsonLd(buildAuthorBreadcrumbs(author)) as {
+      itemListElement: { item: string }[];
+    };
+    expect(ld.itemListElement[2].item).toBe("https://example.com/tac-gia/nguyen-van-a");
   });
 });

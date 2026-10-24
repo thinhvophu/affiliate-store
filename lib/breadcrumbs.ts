@@ -1,6 +1,7 @@
 import { getCategoryMeta } from "@/lib/categories";
 import { NAV_ITEMS } from "@/lib/nav-items";
 import { absoluteUrl, buildCanonicalPath } from "@/lib/seo";
+import type { Author } from "@/lib/authors";
 import type { Product } from "@/types";
 import type { Post } from "@/types";
 
@@ -45,6 +46,14 @@ export function buildPostBreadcrumbs(post: Post): BreadcrumbItem[] {
   if (cat) items.push({ label: cat.name, href: buildCanonicalPath(["danh-muc", cat.slug]) });
   items.push({ label: post.title, href: buildCanonicalPath(["bai-viet", post.slug]) });
   return items;
+}
+
+export function buildAuthorBreadcrumbs(author: Author): BreadcrumbItem[] {
+  return [
+    ROOT_CRUMB,
+    POSTS_CRUMB,
+    { label: author.name, href: buildCanonicalPath(["tac-gia", author.slug]) },
+  ];
 }
 
 /**

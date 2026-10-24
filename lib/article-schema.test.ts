@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { buildArticleSchema } from "./article-schema";
+import { PRIMARY_AUTHOR_SLUG, getPostAuthor } from "@/lib/authors";
 import type { Post } from "@/types";
 
 const fixturePost: Post = {
@@ -23,11 +24,15 @@ describe("buildArticleSchema", () => {
     expect(schema.image).toBe("https://example.com/static/images/blog/tai-nghe-gaming-500k.png");
     expect(schema.datePublished).toBe("2026-05-20");
     expect(schema.author).toEqual({
+      "@type": "Person",
+      name: getPostAuthor(fixturePost).name,
+      url: `https://example.com/tac-gia/${PRIMARY_AUTHOR_SLUG}`,
+    });
+    expect(schema.publisher).toEqual({
       "@type": "Organization",
       name: "MuaGear",
       url: "https://example.com",
     });
-    expect(schema.publisher).toEqual(schema.author);
     expect(schema.mainEntityOfPage).toEqual({
       "@type": "WebPage",
       "@id": "https://example.com/bai-viet/top-5-tai-nghe-gaming",
@@ -83,11 +88,13 @@ describe("buildArticleSchema", () => {
     expect(schema.datePublished).toBe("2026-05-20");
   });
 
-  it("author and publisher are identical Organization objects using SITE_NAME", () => {
+  it("author is a Person with an absolute no-slash url; publisher stays the Organization", () => {
     const schema = buildArticleSchema(fixturePost);
-    expect(schema.author).toEqual(schema.publisher);
     const author = schema.author as Record<string, unknown>;
-    expect(author["@type"]).toBe("Organization");
-    expect(author.name).toBe("MuaGear");
+    const publisher = schema.publisher as Record<string, unknown>;
+    expect(author["@type"]).toBe("Person");
+    expect(author.url).toMatch(/^https:\/\/example\.com\/tac-gia\/[^/]+$/);
+    expect(publisher["@type"]).toBe("Organization");
+    expect(publisher.name).toBe("MuaGear");
   });
 });
