@@ -4,6 +4,9 @@ import { AffiliateLink } from "@/components/AffiliateLink";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { JsonLd } from "@/components/JsonLd";
 import { ProductGallery } from "@/components/ProductGallery";
+import { PostsMentioningProduct } from "@/components/PostsMentioningProduct";
+import { getAllPosts } from "@/lib/posts";
+import { getPostsEmbeddingProduct } from "@/lib/post-embeds";
 import { RelatedProducts } from "@/components/RelatedProducts";
 import { getAllProducts, getRelatedProducts } from "@/lib/products";
 import { formatVnd } from "@/lib/format";
@@ -106,6 +109,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
           )}
         </div>
       </article>
+
+      <PostsMentioningProduct posts={getPostsEmbeddingProduct(product.slug, getAllPosts())} />
 
       <RelatedProducts products={related} />
     </div>

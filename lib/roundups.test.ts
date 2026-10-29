@@ -6,8 +6,10 @@ import type { Post } from "@/types";
 import { getAllPosts } from "@/lib/posts";
 import {
   assertOneRoundupPerCategory,
+  getCategoryGuides,
   getRoundupForCategory,
   isRoundupPost,
+  prioritizeGuides,
   roundupSlugFor,
 } from "./roundups";
 
@@ -83,6 +85,45 @@ describe("getRoundupForCategory", () => {
       "deal-chuot-gaming",
     );
     expect(getRoundupForCategory(posts, "tai-nghe-gaming", { dealsDir })).toBeNull();
+  });
+});
+
+describe("getCategoryGuides", () => {
+  it("leaves out roundups and sorts newest first", () => {
+    writeSidecar("deal-chuot-gaming");
+    const posts = [
+      post({ slug: "old", publishedAt: "2026-01-01" }),
+      post({ slug: "deal-chuot-gaming" }),
+      post({ slug: "new", publishedAt: "2026-05-01" }),
+      post({ slug: "other-cat", category: "tai-nghe-gaming" }),
+    ];
+    expect(getCategoryGuides(posts, "chuot-gaming", { dealsDir }).map((p) => p.slug)).toEqual([
+      "new",
+      "old",
+    ]);
+  });
+
+  it("returns [] for a category with no guides", () => {
+    expect(getCategoryGuides([post()], "tai-nghe-gaming", { dealsDir })).toEqual([]);
+  });
+});
+
+describe("prioritizeGuides", () => {
+  it("puts guides before roundups and keeps order within each group", () => {
+    writeSidecar("deal-a");
+    writeSidecar("deal-b");
+    const posts = [
+      post({ slug: "deal-a" }),
+      post({ slug: "g1" }),
+      post({ slug: "deal-b" }),
+      post({ slug: "g2" }),
+    ];
+    expect(prioritizeGuides(posts, { dealsDir }).map((p) => p.slug)).toEqual([
+      "g1",
+      "g2",
+      "deal-a",
+      "deal-b",
+    ]);
   });
 });
 

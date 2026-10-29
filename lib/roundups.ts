@@ -33,6 +33,24 @@ export function getRoundupForCategory(
   return posts.find((p) => p.category === category && isRoundupPost(p, opts)) ?? null;
 }
 
+/** Non-roundup posts in a category, newest first. */
+export function getCategoryGuides(
+  posts: Post[],
+  category: string,
+  opts: GetDealsOptions = {},
+): Post[] {
+  return posts
+    .filter((p) => p.category === category && !isRoundupPost(p, opts))
+    .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+}
+
+/** Stable partition: guides before roundups, order kept within each group. */
+export function prioritizeGuides(posts: Post[], opts: GetDealsOptions = {}): Post[] {
+  const guides = posts.filter((p) => !isRoundupPost(p, opts));
+  const roundups = posts.filter((p) => isRoundupPost(p, opts));
+  return [...guides, ...roundups];
+}
+
 /**
  * Throws naming the offending slug(s) when a category has more than one
  * roundup, or a roundup's slug is not `roundupSlugFor(category)`.

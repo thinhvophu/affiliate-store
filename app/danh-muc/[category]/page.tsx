@@ -8,6 +8,9 @@ import { JsonLd } from "@/components/JsonLd";
 import { buildCategoryBreadcrumbs, breadcrumbListJsonLd } from "@/lib/breadcrumbs";
 import { ShellLayout } from "@/components/ShellLayout";
 import { CategoryNav } from "@/components/CategoryNav";
+import { CategoryGuides } from "@/components/CategoryGuides";
+import { getAllPosts } from "@/lib/posts";
+import { getCategoryGuides, getRoundupForCategory } from "@/lib/roundups";
 import { CategoryPageClient } from "@/components/CategoryPageClient";
 import styles from "./category-page.module.css";
 
@@ -45,6 +48,7 @@ export default async function CategoryPage({ params }: { params: Promise<Params>
       return dt !== 0 ? dt : a.slug.localeCompare(b.slug);
     });
 
+  const posts = getAllPosts();
   const crumbs = buildCategoryBreadcrumbs(meta.slug);
 
   return (
@@ -58,6 +62,12 @@ export default async function CategoryPage({ params }: { params: Promise<Params>
         </header>
 
         <CategoryPageClient products={filtered} categorySlug={meta.slug} />
+
+        <CategoryGuides
+          heading="Hướng dẫn chọn mua"
+          guides={getCategoryGuides(posts, meta.slug)}
+          dealPost={getRoundupForCategory(posts, meta.slug)}
+        />
       </article>
     </ShellLayout>
   );
