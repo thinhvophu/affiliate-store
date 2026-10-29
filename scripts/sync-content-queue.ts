@@ -15,6 +15,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Product } from "@/types";
+import { extractProductEmbeds } from "@/lib/post-embeds";
 
 const DEFAULT_PRODUCTS_DIR = path.join(process.cwd(), "content", "products");
 const DEFAULT_POSTS_DIR = path.join(process.cwd(), "content", "posts");
@@ -43,7 +44,6 @@ export interface SyncResult {
 }
 
 const TABLE_ROW_RE = /^\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|$/;
-const PRODUCT_CARD_RE = /<ProductCard\s+slug="([^"]+)"/g;
 
 function readProducts(productsDir: string): { slug: string; category: string }[] {
   if (!fs.existsSync(productsDir)) {
@@ -71,8 +71,8 @@ function readReferencedSlugs(postsDir: string): Set<string> {
   }
   for (const file of fs.readdirSync(postsDir).filter((f) => f.endsWith(".mdx"))) {
     const content = fs.readFileSync(path.join(postsDir, file), "utf-8");
-    for (const match of content.matchAll(PRODUCT_CARD_RE)) {
-      referenced.add(match[1]);
+    for (const slug of extractProductEmbeds(content)) {
+      referenced.add(slug);
     }
   }
   return referenced;

@@ -11,7 +11,15 @@ import { TableOfContents } from "@/components/TableOfContents";
 import { MethodologyNote } from "@/components/MethodologyNote";
 import { authorPath, getPostAuthor } from "@/lib/authors";
 import { postHasDeals } from "@/lib/deals";
-import { isRoundupPost } from "@/lib/roundups";
+import {
+  getCategoryGuides,
+  getRoundupForCategory,
+  isRoundupPost,
+  prioritizeGuides,
+} from "@/lib/roundups";
+import { getCategoryMeta } from "@/lib/categories";
+import { CategoryGuides } from "@/components/CategoryGuides";
+import { DealPageLink } from "@/components/DealPageLink";
 import { getAllPosts, getPostBySlug, getRelatedPosts } from "@/lib/posts";
 import { RelatedPosts } from "@/components/RelatedPosts";
 import { extractToc } from "@/lib/toc";
@@ -49,7 +57,13 @@ export default async function PostDetailPage({ params }: PageProps) {
   const all = getAllPosts();
   const post = all.find((p) => p.slug === slug);
   if (!post) notFound();
-  const related = getRelatedPosts(post, all);
+  const roundup = isRoundupPost(post);
+  const categoryName = getCategoryMeta(post.category)?.name ?? post.category;
+  const categoryGuides = roundup ? getCategoryGuides(all, post.category) : [];
+  const guideSlugs = new Set(categoryGuides.map((g) => g.slug));
+  const related = getRelatedPosts(post, prioritizeGuides(all)).filter(
+    (p) => !guideSlugs.has(p.slug),
+  );
   const toc = extractToc(post.content);
   const hasToc = toc.length > 0;
   const crumbs = buildPostBreadcrumbs(post);
@@ -102,10 +116,20 @@ export default async function PostDetailPage({ params }: PageProps) {
           <PostBody content={post.content} />
         </div>
 
-        <MethodologyNote
-          variant={isRoundupPost(post) ? "deal" : "guide"}
-          authorSlug={author.slug}
-        />
+        <MethodologyNote variant={roundup ? "deal" : "guide"} authorSlug={author.slug} />
+
+        {roundup ? (
+          <CategoryGuides
+            heading={`Hướng dẫn chọn mua ${categoryName.toLowerCase()}`}
+            guides={categoryGuides}
+            categoryLink={{ href: `/danh-muc/${post.category}`, label: categoryName }}
+          />
+        ) : (
+          <DealPageLink
+            dealPost={getRoundupForCategory(all, post.category)}
+            categoryName={categoryName}
+          />
+        )}
 
         <RelatedPosts posts={related} />
         <JsonLd data={articleSchema} />
